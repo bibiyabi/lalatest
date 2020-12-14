@@ -14,5 +14,6 @@ return [
         'prefix_schema'  => env('DB_ORA_SCHEMA_PREFIX', ''),
         'edition'        => env('DB_ORA_EDITION', 'ora$base'),
         'server_version' => env('DB_ORA_SERVER_VERSION', '11g'),
+        'service_name'   => env('DB_ORA_SERVICE_NAME', ''),
     ],
 ];
