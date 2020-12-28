@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +24,8 @@ Route::get('test', function ()
     return '123';
     return DB::select('select SYSDATE FROM DUAL ');
 });
+
+Route::middleware(['java.token'])->group(function (){
+    Route::post('recharge',[TestController::class,'index']);
+});
+
