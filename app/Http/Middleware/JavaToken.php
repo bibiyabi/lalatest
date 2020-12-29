@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Common\ExceptionHandler;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -17,14 +18,7 @@ class JavaToken
     public function handle(Request $request, Closure $next)
     {
         if ($request->input('token') != 'iamtoken'){
-            $response = [
-              'status' => 2,
-              'message'=> 'unauthorized',
-            ];
-
-            return response()->json($response);
-//            return $response;
-            // todo trow Exception
+            ExceptionHandler::exceptionThrow(config('testcode.E01'), 'token is incorrect.');
         }
 
         return $next($request);
