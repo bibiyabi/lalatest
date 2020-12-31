@@ -28,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         Auth::extend('name', function ($app, $name, array $config) {
-            return new UsernameGuard(Auth::createUserProvider($config['provider']), $app->request);
+            return new UsernameGuard(Auth::createUserProvider($config['provider']), $app->request, $config['inputKey'], $config['storageKey']);
         });
     }
 }

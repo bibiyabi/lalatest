@@ -50,6 +50,8 @@ return [
         'name' => [
             'driver' => 'name',
             'provider' => 'users',
+            'inputKey' => 'name',
+            'storageKey' => 'name',
         ]
     ],
 
