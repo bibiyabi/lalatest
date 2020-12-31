@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'name',
         'passwords' => 'users',
     ],
 
@@ -46,6 +46,13 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'name' => [
+            'driver' => 'name',
+            'provider' => 'users',
+            'inputKey' => 'name',
+            'storageKey' => 'name',
+        ]
     ],
 
     /*

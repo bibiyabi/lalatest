@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Vendor\Remit\Config as RemitConfig;
+use App\Http\Controllers\Vendor\Remit\Order as RemitOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,8 +20,27 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('test', function ()
-{
-    return '123';
-    return DB::select('select SYSDATE FROM DUAL ');
+Route::prefix('test')->group(function() {
+    Route::get('', function () {
+        return '123';
+        return DB::select('select SYSDATE FROM DUAL ');
+    });
+
+    Route::get('user', function (Request $request)
+    {
+        return $request->user();
+    });
 });
+
+# JAVA出款傳遞出款參數API
+
+Route::group(['middleware' => 'java.api.key'], function()
+{
+
+    //All the routes that belongs to the group goes here
+    Route::get('/remit/config/add', [RemitConfig::class, 'add']);
+    Route::get('/remit/order/add', [RemitOrder::class, 'setOrderToProcessing']);
+});
+
+
+
