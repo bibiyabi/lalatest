@@ -22,7 +22,6 @@ class JavaApiKey
 
         $input = $request->except('signature');
 
-
         $inputSignature = $request->signature;
 
         ksort($input);
@@ -39,7 +38,7 @@ class JavaApiKey
 
         if ( $signature !== strtolower($inputSignature)) {
 
-            return Response()->json(['aa'=>'bb']);
+            return Response()->json(['java api key '=>' error ']);
         }
 
         return $next($request);
