@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Vendor\Remit;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
 use App\Jobs\Remit\Order as JobOrder;
 
-
-class Callback extends Controller
+class WithdrawController extends Controller
 {
     public function setOrderToProcessing(Request $request) {
         #set db
@@ -16,6 +16,11 @@ class Callback extends Controller
         echo 'endOrder';
     }
 
+    public function reset() {
 
+    }
 
+    public function addConfig() {
+
+    }
 }
