@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KeyController;
 use App\Http\Controllers\Payment\WithdrawController;
 
 /*
@@ -24,6 +25,8 @@ Route::prefix('test')->group(function() {
         return '123';
         return DB::select('select SYSDATE FROM DUAL ');
     });
+
+Route::post('setKey',[KeyController::class,'index']);
 
     Route::get('user', function (Request $request)
     {
