@@ -20,10 +20,16 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('test', function ()
-{
-    return '123';
-    return DB::select('select SYSDATE FROM DUAL ');
+Route::prefix('test')->group(function() {
+    Route::get('', function () {
+        return '123';
+        return DB::select('select SYSDATE FROM DUAL ');
+    });
+
+    Route::get('user', function (Request $request)
+    {
+        return $request->user();
+    });
 });
 
 # JAVA出款傳遞出款參數API
