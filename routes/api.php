@@ -2,8 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Vendor\Remit\Config as RemitConfig;
-use App\Http\Controllers\Vendor\Remit\Order as RemitOrder;
+use App\Http\Controllers\Payment\WithdrawController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,11 +35,12 @@ Route::prefix('test')->group(function() {
 
 Route::group(['middleware' => 'java.api.key'], function()
 {
-
     //All the routes that belongs to the group goes here
-    Route::get('/remit/config/add', [RemitConfig::class, 'add']);
-    Route::get('/remit/order/add', [RemitOrder::class, 'setOrderToProcessing']);
+
 });
+
+Route::get('/withdraw/config/add', [WithdrawController::class, 'addConfig']);
+Route::get('/withdraw/order/status/processing', [WithdrawController::class, 'setOrderToProcessing']);
 
 
 

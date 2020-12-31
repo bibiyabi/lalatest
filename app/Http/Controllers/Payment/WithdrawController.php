@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Payment;
 
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\Remit\Order as JobOrder;
+use App\Jobs\Payment\Withdraw\Order;
 
 class WithdrawController extends Controller
 {
     public function setOrderToProcessing(Request $request) {
         #set db
-        $this->dispatch(new JobOrder($request));
+        $this->dispatch(new Order($request));
 
         echo 'endOrder';
     }
@@ -21,6 +21,6 @@ class WithdrawController extends Controller
     }
 
     public function addConfig() {
-
+        echo '@@@';
     }
 }
