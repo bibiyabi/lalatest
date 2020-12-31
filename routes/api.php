@@ -33,7 +33,14 @@ Route::prefix('test')->group(function() {
 });
 
 # JAVA出款傳遞出款參數API
-Route::get('/remit/config/add', [RemitConfig::class, 'add']);
-Route::get('/remit/order/add', [RemitOrder::class, 'setOrderToProcessing']);
+
+Route::group(['middleware' => 'java.api.key'], function()
+{
+
+    //All the routes that belongs to the group goes here
+    Route::get('/remit/config/add', [RemitConfig::class, 'add']);
+    Route::get('/remit/order/add', [RemitOrder::class, 'setOrderToProcessing']);
+});
+
 
 

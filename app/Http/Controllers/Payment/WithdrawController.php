@@ -16,7 +16,7 @@ class WithdrawController extends Controller
         echo 'endOrder';
     }
 
-    public function reset() {
+    public function cancelOrder() {
 
     }
 
