@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Vendor\Remit\Config as RemitConfig;
+use App\Http\Controllers\Vendor\Remit\Order as RemitOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +25,9 @@ Route::get('test', function ()
     return '123';
     return DB::select('select SYSDATE FROM DUAL ');
 });
+
+# JAVA出款傳遞出款參數API
+Route::get('/remit/config/add', [RemitConfig::class, 'add']);
+Route::get('/remit/order/add', [RemitOrder::class, 'setOrderToProcessing']);
+
+
