@@ -16,7 +16,7 @@ class CreateKeyTable extends Migration
         Schema::create('key', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->index();
-            $table->bigInteger('gateway_id');
+            $table->bigInteger('gateway_id')->index();
             $table->string('keys');
             $table->dateTime('created_at');
         });
