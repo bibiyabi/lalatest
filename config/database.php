@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'oracle'),
 
     /*
     |--------------------------------------------------------------------------
@@ -89,6 +89,17 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+        ],
+
+        'oracle' => [
+            'driver'         => 'oracle',
+//            'tns'            => env('', 't2payment'),
+            'host'           => env('DB_ORA_HOST', ''),
+            'port'           => env('DB_ORA_PORT', '1521'),
+            'database'       => env('DB_ORA_DATABASE', ''),
+            'service_name'   => env('DB_ORA_SERVICE_NAME', ''),
+            'username'       => env('DB_ORA_USERNAME', ''),
+            'password'       => env('DB_ORA_PASSWORD', ''),
         ],
 
     ],

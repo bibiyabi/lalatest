@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeyTable extends Migration
+class CreateGatewayTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateKeyTable extends Migration
      */
     public function up()
     {
-        Schema::create('key', function (Blueprint $table) {
+        Schema::create('gateway', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->index();
-            $table->bigInteger('gateway_id');
-            $table->string('keys');
+            $table->string('name')->index();
+            $table->string('real_name');
             $table->dateTime('created_at');
         });
     }
@@ -29,6 +28,6 @@ class CreateKeyTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('key');
+        Schema::dropIfExists('gateway');
     }
 }
