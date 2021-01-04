@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Payment\WithdrawController;
+use App\Http\Controllers\Payment\WithdrawConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +40,10 @@ Route::group(['middleware' => 'java.api.key'], function()
 
 });
 
-Route::get('/withdraw/config/add', [WithdrawController::class, 'addConfig']);
-Route::get('/withdraw/order/status/processing', [WithdrawController::class, 'setOrderToProcessing']);
+Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
+Route::post('/withdraw/order/create', [WithdrawController::class, 'create']);
+
+
 
 
 
