@@ -93,7 +93,6 @@ return [
 
         'oracle' => [
             'driver'         => 'oracle',
-//            'tns'            => env('', 't2payment'),
             'host'           => env('DB_ORA_HOST', ''),
             'port'           => env('DB_ORA_PORT', '1521'),
             'database'       => env('DB_ORA_DATABASE', ''),
