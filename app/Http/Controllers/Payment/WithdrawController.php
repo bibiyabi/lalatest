@@ -6,21 +6,30 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use App\Jobs\Payment\Withdraw\Order;
+use Illuminate\Support\Facades\Log;
+use App\Services\AbstractDepositPayment;
+use Illuminate\Support\Facades\Bus;
 
 class WithdrawController extends Controller
 {
-    public function setOrderToProcessing(Request $request) {
+    public function create(Request $request) {
+
+
+        Log::info('User failed to login.', $request->post());
+
         #set db
-        $this->dispatch(new Order($request));
+        Bus::chain([
+            new Order($request->post()),
+        ])->dispatch();
+
 
         echo 'endOrder';
     }
+
 
     public function cancelOrder() {
 
     }
 
-    public function addConfig() {
-        echo '@@@';
-    }
+
 }
