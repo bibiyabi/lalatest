@@ -11,21 +11,22 @@ use App\Services\AbstractDepositPayment;
 use Illuminate\Support\Facades\Bus;
 use Throwable;
 
-class WithdrawController extends Controller
+class WithdrawOrderController extends Controller
 {
     public function create(Request $request) {
 
 
-        Log::channel('withdraw')->info('User failed to login.', $request->post());
-
+        Log::channel('withdraw')->info(__LINE__ , $request->post());
+        echo __LINE__ ."\r\n";
         #set db
         Bus::chain([
             new Order($request->post()),
         ])->catch(function (Throwable $e) {
-            Log::channel('withdraw')->error($e->getMessage());
+            echo $e->getMessage() . __LINE__ . "\r\n";
+
         })->dispatch();
 
-
+        echo __LINE__ ."\r\n";
         echo 'endOrder';
     }
 

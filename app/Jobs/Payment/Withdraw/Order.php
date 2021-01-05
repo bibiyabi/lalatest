@@ -24,8 +24,14 @@ class Order implements ShouldQueue
      */
     public function __construct($request)
     {
-
+        echo __LINE__ ."\r\n";
         $this->request = $request;
+
+        # fack
+        $this->request = [];
+
+        $this->request['user_pk'] = 1;
+
 
 
 

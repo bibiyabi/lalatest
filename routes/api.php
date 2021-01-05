@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KeyController;
-use App\Http\Controllers\Payment\WithdrawController;
+use App\Http\Controllers\Payment\WithdrawOrderController;
 use App\Http\Controllers\Payment\WithdrawConfigController;
 use App\Http\Controllers\Payment\WithdrawPaymentsController;
 /*
@@ -22,9 +22,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::prefix('test')->group(function() {
-    Route::get('', function () {
-        return '123';
-        return DB::select('select SYSDATE FROM DUAL ');
+    Route::get('aaa', function () {
+        echo '@@@';
+        return DB::select('select * FROM key');
     });
 
 Route::post('setKey',[KeyController::class,'index']);
@@ -42,9 +42,10 @@ Route::group(['middleware' => 'java.api.key'], function()
     //All the routes that belongs to the group goes here
 
 });
-
+# 代付設定
 Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
-Route::post('/withdraw/order/create', [WithdrawController::class, 'create']);
+# 代付下單
+Route::post('/withdraw/order/create', [WithdrawOrderController::class, 'create']);
 # 代付下拉
 Route::get('/withdraw/payments/bankcards', [WithdrawPaymentsController::class, 'getSupportBankCards']);
 Route::get('/withdraw/payments/wallets', [WithdrawPaymentsController::class, 'getSupportWallet']);
