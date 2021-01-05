@@ -6,7 +6,7 @@ use App\Models\Order;
 
 interface DepositGatewayInterface
 {
-    public function depositOrder(Order $order) : OrderRs;
+    public function genDepositOrderParam(Order $order) : OrderParam;
 
     public function depositCallback(Order $order) : OrderRs;
 }
