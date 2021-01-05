@@ -27,13 +27,14 @@ Route::prefix('test')->group(function() {
         return DB::select('select SYSDATE FROM DUAL ');
     });
 
-Route::post('setKey',[KeyController::class,'index']);
-
     Route::get('user', function (Request $request)
     {
         return $request->user();
     });
 });
+
+# Java 設置資料API
+Route::post('setKey',[KeysController::class,'store']);
 
 # JAVA出款傳遞出款參數API
 
