@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KeyController;
 use App\Http\Controllers\Payment\WithdrawController;
 use App\Http\Controllers\Payment\WithdrawConfigController;
-
+use App\Http\Controllers\Payment\WithdrawPaymentsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -45,6 +45,10 @@ Route::group(['middleware' => 'java.api.key'], function()
 
 Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
 Route::post('/withdraw/order/create', [WithdrawController::class, 'create']);
+# 代付下拉
+Route::get('/withdraw/payments/bankcards', [WithdrawPaymentsController::class, 'getSupportBankCards']);
+Route::get('/withdraw/payments/wallets', [WithdrawPaymentsController::class, 'getSupportWallet']);
+Route::get('/withdraw/payments/digital_currencys', [WithdrawPaymentsController::class, 'getSupportDigitalCurrency']);
 
 
 

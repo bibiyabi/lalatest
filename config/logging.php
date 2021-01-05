@@ -99,6 +99,10 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'withdraw' => [
+            'path' => storage_path('logs/withdraw.log'),
+        ],
     ],
 
 ];
