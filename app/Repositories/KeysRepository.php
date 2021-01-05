@@ -6,27 +6,29 @@ use App\Models\key;
 
 class KeysRepository
 {
-    protected $key;
 
-    public function __construct(key $key)
+
+    public function __construct()
     {
-        $this->key = $key;
+
+
     }
 
     public function get()
     {
-        return $this->key
-            ->get();
+        return key::get();
     }
 
     public function getByUserPk($id)
     {
-        return $this->key->where('user_pk', '=', $id)->get();
+        return key::where('user_pk', '=', $id)->get();
     }
 
     public function getKeysByUserPk($id)
     {
-        $keys =  $this->key->where('user_pk', '=', $id)->value('keys');
+
+        $keys =  key::where('user_pk', '=', $id)->value('keys');
+
         return collect(json_decode($keys, true));
     }
 }
