@@ -13,7 +13,7 @@ class CreateGatewayTable extends Migration
      */
     public function up()
     {
-        Schema::create('gateway', function (Blueprint $table) {
+        Schema::create('gateways', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->index();
             $table->string('real_name');
@@ -28,6 +28,6 @@ class CreateGatewayTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gateway');
+        Schema::dropIfExists('gateways');
     }
 }
