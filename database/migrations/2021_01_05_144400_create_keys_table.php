@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeyTable extends Migration
+class CreateKeysTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,11 +15,12 @@ class CreateKeyTable extends Migration
     {
         Schema::create('keys', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->index();
-            $table->bigInteger('gateway_id')->index();
-            $table->bigInteger('user_pk')->index();
+            $table->bigInteger('user_id');
+            $table->bigInteger('gateway_id');
+            $table->bigInteger('user_pk');  // not sure integer or string
             $table->json('keys');
-            $table->dateTime('created_at');
+            $table->timestamps();
+            $table->unique(['user_id','user_pk']);
         });
     }
 
