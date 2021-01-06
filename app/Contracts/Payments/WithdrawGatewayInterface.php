@@ -6,7 +6,7 @@ use App\Models\Order;
 
 interface DepositGatewayInterface
 {
-    public function withdrawOrder(Order $order) : OrderRs;
+    public function withdrawOrder(Order $order) : OrderResult;
 
-    public function withdrawCallback(Order $order) : OrderRs;
+    public function withdrawCallback(Order $order) : OrderResult;
 }
