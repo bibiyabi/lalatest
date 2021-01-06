@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KeyController;
+use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
 use App\Http\Controllers\Payment\WithdrawConfigController;
 use App\Http\Controllers\Payment\WithdrawPaymentsController;
@@ -51,6 +52,11 @@ Route::post('/withdraw/order/create', [WithdrawOrderController::class, 'create']
 Route::get('/withdraw/payments/bankcards', [WithdrawPaymentsController::class, 'getSupportBankCards']);
 Route::get('/withdraw/payments/wallets', [WithdrawPaymentsController::class, 'getSupportWallet']);
 Route::get('/withdraw/payments/digital_currencys', [WithdrawPaymentsController::class, 'getSupportDigitalCurrency']);
+
+Route::prefix('deposit')->group(function ()
+{
+    Route::post('order', [DepositController::class, 'order']);
+});
 
 
 
