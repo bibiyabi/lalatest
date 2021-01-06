@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Services\AbstractDepositPayment;
 use Illuminate\Http\Request;
 use App\Repositories\KeysRepository;
+use App\Contracts\Payments\PaymentInterface;
+use App\Payment\Withdraw\Payment;
 use App\Models\key;
 
 class PaymentServiceProvider extends ServiceProvider
@@ -18,6 +20,12 @@ class PaymentServiceProvider extends ServiceProvider
     public function register()
     {
 
+        $this->app->bind(
+            PaymentInterface::class,
+            Payment::class
+        );
+
+
     }
 
     /**
@@ -25,22 +33,10 @@ class PaymentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(KeysRepository $keysRepository)
+    public function boot()
     {
-        /*
-        # fack request user pk
-        echo __LINE__;
-        $user_pk = '1';
-        $a =  $keysRepository->getKeysByUserPk($user_pk);
-        $merchant = 'ApplePay';
-        echo __LINE__ ."\r\n";
-        $this->app->bind(
-            AbstractDepositPayment::class,
-            function() use ($merchant) {
-                $className = '/App/Payment/Withdraw\/' . $merchant;
-                return new $className;
-            }
-        );
-        */
+
+
+
     }
 }

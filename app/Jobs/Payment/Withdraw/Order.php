@@ -29,12 +29,7 @@ class Order implements ShouldQueue
 
         # fack
         $this->request = [];
-
         $this->request['user_pk'] = 1;
-
-
-
-
     }
 
     /**
@@ -44,6 +39,7 @@ class Order implements ShouldQueue
      */
     public function handle( AbstractDepositPayment $depositPayment)
     {
+        echo 'handle111111';
         # request get gateway
         $gateway = 'applepay';
         # gateway load database load config
@@ -52,4 +48,6 @@ class Order implements ShouldQueue
         $depositPayment->setRequest($this->request)->send();
         # sned request
     }
+
+
 }
