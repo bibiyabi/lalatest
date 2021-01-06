@@ -10,23 +10,13 @@ abstract class AbstractDepositPayment
 
     }
 
-    public function send() {
-
-        if ($this->getRedirectType() == 'form') {
-            #return view('ecpay::send', $data);
-        } else {
-            # curl
-
-        }
-
-    }
+    abstract public function send() ;
 
     public function setRequest($request) {
-        $this->request = $request;
         return $this;
     }
 
     abstract public function getOrderRes();
 
-    abstract public function getRedirectType();
+
 }
