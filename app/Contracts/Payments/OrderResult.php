@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Payments;
 
-class OrderRs
+class OrderResult
 {
     private $success;
 

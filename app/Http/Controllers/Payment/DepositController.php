@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Payment;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Services\Payments\DepositService;
 use App\Contracts\Payments\DepositGatewayInterface;
@@ -9,12 +11,6 @@ use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class DepositController extends Controller
 {
-    private $service;
-
-    public function __construct() {
-        $this->service = new DepositService();
-    }
-
     public function order(Request $request, DepositGatewayInterface $paymentGateway)
     {
         \Log::info('Deposit-order', $request);
@@ -25,7 +21,8 @@ class DepositController extends Controller
             'amount'   => 'required|numeric|min:0'
         ]);
 
-        $rs = $this->service->order($request, $paymentGateway);
+        $service = App::make(DepositService::class);
+        $rs = App::call([$service, 'order'], [$request, $paymentGateway]);
 
         return RB::success($rs);
     }
