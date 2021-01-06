@@ -6,7 +6,7 @@ use App\Models\Order;
 
 interface DepositGatewayInterface
 {
-    public function genDepositOrderParam(Order $order) : OrderParam;
+    public function genDepositParam(Order $order) : HttpParam;
 
     public function processOrderResult($rs);
 

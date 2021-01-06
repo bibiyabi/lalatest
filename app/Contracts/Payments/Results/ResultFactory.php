@@ -2,9 +2,9 @@
 
 namespace App\Contracts\Payments\Results;
 
-use App\Contracts\Payments\OrderParam;
+use App\Contracts\Payments\HttpParam;
 
 interface ResultFactory
 {
-    public function getResult(OrderParam $param);
+    public function getResult(HttpParam $param);
 }

@@ -2,11 +2,11 @@
 
 namespace App\Contracts\Payments\Results;
 
-use App\Contracts\Payments\OrderParam;
+use App\Contracts\Payments\HttpParam;
 
 class FormResult implements ResultFactory
 {
-    public function getResult(OrderParam $param)
+    public function getResult(HttpParam $param)
     {
         $bodies = $param->getBody();
         $rs = '<form action="'.$param->getUrl().'" method="'.$param->getMethod().'">';

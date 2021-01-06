@@ -2,12 +2,12 @@
 
 namespace App\Contracts\Payments\Results;
 
-use App\Contracts\Payments\OrderParam;
+use App\Contracts\Payments\HttpParam;
 use Illuminate\Support\Facades\Http;
 
 class UrlResult implements ResultFactory
 {
-    public function getResult(OrderParam $param)
+    public function getResult(HttpParam $param)
     {
         $method = $param->getMethod();
         $result = Http::$method($param->getUrl(), $param->getBody())
