@@ -6,14 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Services\Payments\DepositService;
-use App\Contracts\Payments\DepositGatewayInterface;
+use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class DepositController extends Controller
 {
-    public function order(Request $request, DepositGatewayInterface $paymentGateway)
+    public function order(Request $request)
     {
-        \Log::info('Deposit-order', $request);
+        \Log::info('Deposit-order', $request->post());
 
         $request->validate([
             'order_id' => 'required',
@@ -22,7 +22,7 @@ class DepositController extends Controller
         ]);
 
         $service = App::make(DepositService::class);
-        $rs = App::call([$service, 'order'], [$request, $paymentGateway]);
+        $rs = App::call([$service, 'order'], ['request' => $request]);
 
         return RB::success($rs);
     }

@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App;
 use Illuminate\Support\ServiceProvider;
-use App\Services\AbstractDepositPayment;
 use Illuminate\Http\Request;
 use App\Repositories\KeysRepository;
-use App\Models\key;
+use App\Services\Payments\DepositService;
+use App\Contracts\Payments\Deposit\DepositGatewayInterface;
+use App\Services\Payments\Gateways\Inrusdt;
 
 class PaymentServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,12 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function boot(KeysRepository $keysRepository)
     {
+        $this->app->when(DepositService::class)
+            ->needs(DepositGatewayInterface::class)
+            ->give(function () {
+                return new Inrusdt();
+            });
+
         /*
         # fack request user pk
         echo __LINE__;
