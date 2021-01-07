@@ -9,7 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-use App\Services\AbstractDepositPayment;
+use App\Services\AbstractWithdrawGateway;
 
 class Order implements ShouldQueue
 {
@@ -24,17 +24,14 @@ class Order implements ShouldQueue
      */
     public function __construct($request)
     {
-        echo __LINE__ ."\r\n";
+        echo " job order construct \r\n";
         $this->request = $request;
+
+        print_r($request, true);
 
         # fack
         $this->request = [];
-
         $this->request['user_pk'] = 1;
-
-
-
-
     }
 
     /**
@@ -42,14 +39,17 @@ class Order implements ShouldQueue
      *
      * @return void
      */
-    public function handle( AbstractDepositPayment $depositPayment)
+    public function handle(AbstractWithdrawGateway $gateway)
     {
+        echo "handle\r\n";
         # request get gateway
-        $gateway = 'applepay';
+        $name = 'applepay';
         # gateway load database load config
         $config = ['md5' => 'md5test', 'account' => '12345676'];
         # gateway load payment
-        $depositPayment->setRequest($this->request)->send();
+        $gateway->setRequest('')->send();
         # sned request
     }
+
+
 }

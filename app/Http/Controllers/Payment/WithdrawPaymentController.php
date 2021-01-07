@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Constants\WithdrawPayments;
 use App\Http\Controllers\Controller;
 
-class WithdrawPaymentsController extends Controller
+class WithdrawPaymentController extends Controller
 {
     public function getSupportBankCards(Request $request) {
         var_dump(WithdrawPayments::getBankCards()->toArray());
