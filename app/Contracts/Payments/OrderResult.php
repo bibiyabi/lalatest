@@ -10,10 +10,13 @@ class OrderResult
 
     private $status;
 
-    public function __construct(bool $success, string $msg, int $status) {
+    private $realAmount;
+
+    public function __construct(bool $success, string $msg, int $status, float $realAmount=0) {
         $this->success = $success;
         $this->msg = $msg;
         $this->status = $status;
+        $this->realAmount = $realAmount;
     }
 
     /**
@@ -38,5 +41,13 @@ class OrderResult
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Get the value of realAmount
+     */
+    public function getRealAmount()
+    {
+        return $this->realAmount;
     }
 }
