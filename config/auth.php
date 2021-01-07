@@ -49,7 +49,7 @@ return [
 
         'name' => [
             'driver' => 'name',
-            'provider' => 'users',
+            'provider' => 'merchants',
             'inputKey' => 'name',
             'storageKey' => 'name',
         ]
@@ -73,10 +73,15 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'merchants' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
+            'model' => App\Models\Merchant::class,
+        ]
+
+        // 'users' => [
+        //     'driver' => 'eloquent',
+        //     'model' => App\Models\User::class,
+        // ],
 
         // 'users' => [
         //     'driver' => 'database',

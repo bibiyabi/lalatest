@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('key_id');
             $table->decimal('amount', 20, 4, true);
-            $table->decimal('real_amount', 20, 4, true);
+            $table->decimal('real_amount', 20, 4, true)->nullable();
             $table->unsignedBigInteger('gateway_id');
             $table->unsignedSmallInteger('status');
             $table->jsonb('order_param');
