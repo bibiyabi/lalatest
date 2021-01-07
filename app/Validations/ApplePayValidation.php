@@ -3,7 +3,7 @@ namespace App\Validations;
 
 use Illuminate\Support\Facades\Validator;
 
-class ApplyPayValidation
+class ApplePayValidation
 {
 
     static public function inputValidator($data)
