@@ -972,16 +972,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.20.1",
+            "version": "v8.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02"
+                "reference": "a61cab167c35f465a923737ee6e6fb99cd5fde88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/b5d8573ab16027867eaa1ac148893833434f9b02",
-                "reference": "b5d8573ab16027867eaa1ac148893833434f9b02",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/a61cab167c35f465a923737ee6e6fb99cd5fde88",
+                "reference": "a61cab167c35f465a923737ee6e6fb99cd5fde88",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -1141,7 +1141,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2020-12-22T21:21:19+00:00"
+            "time": "2021-01-05T15:43:10+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1498,7 +1498,13 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/MarcinOrlowski/laravel-api-response-builder/zipball/4d306c6ae57731e2422be42ef0f769e8a84b5785",
                 "reference": "4d306c6ae57731e2422be42ef0f769e8a84b5785",
-                "shasum": ""
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "laravel/framework": ">= 6.0",
@@ -5318,16 +5324,16 @@
         },
         {
             "name": "yajra/laravel-oci8",
-            "version": "v8.2.2",
+            "version": "v8.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/laravel-oci8.git",
-                "reference": "e78d3f9e4ea84e963d4325850517c9627945859f"
+                "reference": "df774ca6b2ea9f68a1d822da7be21b14a8083f8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/laravel-oci8/zipball/e78d3f9e4ea84e963d4325850517c9627945859f",
-                "reference": "e78d3f9e4ea84e963d4325850517c9627945859f",
+                "url": "https://api.github.com/repos/yajra/laravel-oci8/zipball/df774ca6b2ea9f68a1d822da7be21b14a8083f8e",
+                "reference": "df774ca6b2ea9f68a1d822da7be21b14a8083f8e",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -5390,7 +5396,7 @@
             ],
             "support": {
                 "issues": "https://github.com/yajra/laravel-oci8/issues",
-                "source": "https://github.com/yajra/laravel-oci8/tree/v8.2.2"
+                "source": "https://github.com/yajra/laravel-oci8/tree/v8.2.3"
             },
             "funding": [
                 {
@@ -5402,7 +5408,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-12-08T06:28:14+00:00"
+            "time": "2021-01-06T02:34:14+00:00"
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",

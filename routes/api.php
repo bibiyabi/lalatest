@@ -6,7 +6,7 @@ use App\Http\Controllers\KeyController;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
 use App\Http\Controllers\Payment\WithdrawConfigController;
-use App\Http\Controllers\Payment\WithdrawPaymentsController;
+use App\Http\Controllers\Payment\WithdrawPaymentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -35,7 +35,7 @@ Route::prefix('test')->group(function() {
 });
 
 # Java 設置資料API
-Route::post('setKey',[KeysController::class,'store']);
+#Route::post('setKey',[KeysController::class,'store']);
 
 # JAVA出款傳遞出款參數API
 
@@ -45,13 +45,13 @@ Route::group(['middleware' => 'java.api.key'], function()
 
 });
 # 代付設定
-Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
+#Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
 # 代付下單
 Route::post('/withdraw/order/create', [WithdrawOrderController::class, 'create']);
 # 代付下拉
-Route::get('/withdraw/payments/bankcards', [WithdrawPaymentsController::class, 'getSupportBankCards']);
-Route::get('/withdraw/payments/wallets', [WithdrawPaymentsController::class, 'getSupportWallet']);
-Route::get('/withdraw/payments/digital_currencys', [WithdrawPaymentsController::class, 'getSupportDigitalCurrency']);
+Route::get('/withdraw/payments/bankcards', [WithdrawPaymentController::class, 'getSupportBankCards']);
+Route::get('/withdraw/payments/wallets', [WithdrawPaymentController::class, 'getSupportWallet']);
+Route::get('/withdraw/payments/digital_currencys', [WithdrawPaymentController::class, 'getSupportDigitalCurrency']);
 
 Route::prefix('deposit')->group(function ()
 {

@@ -10,16 +10,22 @@ use Illuminate\Http\Request;
 use App\Repositories\KeysRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Bus;
+
 use Throwable;
+
 
 class Payment implements PaymentInterface
 {
 
     private $postData;
 
-    public function checkInputData(Request $request)  {
-        $this->postData = $request->post();
-        Log::channel('withdraw')->info(__LINE__ , $this->postData);
+    public function checkInputData($postData)  {
+        $this->postData = $postData;
+        #Log::channel('withdraw')->info(__LINE__ , $this->postData);
+        if (false) {
+            throw new WithdrawException("asdsd");
+        }
+        return $this;
     }
 
     public function toOrderQueue()  {

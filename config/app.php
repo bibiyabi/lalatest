@@ -176,7 +176,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+
+        App\Providers\GatewayServiceProvider::class,
         App\Providers\PaymentServiceProvider::class,
+
 
     ],
 

@@ -1,8 +1,9 @@
 <?php
 namespace App\Services;
 use Illuminate\Http\Request;
+use App\Services\InputService;
 
-abstract class AbstractDepositPayment
+abstract class AbstractWithdrawGateway
 {
     private $request;
 
@@ -12,9 +13,7 @@ abstract class AbstractDepositPayment
 
     abstract public function send() ;
 
-    public function setRequest($request) {
-        return $this;
-    }
+
 
     abstract public function getOrderRes();
 
