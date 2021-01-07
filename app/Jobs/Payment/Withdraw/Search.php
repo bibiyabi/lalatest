@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\Remit;
+namespace App\Jobs\Payment\Withdraw;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
