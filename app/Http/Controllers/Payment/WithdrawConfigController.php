@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobs\Payment\Withdraw\Order;
 
-class WithdrawController extends Controller
+class WithdrawConfigController extends Controller
 {
     public function stroe() {
 
