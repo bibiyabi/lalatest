@@ -8,14 +8,14 @@ class OrderResult
 
     private $msg;
 
-    private $status;
+    private $errorCode;
 
     private $realAmount;
 
-    public function __construct(bool $success, string $msg, int $status, float $realAmount=0) {
+    public function __construct(bool $success, string $msg, int $errorCode=0, float $realAmount=0) {
         $this->success = $success;
         $this->msg = $msg;
-        $this->status = $status;
+        $this->errorCode = $errorCode;
         $this->realAmount = $realAmount;
     }
 
@@ -36,11 +36,11 @@ class OrderResult
     }
 
     /**
-     * Get the value of status
+     * Get the value of errorCode
      */
-    public function getStatus()
+    public function getErrorCode()
     {
-        return $this->status;
+        return $this->errorCode;
     }
 
     /**

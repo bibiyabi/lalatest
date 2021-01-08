@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\KeyController;
+use App\Http\Controllers\KeysController;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
 use App\Http\Controllers\Payment\WithdrawConfigController;
@@ -18,14 +18,14 @@ use App\Http\Controllers\Payment\WithdrawPaymentController;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::prefix('test')->group(function() {
     Route::get('aaa', function () {
         echo '@@@';
         return DB::select('select * FROM key');
+    });
+
+    Route::get('bbb', function (){
+        return 123;
     });
 
     Route::get('user', function (Request $request)
@@ -34,8 +34,11 @@ Route::prefix('test')->group(function() {
     });
 });
 
-# Java 設置資料API
-#Route::post('setKey',[KeysController::class,'store']);
+# Java設置資料API
+Route::post('key',[KeysController::class, 'store']);
+Route::patch('key',[KeysController::class, 'update']);
+Route::delete('key',[KeysController::class, 'destroy']);
+
 
 # JAVA出款傳遞出款參數API
 
@@ -46,6 +49,7 @@ Route::group(['middleware' => 'java.api.key'], function()
 });
 # 代付設定
 #Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
+
 # 代付下單
 Route::post('/withdraw/order/create', [WithdrawOrderController::class, 'create']);
 # 代付下拉

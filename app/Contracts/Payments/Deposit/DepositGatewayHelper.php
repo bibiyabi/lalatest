@@ -16,7 +16,7 @@ trait DepositGatewayHelper
         $param = $this->createParam($order, $config);
         $param[$this->getSignKey()] = $this->createSign($param, $config);
 
-        return new HttpParam($this->getUrl(), $this->getMethod(), [], $param, []);
+        return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
     }
 
     abstract protected function createParam(Order $order, Key $key): array;
@@ -24,6 +24,16 @@ trait DepositGatewayHelper
     abstract protected function createSign(array $param, Key $key): string;
 
     abstract protected function getUrl(): string;
+
+    protected function getHeader(): array
+    {
+        return [];
+    }
+
+    protected function getConfig(): array
+    {
+        return [];
+    }
 
     protected function getSignKey()
     {

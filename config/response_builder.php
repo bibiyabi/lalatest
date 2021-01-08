@@ -1,5 +1,7 @@
 <?php
 
+use App\Contracts\ResponseCode as CODE;
+
 /**
  * Laravel API Response Builder - configuration file
  *
@@ -17,7 +19,7 @@ return [
 	| Code range settings
 	|-------------------------------------------------------------------------------------------------------------------
 	*/
-	'min_code'          => 100,
+	'min_code'          => 20,
 	'max_code'          => 1024,
 
 	/*
@@ -27,6 +29,11 @@ return [
 	*/
 	'map'               => [
 //         YOUR_API_CODE => '<MESSAGE_LOCALISATION_KEY>',
+        CODE::SUCCESS               => '传送成功',
+		CODE::FAIL                  => '传送失败',
+		CODE::RESOURCE_NOT_FOUND    => '查无资料',
+        CODE::ERROR_PARAMETERS      => '请输入完整信息',
+        CODE::DATABASE_FAILED       => '资料库错误',
 	],
 
 	/*

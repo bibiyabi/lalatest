@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Key;
 
-class User extends Authenticatable
+class Merchant extends Authenticatable
 {
     use HasFactory, Notifiable;
 

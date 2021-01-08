@@ -24,7 +24,11 @@ class DepositController extends Controller
         $service = App::make(DepositService::class);
         $rs = App::call([$service, 'order'], ['request' => $request]);
 
-        return RB::success($rs);
+        $success = $rs->getSuccess();
+
+        return $success
+            ? RB::success()
+            : RB::error($rs->getErrorCode());
     }
 
     public function callback(Request $request, DepositGatewayInterface $gateway)
