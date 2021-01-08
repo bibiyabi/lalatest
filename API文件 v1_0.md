@@ -50,7 +50,7 @@ Response example:
 ```json
 {
     "success": true,
-    "code": 0,
+    "code": 100,
     "locale": "en",
     "message": "传送成功",
     "data": null
@@ -60,7 +60,7 @@ Response example:
 ```json
 {
     "success": false,
-    "code": 1,
+    "code": 101,
     "locale": "en",
     "message": "传送失败",
     "data": null,
@@ -71,7 +71,7 @@ Response example:
 ```json
 {
     "success": false,
-    "code": 11,
+    "code": 111,
     "locale": "en",
     "message": "请输入完整信息",
     "data": null,
