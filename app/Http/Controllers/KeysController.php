@@ -2,30 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Keys;
+use App\Models\Key;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
+use App\Contracts\ResponseCode as CODE;
 
 class KeysController extends Controller
 {
+    private $keys;
+
+    public function __construct()
+    {
+
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+//    public function index()
+//    {
+//
+//    }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+//    public function create()
+//    {
+//        //
+//    }
 
     /**
      * Setting payment keys from java.
@@ -36,24 +47,26 @@ class KeysController extends Controller
     {
         $rules = [
             "id"                => "required|integer",
-            "type"              => "required|integer|between:0,2",
-            "msgName"           => "required|string",
-            "bankName"          => "present",
-            "secondName"        => "present",
-            "firstName"         => "present",
-            "cardNumber"        => "present",
-            "ifsc"              => "present",
-            "cashflowMerchant"  => "required|string",
-            "cashflowUserId"    => "required|string",
-            "cashflowMerchantId"=> "required|string",
-            "md5"               => "present",
-            "publickey"         => "present",
-            "privatekey"        => "present",
-            "syncAddress"       => "required|string",
-            "asyncAddress"      => "required|string",
-            "channelId"         => "required|integer",
-            "remark1"           => "present",
-            "remark2"           => "present",
+            "msgName"           => "nullable|string",
+            "bankName"          => "nullable|string",
+            "secondName"        => "nullable|string",
+            "firstName"         => "nullable|string",
+            "cardNumber"        => "nullable|string",
+            "ifsc"              => "nullable|string",
+            "cashflowMerchant"  => "required|integer",
+            "cashflowUserId"    => "nullable|string",
+            "cashflowMerchantId"=> "nullable|string",
+            "md5"               => "nullable|string",
+            "publickey"         => "nullable|string",
+            "privatekey"        => "nullable|string",
+            "syncAddress"       => "nullable|string",
+            "asyncAddress"      => "nullable|string",
+            "blockChain"        => "nullable|string",
+            "rechargeAdd"       => "nullable|string",
+            "apiKey"            => "nullable|string",
+            "blockPrivateKey"   => "nullable|string",
+            "remark1"           => "nullable|string",
+            "remark2"           => "nullable|string",
         ];
         $validator = Validator::make($request->all(), $rules);
 
@@ -63,16 +76,30 @@ class KeysController extends Controller
                 'msg'       => $validator->errors()->all(),
             ];
             Log::info(json_encode($errMsg));
-            echo 123;
-            return ResponseBuilder::success();
-//            return response()->json(config('code.E02'));  //todo response改寫法
+
+            return RB::error(CODE::ERROR_PARAMETERS);
         }
 
-        // todo stored into DB  /eloquent
+        # store into keys table
+        try {
+            $key = new Key();
+            $key->user_id = $request->user()->id;
+            $key->gateway_id = $request->input('cashflowMerchant');
+            $key->user_pk = $request->input('id');
+            $key->keys = json_encode($request->all());
+            $key->save();
 
-        // todo response success
-        echo 'success';
-        return ResponseBuilder::success();
+        }catch (\Exception $e){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $e->getMessage(),
+            ];
+            Log::info(json_encode($errMsg));
+
+            return RB::error(CODE::FAIL);
+        }
+
+        return RB::success();
     }
 
     /**
@@ -106,7 +133,7 @@ class KeysController extends Controller
      */
     public function update(Request $request, Keys $keys)
     {
-        //
+
     }
 
     /**

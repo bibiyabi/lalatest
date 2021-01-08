@@ -48,13 +48,33 @@ POST /api/key
 Response example:
 
 ```json
-{"success":true,"code":0,"locale":"en","message":"传送成功","data":null}
+{
+    "success": true,
+    "code": 0,
+    "locale": "en",
+    "message": "传送成功",
+    "data": null
+}
 ```
 
 ```json
-{"success":false,"code":1,"locale":"en","message":"传送失败","data":null,"debug":[]}
+{
+    "success": false,
+    "code": 1,
+    "locale": "en",
+    "message": "传送失败",
+    "data": null,
+    "debug": []
+}
 ```
 
 ```json
-{"success":false,"code":11,"locale":"en","message":"请输入完整信息","data":null,"debug":[]}
+{
+    "success": false,
+    "code": 11,
+    "locale": "en",
+    "message": "请输入完整信息",
+    "data": null,
+    "debug": []
+}
 ```
