@@ -47,15 +47,9 @@ Route::group(['middleware' => 'java.api.key'], function()
     //All the routes that belongs to the group goes here
 
 });
-# 代付設定
-#Route::post('/withdraw/config/', [WithdrawConfigController::class, 'store']);
 
 # 代付下單
 Route::post('/withdraw/order/create', [WithdrawOrderController::class, 'create']);
-# 代付下拉
-Route::get('/withdraw/payments/bankcards', [WithdrawPaymentController::class, 'getSupportBankCards']);
-Route::get('/withdraw/payments/wallets', [WithdrawPaymentController::class, 'getSupportWallet']);
-Route::get('/withdraw/payments/digital_currencys', [WithdrawPaymentController::class, 'getSupportDigitalCurrency']);
 
 Route::prefix('deposit')->group(function ()
 {
