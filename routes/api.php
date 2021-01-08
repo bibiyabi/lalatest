@@ -30,7 +30,7 @@ Route::prefix('test')->group(function() {
 
     Route::get('user', function (Request $request)
     {
-        return $request->user(); //{"id":1,"name":"java","created_at":null,"updated_at":null}
+        return $request->user();
     });
 });
 

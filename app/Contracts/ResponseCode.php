@@ -6,10 +6,10 @@ namespace App\Contracts;
 
 class ResponseCode
 {
-    public const SUCCESS            = 0;  // 传送成功
-    public const FAIL               = 1;  // 传送失败
-    public const ERROR_PARAMETERS   = 11; // 请输入完整信息
-    public const DATABASE_FAILED    = 20; // 资料库错误
+    public const SUCCESS            = 100;  // 传送成功
+    public const FAIL               = 101;  // 传送失败
+    public const ERROR_PARAMETERS   = 111;  // 请输入完整信息
+    public const DATABASE_FAILED    = 120;  // 资料库错误
 
 /**  參考error code
     "platFormCode": {
