@@ -18,14 +18,14 @@ use App\Http\Controllers\Payment\WithdrawPaymentController;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::prefix('test')->group(function() {
     Route::get('aaa', function () {
         echo '@@@';
         return DB::select('select * FROM key');
+    });
+
+    Route::get('bbb', function (){
+        return 123;
     });
 
     Route::get('user', function (Request $request)
