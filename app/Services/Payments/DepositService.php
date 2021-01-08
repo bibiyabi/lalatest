@@ -10,6 +10,7 @@ use App\Contracts\Payments\Results\UrlResult;
 use App\Contracts\Payments\Results\FormResult;
 use App\Models\Key;
 Use App\Contracts\Payments\Status;
+use App\Contracts\ResponseCode;
 
 class DepositService
 {
@@ -29,7 +30,7 @@ class DepositService
                     ->first();
 
         if (empty($key)) {
-            return new OrderResult(false, 'Key not found', Status::ORDER_FAILED);
+            return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
         }
 
         $order = Order::create([
