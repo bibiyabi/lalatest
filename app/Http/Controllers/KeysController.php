@@ -99,7 +99,7 @@ class KeysController extends Controller
             return RB::error(CODE::FAIL);
         }
 
-        return RB::success();
+        return RB::success(null,CODE::SUCCESS);
     }
 
     /**
