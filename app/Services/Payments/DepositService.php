@@ -8,6 +8,8 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Contracts\Payments\Results\UrlResult;
 use App\Contracts\Payments\Results\FormResult;
+use App\Models\Key;
+Use App\Contracts\Payments\Status;
 
 class DepositService
 {
@@ -17,10 +19,26 @@ class DepositService
         $this->gateway = $gateway;
     }
 
-    public function order(Request $request)
+    public function order(Request $request): OrderResult
     {
         # create order param
-        $order = Order::create($request->post());
+        $user = $request->user();
+        $keyId = $request->post('key_id');
+        $key = Key::where('user_id', $user->id)
+                    ->where('user_pk', $keyId)
+                    ->first();
+
+        if (empty($key)) {
+            return new OrderResult(false, 'Key not found', Status::ORDER_FAILED);
+        }
+
+        $order = Order::create([
+            'order_id' => $request->post('order_id'),
+            'user_id'  => $user->id,
+            'key_id'   => $keyId,
+            'amount'   => $request->post('amount'),
+            'gateway_id' => $key->gateway_id,
+        ]);
         $param = $this->gateway->genDepositParam($order);
 
         # deside how to return value
