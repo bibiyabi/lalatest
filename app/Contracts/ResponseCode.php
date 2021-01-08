@@ -7,8 +7,9 @@ namespace App\Contracts;
 interface ResponseCode
 {
     // todo use interface for temp, not testing yet
-    public const SUCCESS            = 000;
-    public const ERROR_PARAMETERS   = 011; // 请输入完整信息
+    public const SUCCESS            = 0;
+    public const RESOURCE_NOT_FOUND = 7;  // 查無資料
+    public const ERROR_PARAMETERS   = 11; // 请输入完整信息
 
 /**  參考error code
     "platFormCode": {
