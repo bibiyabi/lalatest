@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Services\AbstractWithdrawGateway;
+
 
 
 class GatewayServiceProvider extends ServiceProvider
@@ -15,14 +15,8 @@ class GatewayServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $merchant = 'ApplePay';
-        $this->app->bind(
-            AbstractWithdrawGateway::class,
-            function() use ($merchant) {
-                $className = "App\Payment\Withdraw\\$merchant";
-                return $this->app->make($className);
-            }
-        );
+
+
 
 
     }

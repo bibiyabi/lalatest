@@ -8,7 +8,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
+use App\Collections\ApplePayCollection;
+use App\Collections\BanksCollection;
 use App\Services\AbstractWithdrawGateway;
 
 class Order implements ShouldQueue
@@ -24,14 +25,14 @@ class Order implements ShouldQueue
      */
     public function __construct($request)
     {
-        echo " job order construct \r\n";
-        $this->request = $request;
 
-        print_r($request, true);
+        $this->request = $request;
 
         # fack
         $this->request = [];
         $this->request['user_pk'] = 1;
+
+
     }
 
     /**
@@ -47,7 +48,7 @@ class Order implements ShouldQueue
         # gateway load database load config
         $config = ['md5' => 'md5test', 'account' => '12345676'];
         # gateway load payment
-        $gateway->setRequest('')->send();
+        $gateway->setRequest($config, new ApplePayCollection, new BanksCollection)->send();
         # sned request
     }
 

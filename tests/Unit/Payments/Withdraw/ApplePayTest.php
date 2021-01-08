@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\Payments\Withdraw;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use App\Payment\Withdraw\ApplePay;
-use App\Collections\ApplePayCollection;
+use App\Collections\ApplePayPostCollection;
+use App\Collections\ApplePayBanksCollection;
+use App\Collections\BanksCollection;
 use Illuminate\Support\Facades\Config;
 
 
@@ -28,7 +30,11 @@ class ApplePayTest extends TestCase
 
         $data = [
             'user_pk' => 1,
+            'sign' => 1,
         ];
+
+
+
 
         $assertObject = $payment->setRequest($data);
 

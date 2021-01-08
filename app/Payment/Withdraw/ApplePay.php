@@ -1,65 +1,57 @@
 <?php
 namespace App\Payment\Withdraw;
-use App\Services\AbstractWithdrawGateway;
-use App\Validations\ApplyPayValidation;
-use App\Exceptions\WithdrawException;
-use App\Collections\ApplePayCollection;
-use App\Collections\JavaBanksCollection;
-use App\Services\InputService;
-use app\Constants\WithDrawOrderStatus;
 
+use App\Services\AbstractWithdrawGateway;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
+use App\Services\Curl;
+use App\Payment\Withdraw\CreateRes;
 class ApplePay extends AbstractWithdrawGateway
 {
+    use CreateRes;
 
-    public function __construct( ) {
-        echo __CLASS__.__FUNCTION__;
+    private $postData;
+    private $curlRes;
+
+    public function setRequest($data) {
+
+       Log::channel('withdraw')->info(__LINE__ , $data);
+
+        $validator = Validator::make($data, [
+            'user_pk' => 'required',
+            'sign' => 'required',
+            'bankName' => '中国工商银行'
+        ]);
+
+        if($validator->fails()){
+            return "您輸入的資料有誤";
+        }
+
+        return $this->setData($data)->genSign()->send(new Curl);
     }
 
-    public function setRequest($order, $vendor, InputService $inputService, ApplePayCollection $applyPayCollection,
-     JavaBanksCollection $JavaBanksCollection) {
-
-        $inputService->checkIsset($order, ['amount', 'order_id', 'card_no',
-             'bank_code']);
-
-        $params = [];
-        $params['version']    = 'V1.0';
-        $params['appId']      = $vendor['business_number'];  //商戶號
-        $params['orderType']    = '1';
-        $params['merchOrderNo'] = $order['order_id'];
-
-        $params['orderDate']      = date('YmdHis');
-        $params['amount'] = $order['price'];
-        $params['notifyUrl'] = $vendor['server_back_url'];
-        $params['clientIp'] = '10.21.211.111';
-        $params['accNo'] = $order['card_no'];
-        $params['accName'] = $order['name'];
-
-        $bankList = $applyPayCollection->getBanksList();
-
-
-
-        $bankName = $JavaBanksCollection->getBankNameByJavaBankCode($order['bank_code']);
-
-        if ($bankName === false) {
-            return ['status' => false, 'msg' => ' bank_name not found ' . $e->getMessage() . json_encode($order) . json_encode($vendor) ,  'code' => WithDrawOrderStatus::FAIL];
-        }
-
-        if (!isset($bankList[$bankName])) {
-            return ['status' => false, 'msg' => 'bank not found ' . $bankName ,  'code' => WithDrawOrderStatus::FAIL];
-        }
-
+    private function setData($data) {
         return $this;
     }
 
-    public function send() {
-
+    private function genSign() {
+        return $this;
     }
 
-    public function getOrderRes() {
-        echo 'apple getOrderRes';
+
+    public function send(Curl $curl) {
+        $url = $this->getServerUrl(). '/DMAW2KD7/autoPay/sendOrder.zv';
+        $this->curlRes = $curl->setUrl($url)->setHeader([])->setPost($this->postData)->exec();
+        return $this;
     }
 
-    public function getRedirectType() {
-        return 'curl';
+
+    protected function returnOrderRes()
+    {
+        if ($this->curlRes['code'] == 0) {
+            return $this->resSuccess();
+        }
     }
+
+
 }

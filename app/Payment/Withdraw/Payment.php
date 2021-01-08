@@ -21,7 +21,7 @@ class Payment implements PaymentInterface
 
     public function checkInputData($postData)  {
         $this->postData = $postData;
-        #Log::channel('withdraw')->info(__LINE__ , $this->postData);
+        Log::channel('withdraw')->info(__LINE__ , $this->postData);
         if (false) {
             throw new WithdrawException("asdsd");
         }
@@ -29,6 +29,8 @@ class Payment implements PaymentInterface
     }
 
     public function toOrderQueue()  {
+
+
 
         echo __LINE__ ."\r\n";
         #set db

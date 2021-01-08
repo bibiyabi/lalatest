@@ -2,20 +2,18 @@
 
 namespace App\Providers;
 
-use App;
+
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Request;
-use App\Repositories\KeysRepository;
+
 
 use App\Contracts\Payments\PaymentInterface;
 use App\Payment\Withdraw\Payment;
-use App\Models\key;
+
 use App\Services\AbstractWithdrawGateway;
-use App\Payment\Withdraw\ApplePay;
+
 use App\Services\Payments\DepositService;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Services\Payments\Gateways\Inrusdt;
-
 class PaymentServiceProvider extends ServiceProvider
 {
 
@@ -34,7 +32,14 @@ class PaymentServiceProvider extends ServiceProvider
         );
 
 
-
+        $merchant = 'ApplePay';
+        $this->app->bind(
+            AbstractWithdrawGateway::class,
+            function() use ($merchant) {
+                $className = "App\Payment\Withdraw\\$merchant";
+                return $this->app->make($className);
+            }
+        );
 
 
 
