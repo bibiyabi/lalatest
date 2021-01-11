@@ -18,4 +18,8 @@ class Key extends Model
         'keys',
     ];
 
+    public function gateway()
+    {
+        return $this->belongsTo(Gateway::class);
+    }
 }
