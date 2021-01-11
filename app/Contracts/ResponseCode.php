@@ -12,8 +12,9 @@ class ResponseCode
     public const RESOURCE_NOT_FOUND = 107;  // 查無資料
     public const ERROR_PARAMETERS   = 111; // 请输入完整信息
     public const DATABASE_FAILED    = 120; // 资料库错误
+    public const DUPLICATE_ORDERID  = 302; // 已有该订单
 
-/**  參考error code
+/**  參考error code 以下要用的時候要全部 + 100
     "platFormCode": {
     '001':'传送失败',
     '002':'登入異常',
