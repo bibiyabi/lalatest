@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use Mockery;
 use Illuminate\Support\Facades\Queue;
 use App\Payment\Withdraw\Payment;

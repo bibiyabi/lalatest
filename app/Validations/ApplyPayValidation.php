@@ -10,13 +10,9 @@ class ApplyPayValidation
     {
 
 
-        $validator = Validator::make(['title' => '1'], [
-          #  'OrderId' => 'alpha_num|max:20',
-          'title' => 'required|max:255',
-        ]);
 
-
-        return $validator;
+        $messages = $v->messages();
+        return $v;
 
     }
 }

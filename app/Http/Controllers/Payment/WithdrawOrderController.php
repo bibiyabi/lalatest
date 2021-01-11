@@ -11,7 +11,11 @@ class WithdrawOrderController extends Controller
 {
     public function create(Request $request, PaymentInterface $payment) {
 
-        $payment->checkInputData($request->post())->toOrderQueue();
+        $this->request = [];
+        $this->request['user_pk'] = 2;
+        $this->request['user_id'] = 1;
+
+        $payment->checkInputData( $this->request)->toOrderQueue();
     }
 
     public function cancelOrder() {

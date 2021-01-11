@@ -2,11 +2,10 @@
 
 namespace Tests\Unit\Payments\Withdraw;
 
-use PHPUnit\Framework\TestCase;
-use App\Payment\Withdraw\ApplePay;
-use App\Collections\ApplePayCollection;
-use Illuminate\Support\Facades\Config;
-
+use Tests\TestCase;
+use App\Services\Payments\WithdrawGateways\ApplePay;
+use Illuminate\Container\container;
+use App\Services\Curl;
 
 class ApplePayTest extends TestCase
 {
@@ -21,18 +20,22 @@ class ApplePayTest extends TestCase
      *
      * @return void
      */
-    public function testRequestValidate()
+    public function testSetRequestAndSend()
     {
+        $container = Container::getInstance();
 
-        $payment = new ApplePay(['aa'=>1]);
+        $payment = $container->make(ApplePay::class);
 
         $data = [
             'user_pk' => 1,
+            'sign' => 1,
         ];
 
-        $assertObject = $payment->setRequest($data);
 
-        $this->assertInstanceOf(ApplePay::class, $assertObject);
+        $payment->setRequest($data);
+        $assertObject = $payment->send();
+
+        $this->assertInstanceOf(Curl::class, $assertObject);
     }
 
 
