@@ -6,4 +6,5 @@ class WithDrawOrderStatus
     const SUCCESS = '1';
     const FAIL = '2';
     const RETRY = '3';
+    const TIMEOUT = '4';
 }

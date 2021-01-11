@@ -17,6 +17,8 @@ class Payment implements PaymentInterface
 
     private $postData;
     private $keyRepository;
+    private $keys;
+
 
     public function __construct(KeyRepository $k)
     {
@@ -104,32 +106,35 @@ class Payment implements PaymentInterface
     private function setOrderToDb() {
 
         DB::enableQueryLog();
+        #$this->postData['user_id'] = 1;
+        #$this->postData['user_pk'] = 6;
         $keys = $this->keyRepository->filterCombinePk($this->postData['user_id'], $this->postData['user_pk'])->first();
 
-        $keys = collect($keys);
+        $this->keys = collect($keys);
 
-        if (! $keys->has('id')  ) {
+        if (! $this->keys->has('id')  ) {
             throw new WithdrawException('aaa', 0 );
         }
 
         WithdrawOrder::create([
-            'order_id'    => (string) $this->postData['order_id'],
+            'order_id'    => (string) $this->postData['order_id']. uniqid(),
             'user_id'     => $this->postData['user_id'],
-            'key_id'      => $keys->get('id'),
+            'key_id'      => $this->keys->get('id'),
             'amount'      => $this->postData['rate_amount'],
             'real_amount' => $this->postData['rate_amount'],
-            'gateway_id'  => $keys->get('gateway_id'),
+            'gateway_id'  => $this->keys->get('gateway_id'),
             'status'      => 1,
             'order_param' => json_encode($this->postData, true),
         ]);
     }
 
-    public function toOrderQueue()  {
+    public function prepareToQueue()  {
 
         $this->setOrderToDb();
-        echo __LINE__ ."\r\n";
 
-        #set db
+        $this->postData['key_id'] = $this->keys->get('id');
+        $this->postData['gateway_id'] = $this->keys->get('gateway_id');
+
         Bus::chain([
             new Order($this->postData),
         ])->catch(function (Throwable $e) {

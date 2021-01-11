@@ -7,6 +7,6 @@ interface PaymentInterface
 
     public function checkInputData($request);
 
-    public function toOrderQueue();
+    public function prepareToQueue();
 
 }

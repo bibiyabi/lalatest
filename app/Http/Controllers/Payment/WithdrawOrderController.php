@@ -33,7 +33,7 @@ class WithdrawOrderController extends Controller
 
 
         $this->request['user_id'] = 123;
-        $payment->checkInputData($this->request)->toOrderQueue();
+        $payment->checkInputData($this->request)->prepareToQueue();
     }
 
     public function cancelOrder() {

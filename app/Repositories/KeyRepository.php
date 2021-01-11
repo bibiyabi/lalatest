@@ -23,6 +23,11 @@ class KeyRepository
         return $this->key->get();
     }
 
+    public function filterId($id)
+    {
+        return $this->key->where('id', '=', $id);
+    }
+
     public function filterByUserPk($id)
     {
         $this->key->where('user_pk', '=', $id);

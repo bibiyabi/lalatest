@@ -29,19 +29,13 @@ class GatewayServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(KeyRepository $keyRepository, GatewayRepository $gatewayRepository)
+    public function boot(GatewayRepository $gatewayRepository, KeyRepository $keyRepository)
     {
-        $this->app->bindMethod([Order::class, 'handle'], function ($job, $app) use ($keyRepository, $gatewayRepository) {
+        $this->app->bindMethod([Order::class, 'handle'], function ($job, $app) use ($gatewayRepository, $keyRepository) {
 
             $request = $job->getRequest();
-            $keys = $keyRepository->filterCombinePk($request['user_id'], $request['user_pk'])->first();
-
-            if (! collect($keys)->has('gateway_id')) {
-                throw new WithdrawException('aaa', 0 );
-            }
-
-            echo '@@' . $keys->gateway_id;
-            $gateway = $gatewayRepository->filterGatewayId($keys->gateway_id)->first();
+            $request['gateway_id'] = 1;
+            $gateway = $gatewayRepository->filterGatewayId($request['gateway_id'])->first();
 
             $gateway = collect($gateway);
             if (! $gateway->has('name')) {
@@ -50,7 +44,7 @@ class GatewayServiceProvider extends ServiceProvider
 
             $gatewayName = $gateway->get('name');
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
-            return $job->handle($app->make($className));
+            return $job->handle($app->make($className), $keyRepository);
         });
 
     }
