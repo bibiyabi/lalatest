@@ -34,6 +34,7 @@ return [
 		CODE::RESOURCE_NOT_FOUND    => '查无资料',
         CODE::ERROR_PARAMETERS      => '请输入完整信息',
         CODE::DATABASE_FAILED       => '资料库错误',
+        CODE::DUPLICATE_ORDERID     => '订单号重复',
 	],
 
 	/*

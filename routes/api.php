@@ -37,6 +37,11 @@ Route::post('key',[KeysController::class, 'store']);
 Route::patch('key',[KeysController::class, 'update']);
 Route::delete('key',[KeysController::class, 'destroy']);
 
+# 金流商/交易所下拉選單
+Route::get('vendor/list',[]);
+
+# 提示字
+Route::get('placeholder',[]);
 
 # JAVA出款傳遞出款參數API
 

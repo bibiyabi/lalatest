@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payments\Gateways;
+namespace App\Services\Payments\DepositGateways;
 
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
@@ -54,15 +54,15 @@ class Inrusdt implements DepositGatewayInterface
         return $unprocessed;
     }
 
-    public function depositCallback(Request $unprocessed): OrderResult
+    public function depositCallback(Request $request): OrderResult
     {
-        $unprocessed = json_decode($unprocessed->body(), true);
-        $status = $unprocessed['success'] == true ? (bool)$unprocessed['data']['status'] : false;
+        $request = json_decode($request->body(), true);
+        $status = $request['success'] == true ? (bool)$request['data']['status'] : false;
 
         if ($status === false) {
-            return new OrderResult(false, $unprocessed['msg'] ?? '', Status::ORDER_FAILED);
+            return new OrderResult(false, $request['msg'] ?? '', Status::ORDER_FAILED);
         }
 
-        return new OrderResult(true, 'success', Status::ORDER_SUCCES, $unprocessed['money']);
+        return new OrderResult(true, 'success', Status::ORDER_SUCCES, $request['money']);
     }
 }

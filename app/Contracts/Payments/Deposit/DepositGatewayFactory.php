@@ -10,7 +10,7 @@ class DepositGatewayFactory
     public static function createGateway(string $gatewayName): DepositGatewayInterface
     {
         if ($gatewayName == 'Inrusdt') {
-            $gateway = new \App\Services\Payments\Gateways\Inrusdt();
+            $gateway = new \App\Services\Payments\DepositGateways\Inrusdt();
         } else {
             throw new GatewayNotFountException("Gateway not found.", 1);
         }

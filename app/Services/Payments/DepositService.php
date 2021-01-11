@@ -6,50 +6,44 @@ use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\OrderResult;
 use App\Models\Order;
 use Illuminate\Http\Request;
-use App\Contracts\Payments\Results\UrlResult;
-use App\Contracts\Payments\Results\FormResult;
 use App\Models\Key;
-Use App\Contracts\Payments\Status;
 use App\Contracts\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
-use Illuminate\Http\Client\Response;
+use App\Repositories\Orders\DepositRepository;
 
 class DepositService
 {
+    private $orderRepo;
+
+    public function __construct(DepositRepository $orderRepo) {
+        $this->orderRepo = $orderRepo;
+    }
+
     public function order(Request $request): OrderResult
     {
         # create order param
         $user = $request->user();
         $keyId = $request->post('key_id');
-        $key = Key::where('user_id', $user->id)
-                    ->where('user_pk', $keyId)
-                    ->first();
+        $key = Key::where('user_id', $user->id)->where('user_pk', $keyId)->first();
 
         if (empty($key)) {
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
         }
 
-        $order_param = $request->post();
-        unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
-        $order = Order::create([
-            'order_id' => $request->post('order_id'),
-            'user_id'  => $user->id,
-            'key_id'   => $keyId,
-            'amount'   => $request->post('amount'),
-            'gateway_id' => $key->gateway_id,
-            'status'   => Status::PENDING,
-            'order_param' => json_encode($order_param),
-        ]);
-
-        $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
-        $param = $gateway->genDepositParam($order);
+        try {
+            $order = $this->orderRepo->create($request, $key->gateway_id);
+        } catch (\PDOException $e) {
+            return new OrderResult(false, 'Duplicate OrderId.', ResponseCode::DUPLICATE_ORDERID);
+        }
 
         # deside how to return value
+        $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
         $type = $gateway->getReturnType();
-        $factory = ResultFactory::createResultFactory($type);
 
         # submit param
+        $factory = ResultFactory::createResultFactory($type);
+        $param = $gateway->genDepositParam($order);
         $unprocessRs = $factory->getResult($param);
 
 
