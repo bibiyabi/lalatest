@@ -13,7 +13,7 @@ class CreateWithdrawOrderTable extends Migration
      */
     public function up()
     {
-        Schema::create('withdraw_order', function (Blueprint $table) {
+        Schema::create('withdraw_orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_id', '30')->unique();
             $table->unsignedBigInteger('user_id');
@@ -34,6 +34,6 @@ class CreateWithdrawOrderTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('withdraw_order');
+        Schema::dropIfExists('withdraw_orders');
     }
 }

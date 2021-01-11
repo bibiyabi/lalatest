@@ -36,8 +36,8 @@ class KeyRepository
     }
 
     public function filterCombinePk($userId, $userPk) {
-        $this->key->where('user_pk', '=', $userPk);
-        $this->key->where('user_id', '=', $userId);
+        $this->filterByUserPk($userPk);
+        $this->filterByUserId($userId);
         return $this;
     }
 }
