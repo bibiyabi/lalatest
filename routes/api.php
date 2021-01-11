@@ -60,6 +60,7 @@ Route::get('/withdraw/payments/digital_currencys', [WithdrawPaymentController::c
 Route::prefix('deposit')->group(function ()
 {
     Route::post('order', [DepositController::class, 'order']);
+    Route::post('callback/{gatewayName}', [DepositController::class, 'callback']);
 });
 
 

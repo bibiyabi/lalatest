@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Services\Payments\DepositService;
-use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class DepositController extends Controller
@@ -24,18 +23,17 @@ class DepositController extends Controller
         $service = App::make(DepositService::class);
         $rs = App::call([$service, 'order'], ['request' => $request]);
 
-        $success = $rs->getSuccess();
-
-        return $success
+        return $rs->getSuccess()
             ? RB::success()
             : RB::error($rs->getErrorCode());
     }
 
-    public function callback(Request $request, DepositGatewayInterface $gateway)
+    public function callback($gatewayName, Request $request)
     {
-        \Log::info('Deposit-callback', $request);
+        \Log::info('Deposit-callback', compact('gatewayName', 'request'));
 
-        $rs = $this->service->callback($request, $gateway);
+        $service = App::make(DepositService::class);
+        $rs = App::call([$service, 'callback'], compact('gatewayName', 'request'));
 
         return $rs->getMsg();
     }
