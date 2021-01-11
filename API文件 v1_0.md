@@ -23,26 +23,25 @@ POST /api/key
 | 欄位          | 型態     | 必要參數   | 說明                     |
 | ------------ | ------  | ------- | :-----------------------  |
 | id            | integer |  V   | 出/入款id /java unique  id   |
-| msgName       | string |     | 信息名稱                |
-| bankName      | string |     | 銀行名稱                |
-| secondName    | string |     | 名稱                |
-| firstName     | string |     | 姓氏                |
-| cardNumber    | string |     | 卡號                |
-| ifsc          | string |     | isfc                |
-| cashflowMerchant  | integer |  V   | 金流商/交易所 id  |
-| cashflowUserId    | string |     | 金流帳戶號         |
-| cashflowMerchantId| string |     | 金流商戶號         |
-| md5           | string |     | md5                |
-| publickey     | string |     | 公鑰                |
-| privatekey    | string |     | 私鑰                |
-| syncAddress   | string |     | 同步地址                |
-| asyncAddress  | string |     | 異步地址                |
-| blockChain    | string |     | 區塊鍊網路                |
-| rechargeAdd   | string |     | 充值地址                |
-| apiKey        | string |     | API Key                |
-| blockPrivateKey  | string |     | 密鑰                |
-| remark1       | string |     | 備注欄位1                |
-| remark2       | string |     | 備注欄位2                |
+| info_title    | string |     | 信息名稱                |
+| bank          | string |     | 銀行名稱                |
+| first_name    | string |     | 名稱                |
+| last_name     | string |     | 姓氏                |
+| bank_card_number    | string |     | 卡號                |
+| ifsc          | string |     | ifsc                |
+| gateway_id    | integer |  V   | 金流商/交易所 id  |
+| account       | string |     | 金流帳戶號         |
+| merchant_number| string |     | 金流商戶號         |
+| md5_key       | string |     | md5                |
+| public_key    | string |     | 公鑰                |
+| private_key   | string |     | 私鑰                |
+| return_url    | string |     | 同步地址                |
+| notify_url    | string |     | 異步地址                |
+| blockchain_contract    | string |     | 區塊鍊網路                |
+| crypto_address | string |     | 充值地址                |
+| api_key        | string |     | API Key                |
+| note1         | string |     | 備注欄位1                |
+| note2         | string |     | 備注欄位2                |
 
 
 Response example:
@@ -89,8 +88,8 @@ GET /api/vendor/list
 
 | 欄位                 | 型態     | 必要參數   | 說明                     |
 | ------------        | ------  | -------   | :-----------------------|
-| type                | integer |  V        | 出=1 / 入款=2            |
-| gatewayId           | integer |  V        | 渠道id (php java同步)     |
+| is_deposit          | integer |  V        | 出=1 / 入款=0            |
+| type                | string  |  V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card  |
 
 ### 提示字
 
@@ -100,6 +99,6 @@ GET /api/placeholder
 
 | 欄位                 | 型態     | 必要參數   | 說明                     |
 | ------------        | ------  | -------   | :-----------------------|
-| type                | integer |  V        | 出=1 /入款=2             |
-| gatewayId           | integer |  V        | 渠道id                   |
-| cashflowMerchant    | integer |  V        | 金流商/交易所 id           |
+| is_deposit          | integer |  V        | 出=1 /入款=0             |
+| type                 | string |  V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card                   |
+| gateway_id           | integer |  V        | 金流商/交易所 id           |
