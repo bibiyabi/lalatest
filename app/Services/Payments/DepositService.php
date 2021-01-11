@@ -11,15 +11,11 @@ use App\Contracts\Payments\Results\FormResult;
 use App\Models\Key;
 Use App\Contracts\Payments\Status;
 use App\Contracts\ResponseCode;
+use App\Contracts\Payments\Deposit\DepositGatewayFactory;
+use App\Contracts\Payments\Results\ResultFactory;
 
 class DepositService
 {
-    private $gateway;
-
-    public function __construct(DepositGatewayInterface $gateway) {
-        $this->gateway = $gateway;
-    }
-
     public function order(Request $request): OrderResult
     {
         # create order param
@@ -40,23 +36,12 @@ class DepositService
             'amount'   => $request->post('amount'),
             'gateway_id' => $key->gateway_id,
         ]);
-        $param = $this->gateway->genDepositParam($order);
+        $gateway = DepositGatewayFactory::createGateway($request->post('gateway'));
+        $param = $gateway->genDepositParam($order);
 
         # deside how to return value
-        $type = $this->gateway->getReturnType();
-        switch ($type) {
-            case 'url':
-                $factory = new UrlResult();
-                break;
-
-            case 'form':
-                $factory = new FormResult();
-                break;
-
-            default:
-                throw new \Exception("Result factory not found", 1);
-                break;
-        }
+        $type = $gateway->getReturnType();
+        $factory = ResultFactory::createResultFactory($type);
 
         # submit param
         $unprocessRs = $factory->getResult($param);
@@ -64,7 +49,7 @@ class DepositService
         # trigger event ?
 
         # return result
-        return $this->gateway->processOrderResult($unprocessRs);
+        return $gateway->processOrderResult($unprocessRs);
     }
 
     public function search()
