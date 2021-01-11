@@ -78,3 +78,28 @@ Response example:
     "debug": []
 }
 ```
+
+
+### 金流商/交易所下拉選單
+
+
+```plaintext
+GET /api/vendor/list
+```
+
+| 欄位                 | 型態     | 必要參數   | 說明                     |
+| ------------        | ------  | -------   | :-----------------------|
+| type                | integer |  V        | 出=1 / 入款=2            |
+| gatewayId           | integer |  V        | 渠道id (php java同步)     |
+
+### 提示字
+
+```plaintext
+GET /api/placeholder
+```
+
+| 欄位                 | 型態     | 必要參數   | 說明                     |
+| ------------        | ------  | -------   | :-----------------------|
+| type                | integer |  V        | 出=1 /入款=2             |
+| gatewayId           | integer |  V        | 渠道id                   |
+| cashflowMerchant    | integer |  V        | 金流商/交易所 id           |
