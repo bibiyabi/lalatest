@@ -4,7 +4,7 @@ namespace App\Contracts\Payments\Results;
 
 use App\Contracts\Payments\HttpParam;
 
-class FormResult implements ResultFactory
+class FormResult implements ResultFactoryInterface
 {
     public function getResult(HttpParam $param)
     {
