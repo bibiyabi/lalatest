@@ -5,8 +5,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KeysController;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
-use App\Http\Controllers\Payment\WithdrawConfigController;
-use App\Http\Controllers\Payment\WithdrawPaymentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
