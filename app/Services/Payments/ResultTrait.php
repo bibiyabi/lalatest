@@ -1,7 +1,7 @@
 <?php
-namespace App\Payment\Withdraw;
+namespace App\Services\Payments;
 
-trait CreateRes
+trait ResultTrait
 {
     private $success = 1;
     private $timeout = 2;

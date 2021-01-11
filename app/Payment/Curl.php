@@ -1,5 +1,5 @@
 <?php
-namespace App\Services;
+namespace  App\Payment;
 
 class Curl
 {

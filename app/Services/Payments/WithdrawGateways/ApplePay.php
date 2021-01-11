@@ -1,17 +1,25 @@
 <?php
-namespace App\Payment\Withdraw;
+namespace App\Services\Payments\WithdrawGateways;
 
 use App\Services\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use App\Services\Curl;
-use App\Payment\Withdraw\CreateRes;
+use App\Payment\Curl;
+use App\Payment\Proxy;
+use App\Services\Payments\ResultTrait;
+
 class ApplePay extends AbstractWithdrawGateway
 {
-    use CreateRes;
+    use ResultTrait;
+    use Proxy;
 
-    private $postData;
+    private $curlPostData;
     private $curlRes;
+    private $curl;
+
+    public function __construct(Curl $curl) {
+        $this->curl = $curl;
+    }
 
     public function setRequest($data) {
 
@@ -26,12 +34,9 @@ class ApplePay extends AbstractWithdrawGateway
         if($validator->fails()){
             return "您輸入的資料有誤";
         }
-
-        return $this->setData($data)->genSign()->send(new Curl);
-    }
-
-    private function setData($data) {
-        return $this;
+        # set data
+       $this->curlPostData = $this->genSign();
+       return $this;
     }
 
     private function genSign() {
@@ -39,19 +44,19 @@ class ApplePay extends AbstractWithdrawGateway
     }
 
 
-    public function send(Curl $curl) {
+    public function send() {
+        echo '@@send';
         $url = $this->getServerUrl(). '/DMAW2KD7/autoPay/sendOrder.zv';
-        $this->curlRes = $curl->setUrl($url)->setHeader([])->setPost($this->postData)->exec();
-        return $this;
-    }
-
-
-    protected function returnOrderRes()
-    {
-        if ($this->curlRes['code'] == 0) {
+        $this->curlRes = $this->curl->setUrl($this->curlPostData['url'])
+            ->setHeader([])
+            ->setPost($this->curlPostData['data'])
+            ->exec();
+        if (true) {
             return $this->resSuccess();
         }
     }
+
+
 
 
 }

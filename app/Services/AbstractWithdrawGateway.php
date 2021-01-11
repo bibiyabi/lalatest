@@ -8,33 +8,23 @@ use App\Collections\ApplePayBanksCollection;
 abstract class AbstractWithdrawGateway
 {
 
-    const VIP_SERVER_IP = '8.210.163.4';
-    const TEST_SERVER_IP = '47.52.40.40';
 
     public function __construct() {
 
     }
 
+    abstract public function setRequest($data);
 
-    /**
-     * 走8080 我們往外就是 http://第三方
-        走8443 我們往外就是 https://第三方
-    */
-    protected function getServerUrl($https = 0) {
-        if (env('APP_ENV', false) == 'ONLINE') {
-            if ($https) {
-                return 'http://' . self::VIP_SERVER_IP.':8443';
-            }
-            return 'http://' . self::VIP_SERVER_IP.':8080';
+    abstract public function send() ;
+
+    public function __get($attribute)
+    {
+        if(property_exists($this, $attribute)) {
+            return $this->{$attribute};
         }
-
-        if ($https) {
-            return  'http://' . self::TEST_SERVER_IP.':8443';
-        } else {
-            return  'http://' . self::TEST_SERVER_IP.':8080';
-        }
-
+        return null;
     }
+
 
 
 }

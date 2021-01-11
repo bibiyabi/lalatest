@@ -8,12 +8,10 @@ use Illuminate\Support\ServiceProvider;
 
 use App\Contracts\Payments\PaymentInterface;
 use App\Payment\Withdraw\Payment;
-
-use App\Services\AbstractWithdrawGateway;
-
 use App\Services\Payments\DepositService;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Services\Payments\Gateways\Inrusdt;
+
 class PaymentServiceProvider extends ServiceProvider
 {
 
@@ -32,14 +30,6 @@ class PaymentServiceProvider extends ServiceProvider
         );
 
 
-        $merchant = 'ApplePay';
-        $this->app->bind(
-            AbstractWithdrawGateway::class,
-            function() use ($merchant) {
-                $className = "App\Payment\Withdraw\\$merchant";
-                return $this->app->make($className);
-            }
-        );
 
 
 
@@ -58,6 +48,11 @@ class PaymentServiceProvider extends ServiceProvider
             ->give(function () {
                 return new Inrusdt();
             });
+
+
+
+
+
 
         /*
         # fack request user pk
