@@ -16,7 +16,7 @@ class Order extends Model
         'amount',
         'real_amount',
         'gateway_id',
-        'status_id',
+        'status',
         'order_param',
     ];
 

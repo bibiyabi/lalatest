@@ -11,15 +11,12 @@ use App\Contracts\Payments\Results\FormResult;
 use App\Models\Key;
 Use App\Contracts\Payments\Status;
 use App\Contracts\ResponseCode;
+use App\Contracts\Payments\Deposit\DepositGatewayFactory;
+use App\Contracts\Payments\Results\ResultFactory;
+use Illuminate\Http\Client\Response;
 
 class DepositService
 {
-    private $gateway;
-
-    public function __construct(DepositGatewayInterface $gateway) {
-        $this->gateway = $gateway;
-    }
-
     public function order(Request $request): OrderResult
     {
         # create order param
@@ -33,30 +30,24 @@ class DepositService
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
         }
 
+        $order_param = $request->post();
+        unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
         $order = Order::create([
             'order_id' => $request->post('order_id'),
             'user_id'  => $user->id,
             'key_id'   => $keyId,
             'amount'   => $request->post('amount'),
             'gateway_id' => $key->gateway_id,
+            'status'   => Status::PENDING,
+            'order_param' => json_encode($order_param),
         ]);
-        $param = $this->gateway->genDepositParam($order);
+
+        $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
+        $param = $gateway->genDepositParam($order);
 
         # deside how to return value
-        $type = $this->gateway->getReturnType();
-        switch ($type) {
-            case 'url':
-                $factory = new UrlResult();
-                break;
-
-            case 'form':
-                $factory = new FormResult();
-                break;
-
-            default:
-                throw new \Exception("Result factory not found", 1);
-                break;
-        }
+        $type = $gateway->getReturnType();
+        $factory = ResultFactory::createResultFactory($type);
 
         # submit param
         $unprocessRs = $factory->getResult($param);
@@ -64,7 +55,8 @@ class DepositService
         # trigger event ?
 
         # return result
-        return $this->gateway->processOrderResult($unprocessRs);
+        $result = $gateway->processOrderResult($unprocessRs);
+        return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result);
     }
 
     public function search()

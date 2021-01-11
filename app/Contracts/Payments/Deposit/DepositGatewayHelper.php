@@ -10,11 +10,8 @@ trait DepositGatewayHelper
 {
     public function genDepositParam(Order $order): HttpParam
     {
-        $key = $order->key();
-        $config = json_decode($key->keys);
-
-        $param = $this->createParam($order, $config);
-        $param[$this->getSignKey()] = $this->createSign($param, $config);
+        $param = $this->createParam($order, $order->key);
+        $param[$this->getSignKey()] = $this->createSign($param, $order->key);
 
         return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
     }

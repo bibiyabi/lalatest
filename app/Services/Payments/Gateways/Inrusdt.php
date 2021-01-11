@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Contracts\Payments\OrderResult;
 use App\Contracts\Payments\Status;
 use App\Models\Key;
+use Illuminate\Http\Request;
 
 class Inrusdt implements DepositGatewayInterface
 {
@@ -20,7 +21,7 @@ class Inrusdt implements DepositGatewayInterface
 
     protected function getUrl(): string
     {
-        return ' https://www.inrusdt.com';
+        return 'https://www.inrusdt.com';
     }
 
     protected function createParam(Order $order, Key $key): array
@@ -45,25 +46,23 @@ class Inrusdt implements DepositGatewayInterface
 
     public function getReturnType(): string
     {
-        return 'url';
+        return 'form';
     }
 
-    public function processOrderResult($unprocessed): OrderResult
+    public function processOrderResult($unprocessed): string
     {
-        $unprocessed = json_decode($unprocessed, true);
+        return $unprocessed;
+    }
+
+    public function depositCallback(Request $unprocessed): OrderResult
+    {
+        $unprocessed = json_decode($unprocessed->body(), true);
         $status = $unprocessed['success'] == true ? (bool)$unprocessed['data']['status'] : false;
 
         if ($status === false) {
-            return new OrderResult(false, $unprocessed['msg'], Status::ORDER_FAILED);
+            return new OrderResult(false, $unprocessed['msg'] ?? '', Status::ORDER_FAILED);
         }
 
-        $msg = '';
-
-        $orderResult = new OrderResult();
-    }
-
-    public function depositCallback(Order $order): OrderResult
-    {
-
+        return new OrderResult(true, 'success', Status::ORDER_SUCCES, $unprocessed['money']);
     }
 }

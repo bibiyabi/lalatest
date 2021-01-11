@@ -5,6 +5,8 @@ namespace App\Contracts\Payments\Deposit;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
 use App\Contracts\Payments\OrderResult;
+use Illuminate\Http\Client\Response;
+use Illuminate\Http\Request;
 
 interface DepositGatewayInterface
 {
@@ -19,10 +21,10 @@ interface DepositGatewayInterface
     /**
      * 處裡下單結果
      *
-     * @param string $rs App
-     * @return OrderResult
+     * @param Response|form $rs 可能是打第三方的 Response 或 自己產的 HTML Form
+     * @return string 可能是跳轉 Url 或 HTML Form
      */
-    public function processOrderResult($rs): OrderResult;
+    public function processOrderResult($rs): string;
 
     /**
      * 取得下單方式 post get patch ...
@@ -44,5 +46,5 @@ interface DepositGatewayInterface
      * @param Order $order
      * @return OrderResult
      */
-    public function depositCallback(Order $order) : OrderResult;
+    public function depositCallback(Request $order) : OrderResult;
 }
