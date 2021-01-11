@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payments\Gateways;
+namespace App\Services\Payments\DepositGateways;
 
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
