@@ -13,6 +13,7 @@ Use App\Contracts\Payments\Status;
 use App\Contracts\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
+use Illuminate\Http\Client\Response;
 
 class DepositService
 {
@@ -29,14 +30,19 @@ class DepositService
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
         }
 
+        $order_param = $request->post();
+        unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
         $order = Order::create([
             'order_id' => $request->post('order_id'),
             'user_id'  => $user->id,
             'key_id'   => $keyId,
             'amount'   => $request->post('amount'),
             'gateway_id' => $key->gateway_id,
+            'status'   => Status::PENDING,
+            'order_param' => json_encode($order_param),
         ]);
-        $gateway = DepositGatewayFactory::createGateway($request->post('gateway'));
+
+        $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
         $param = $gateway->genDepositParam($order);
 
         # deside how to return value
@@ -49,7 +55,8 @@ class DepositService
         # trigger event ?
 
         # return result
-        return $gateway->processOrderResult($unprocessRs);
+        $result = $gateway->processOrderResult($unprocessRs);
+        return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result);
     }
 
     public function search()

@@ -24,7 +24,7 @@ class DepositController extends Controller
         $rs = App::call([$service, 'order'], ['request' => $request]);
 
         return $rs->getSuccess()
-            ? RB::success()
+            ? RB::success($rs->getResult())
             : RB::error($rs->getErrorCode());
     }
 
