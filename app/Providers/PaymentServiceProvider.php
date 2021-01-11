@@ -50,24 +50,5 @@ class PaymentServiceProvider extends ServiceProvider
             });
 
 
-
-
-
-
-        /*
-        # fack request user pk
-        echo __LINE__;
-        $user_pk = '1';
-        $a =  $keysRepository->getKeysByUserPk($user_pk);
-        $merchant = 'ApplePay';
-        echo __LINE__ ."\r\n";
-        $this->app->bind(
-            AbstractDepositPayment::class,
-            function() use ($merchant) {
-                $className = '/App/Payment/Withdraw\/' . $merchant;
-                return new $className;
-            }
-        );
-        */
     }
 }
