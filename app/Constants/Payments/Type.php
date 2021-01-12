@@ -1,7 +1,7 @@
 <?php
-namespace app\Constants;
+namespace App\Constants\Payments;
 
-class PaymentType
+class Type
 {
     const BANK = '1';
     const WALLET = '2';

@@ -6,7 +6,7 @@ interface Status
 {
     public const PENDING = 0;
 
-    public const ORDER_SUCCES = 10;
+    public const ORDER_SUCCESS = 10;
 
     public const ORDER_FAILED = 11;
 

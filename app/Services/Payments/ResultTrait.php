@@ -5,7 +5,7 @@ use App\Contracts\Payments\Status;
 
 trait ResultTrait
 {
-    private $createSuccess = Status::ORDER_SUCCES;
+    private $createSuccess = Status::ORDER_SUCCESS;
     private $createTimeout = Status::ORDER_ERROR;
     private $createFailed = Status::ORDER_FAILED;
     private $createRetry = Status::ORDER_ERROR;

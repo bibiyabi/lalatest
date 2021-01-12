@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Bus;
 use Throwable;
 use App\Models\WithdrawOrder;
-use App\Constants\PaymentType;
+use App\Constants\Payments\Type;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\KeyRepository;
 use Illuminate\Support\Facades\DB;
@@ -41,13 +41,13 @@ class Payment implements PaymentInterface
 
 
         switch ($this->postData['payment_type']) {
-            case PaymentType::BANK:
+            case Type::BANK:
                 $this->check_bank_post();
                 break;
-            case PaymentType::WALLET:
+            case Type::WALLET:
                 $this->check_wallet_post();
                 break;
-            case PaymentType::DIGITAL_CURRENCY:
+            case Type::DIGITAL_CURRENCY:
                 $this->check_digital_currency_post();
                 break;
             default:
