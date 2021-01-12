@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use App\Contracts\ResponseCode as CODE;
 
-class KeysController extends Controller
+class KeyController extends Controller
 {
     private $keys;
 
@@ -46,27 +46,22 @@ class KeysController extends Controller
     public function store(Request $request)
     {
         $rules = [
-            "id"                => "required|integer",
-            "msgName"           => "nullable|string",
-            "bankName"          => "nullable|string",
-            "secondName"        => "nullable|string",
-            "firstName"         => "nullable|string",
-            "cardNumber"        => "nullable|string",
-            "ifsc"              => "nullable|string",
-            "cashflowMerchant"  => "required|integer",
-            "cashflowUserId"    => "nullable|string",
-            "cashflowMerchantId"=> "nullable|string",
-            "md5"               => "nullable|string",
-            "publickey"         => "nullable|string",
-            "privatekey"        => "nullable|string",
-            "syncAddress"       => "nullable|string",
-            "asyncAddress"      => "nullable|string",
-            "blockChain"        => "nullable|string",
-            "rechargeAdd"       => "nullable|string",
-            "apiKey"            => "nullable|string",
-            "blockPrivateKey"   => "nullable|string",
-            "remark1"           => "nullable|string",
-            "remark2"           => "nullable|string",
+            "id"                  => "required|integer",
+            "info_title"          => "nullable|string",
+            "gateway_id"          => "required|integer",
+            "account"             => "nullable|string",
+            "merchant_number"     => "nullable|string",
+            "md5_key"             => "nullable|string",
+            "public_key"          => "nullable|string",
+            "private_key"         => "nullable|string",
+            "return_url"          => "nullable|string",
+            "notify_url"          => "nullable|string",
+            "coin"                => "nullable|string",
+            "blockchain_contract" => "nullable|string",
+            "crypto_address"      => "nullable|string",
+            "api_key"             => "nullable|string",
+            "note1"               => "nullable|string",
+            "note2"               => "nullable|string",
         ];
         $validator = Validator::make($request->all(), $rules);
 
@@ -84,7 +79,7 @@ class KeysController extends Controller
         try {
             $key = new Key();
             $key->user_id = $request->user()->id;
-            $key->gateway_id = $request->input('cashflowMerchant');
+            $key->gateway_id = $request->input('gateway_id');
             $key->user_pk = $request->input('id');
             $key->keys = json_encode($request->all());
             $key->save();
@@ -146,4 +141,6 @@ class KeysController extends Controller
     {
         //
     }
+
+
 }

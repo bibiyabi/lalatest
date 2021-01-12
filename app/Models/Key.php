@@ -10,7 +10,6 @@ class Key extends Model
 //    use HasFactory;
 
     protected $table = 'keys';
-//    protected $timestamps = true;
 
     protected $fillable = [
         'user_id',

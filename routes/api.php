@@ -2,9 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\KeysController;
+use App\Http\Controllers\KeyController;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
+use App\Http\Controllers\PlaceholderController;
+use App\Http\Controllers\GatewayController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -33,15 +35,15 @@ Route::prefix('test')->group(function() {
 });
 
 # Java設置資料API
-Route::post('key',[KeysController::class, 'store']);
-Route::patch('key',[KeysController::class, 'update']);
-Route::delete('key',[KeysController::class, 'destroy']);
+Route::post('key',[KeyController::class, 'store']);
+Route::patch('key',[KeyController::class, 'update']);
+Route::delete('key',[KeyController::class, 'destroy']);
 
 # 金流商/交易所下拉選單
-Route::get('vendor/list',[]);
+Route::get('vendor/list',[GatewayController::class,'index']);
 
 # 提示字
-Route::get('placeholder',[]);
+Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 
 # JAVA出款傳遞出款參數API
 

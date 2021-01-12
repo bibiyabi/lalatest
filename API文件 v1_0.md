@@ -24,11 +24,6 @@ POST /api/key
 | ------------ | ------  | ------- | :-----------------------  |
 | id            | integer |  V   | 出/入款id /java unique  id   |
 | info_title    | string |     | 信息名稱                |
-| bank          | string |     | 銀行名稱                |
-| first_name    | string |     | 名稱                |
-| last_name     | string |     | 姓氏                |
-| bank_card_number    | string |     | 卡號                |
-| ifsc          | string |     | ifsc                |
 | gateway_id    | integer |  V   | 金流商/交易所 id  |
 | account       | string |     | 金流帳戶號         |
 | merchant_number| string |     | 金流商戶號         |
@@ -37,9 +32,10 @@ POST /api/key
 | private_key   | string |     | 私鑰                |
 | return_url    | string |     | 同步地址                |
 | notify_url    | string |     | 異步地址                |
-| blockchain_contract    | string |     | 區塊鍊網路                |
-| crypto_address | string |     | 充值地址                |
-| api_key        | string |     | API Key                |
+| coin          | string |     | 幣種-加密貨幣                |
+| blockchain_contract    | string |     | 區塊鍊網路-加密貨幣                |
+| crypto_address | string |     | 充值地址-加密貨幣                |
+| api_key        | string |     | API Key-加密貨幣                |
 | note1         | string |     | 備注欄位1                |
 | note2         | string |     | 備注欄位2                |
 
@@ -88,7 +84,7 @@ GET /api/vendor/list
 
 | 欄位                 | 型態     | 必要參數   | 說明                     |
 | ------------        | ------  | -------   | :-----------------------|
-| is_deposit          | integer |  V        | 出=1 / 入款=0            |
+| is_deposit          | integer |  V        | 出款=1 / 入款=0            |
 | type                | string  |  V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card  |
 
 ### 提示字
@@ -99,6 +95,6 @@ GET /api/placeholder
 
 | 欄位                 | 型態     | 必要參數   | 說明                     |
 | ------------        | ------  | -------   | :-----------------------|
-| is_deposit          | integer |  V        | 出=1 /入款=0             |
+| is_deposit          | integer |  V        | 出款=1 /入款=0             |
 | type                 | string |  V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card                   |
-| gateway_id           | integer |  V        | 金流商/交易所 id           |
+| gateway_name        | string |  V         | 金流商/交易所名稱            |
