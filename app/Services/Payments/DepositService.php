@@ -3,14 +3,13 @@
 namespace App\Services\Payments;
 
 use App\Contracts\Payments\CallbackResult;
-use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\OrderResult;
-use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Key;
 use App\Contracts\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
+use App\Contracts\Payments\Status;
 use App\Repositories\Orders\DepositRepository;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -75,10 +74,15 @@ class DepositService
         }
 
         # update order
-        if ($result->getSuccess() === true) {
-            $order = $result->getOrder();
+        $order = $result->getOrder();
+        if ($result->getSuccess()) {
             $order->update([
                 'real_amount' => $result->getAmount(),
+                'status' => Status::CALLBACK_SUCCESS,
+            ]);
+        } else {
+            $order->update([
+                'status' => Status::CALLBACK_FAILED,
             ]);
         }
 
