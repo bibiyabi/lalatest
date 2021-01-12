@@ -12,7 +12,7 @@ class CallbackResult
 
     private $msg;
 
-    public function __construct(bool $success, string $orderId, float $amount='', string $msg='') {
+    public function __construct(bool $success, string $orderId='', float $amount=0, string $msg='') {
         $this->success = $success;
         $this->orderId = $orderId;
         $this->amount = $amount;
