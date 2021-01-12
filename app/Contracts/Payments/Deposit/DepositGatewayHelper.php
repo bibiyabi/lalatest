@@ -2,9 +2,12 @@
 
 namespace App\Contracts\Payments\Deposit;
 
+use App\Contracts\Payments\CallbackResult;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
 use App\Models\Key;
+use Illuminate\Http\Request;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 trait DepositGatewayHelper
 {
@@ -40,5 +43,38 @@ trait DepositGatewayHelper
     protected function getMethod()
     {
         return 'post';
+    }
+
+    public function depositCallback(Request $request): CallbackResult
+    {
+        $data = $request->all();
+        $status = isset($data[$this->getCallbackKeyStatus()])  ? (bool)$data[$this->getCallbackKeyStatus()] : false;
+
+        if (!isset($data[$this->getCallbackKeyOrderId()])) {
+            throw new NotFoundResourceException("OrderId not found.");
+        }
+
+        $order = Order::where('order_id', $data[$this->getCallbackKeyOrderId()])->first();
+        if (empty($order)) {
+            throw new NotFoundResourceException("Order not found.");
+        }
+
+        $key = $order->key;
+        if (empty($key)) {
+            throw new NotFoundResourceException("Order not found.");
+        }
+
+        if (
+            !isset($data[$this->getCallbackKeySign()])
+            || $data[$this->getCallbackKeySign()] != $this->createCallbackSign($data, $key)
+        ) {
+            throw new NotFoundResourceException("Status not found");
+        }
+
+        if ($status === false) {
+            return new CallbackResult(false, 'Order failed.', $order);
+        }
+
+        return new CallbackResult(true, $this->getCallbackSuccessReturn(), $order, $data[$this->getCallbackKeyAmount()]);
     }
 }
