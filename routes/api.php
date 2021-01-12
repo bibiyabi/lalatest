@@ -19,7 +19,7 @@ use App\Http\Controllers\Payment\WithdrawOrderController;
 Route::prefix('test')->group(function() {
     Route::get('aaa', function () {
         echo '@@@';
-        return DB::select('select * FROM key');
+        return DB::select('select * FROM keys');
     });
 
     Route::get('bbb', function (){
