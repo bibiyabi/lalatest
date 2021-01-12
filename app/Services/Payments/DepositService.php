@@ -2,6 +2,7 @@
 
 namespace App\Services\Payments;
 
+use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\OrderResult;
 use App\Models\Order;
@@ -11,6 +12,7 @@ use App\Contracts\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Repositories\Orders\DepositRepository;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class DepositService
 {
@@ -60,16 +62,28 @@ class DepositService
         # code...
     }
 
-    public function callback(Request $request, DepositGatewayInterface $gateway) : OrderResult
+    public function callback(Request $request, $gatewayName) : CallbackResult
     {
         # process request
+        $gateway = DepositGatewayFactory::createGateway($gatewayName);
 
         # if failed return false
+        try {
+            $result = $gateway->depositCallback($request);
+        } catch (NotFoundResourceException $e) {
+            return new CallbackResult(false, $e->getMessage());
+        }
 
         # update order
+        if ($result->getSuccess() === true) {
+            $order = $result->getOrder();
+            $order->update([
+                'real_amount' => $result->getAmount(),
+            ]);
+        }
 
-        # trigger event
+        # push to queue
 
-        return new OrderResult();
+        return $result;
     }
 }

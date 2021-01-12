@@ -2,13 +2,13 @@
 
 namespace App\Services\Payments\DepositGateways;
 
+use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Models\Order;
-use App\Contracts\Payments\OrderResult;
-use App\Contracts\Payments\Status;
 use App\Models\Key;
 use Illuminate\Http\Request;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class Inrusdt implements DepositGatewayInterface
 {
@@ -54,15 +54,77 @@ class Inrusdt implements DepositGatewayInterface
         return $unprocessed;
     }
 
-    public function depositCallback(Request $request): OrderResult
+    public function depositCallback(Request $request): CallbackResult
     {
-        $request = json_decode($request->body(), true);
-        $status = $request['success'] == true ? (bool)$request['data']['status'] : false;
+        $data = $request->all();
+        $status = isset($data[$this->getCallbackKeyStatus()])  ? (bool)$data[$this->getCallbackKeyStatus()] : false;
 
-        if ($status === false) {
-            return new OrderResult(false, $request['msg'] ?? '', Status::ORDER_FAILED);
+        if (!isset($data[$this->getCallbackKeyOrderId()])) {
+            throw new NotFoundResourceException("OrderId not found.");
         }
 
-        return new OrderResult(true, 'success', Status::ORDER_SUCCES, $request['money']);
+        $order = Order::where('order_id', $data[$this->getCallbackKeyOrderId()])->first();
+        if (empty($order)) {
+            throw new NotFoundResourceException("Order not found.");
+        }
+
+        $key = $order->key;
+        if (empty($key)) {
+            throw new NotFoundResourceException("Order not found.");
+        }
+
+        if (
+            !isset($data[$this->getCallbackKeySign()])
+            || $data[$this->getCallbackKeySign()] != $this->createCallbackSign($data, $key)
+        ) {
+            throw new NotFoundResourceException("Status not found");
+        }
+
+        if ($status === false) {
+            return new CallbackResult(false, 'Order failed.', $order);
+        }
+
+        return new CallbackResult(true, $this->getCallbackSuccessReturn(), $order, $data[$this->getCallbackKeyAmount()]);
+    }
+
+    protected function createCallbackSign($param, $key): string
+    {
+        $data = [
+            'merchantBizNum' => $param['merchantBizNum'],
+            'merchantId'     => $param['merchantId'],
+            'merchantPrice'  => $param['merchantPrice'],
+            'money'          => $param['money'],
+            'status'         => $param['status'],
+            'sysBizNum'      => $param['sysBizNum'],
+            'usdtAmount'     => $param['usdtAmount'],
+            'key'            => $key->coin,
+        ];
+
+        return strtoupper(md5(http_build_query($data)));
+    }
+
+    protected function getCallbackKeyStatus()
+    {
+        return 'status';
+    }
+
+    protected function getCallbackKeyOrderId()
+    {
+        return 'merchantBizNum';
+    }
+
+    protected function getCallbackKeySign()
+    {
+        return 'sign';
+    }
+
+    protected function getCallbackKeyAmount()
+    {
+        return 'money';
+    }
+
+    protected function getCallbackSuccessReturn()
+    {
+        return 'ok';
     }
 }

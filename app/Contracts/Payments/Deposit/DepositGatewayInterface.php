@@ -7,6 +7,7 @@ use App\Contracts\Payments\HttpParam;
 use App\Contracts\Payments\OrderResult;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
+use App\Contracts\Payments\CallbackResult;
 
 interface DepositGatewayInterface
 {
@@ -46,5 +47,5 @@ interface DepositGatewayInterface
      * @param Order $order
      * @return OrderResult
      */
-    public function depositCallback(Request $order) : OrderResult;
+    public function depositCallback(Request $order) : CallbackResult;
 }

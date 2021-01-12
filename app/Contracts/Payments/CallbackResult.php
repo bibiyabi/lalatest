@@ -2,19 +2,21 @@
 
 namespace App\Contracts\Payments;
 
+use App\Models\Order;
+
 class CallbackResult
 {
     private $success;
 
-    private $orderId;
+    private $order;
 
     private $amount;
 
     private $msg;
 
-    public function __construct(bool $success, string $orderId='', float $amount=0, string $msg='') {
+    public function __construct(bool $success, string $msg='', Order $order=null, float $amount=0) {
         $this->success = $success;
-        $this->orderId = $orderId;
+        $this->order = $order;
         $this->amount = $amount;
         $this->msg = $msg;
     }
@@ -28,11 +30,11 @@ class CallbackResult
     }
 
     /**
-     * Get the value of orderId
+     * Get the value of order
      */
-    public function getOrderId()
+    public function getOrder()
     {
-        return $this->orderId;
+        return $this->order;
     }
 
     /**

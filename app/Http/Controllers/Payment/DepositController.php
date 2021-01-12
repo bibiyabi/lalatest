@@ -28,7 +28,7 @@ class DepositController extends Controller
             : RB::error($rs->getErrorCode());
     }
 
-    public function callback($gatewayName, Request $request)
+    public function callback(Request $request, $gatewayName)
     {
         \Log::info('Deposit-callback', compact('gatewayName', 'request'));
 
