@@ -25,6 +25,7 @@ POST /api/key
 | id            | integer |  V   | 出/入款id /java unique  id   |
 | info_title    | string |     | 信息名稱                |
 | gateway_id    | integer |  V   | 金流商/交易所 id  |
+| transaction_type      | string |     | 交易方式-出入款:信用卡/電子錢包 |
 | account       | string |     | 金流帳戶號         |
 | merchant_number| string |     | 金流商戶號         |
 | md5_key       | string |     | md5                |
@@ -86,6 +87,40 @@ GET /api/vendor/list
 | ------------        | ------  | -------   | :-----------------------|
 | is_deposit          | integer |  V        | 出款=1 / 入款=0            |
 | type                | string  |  V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card  |
+
+Response example:
+
+```json
+{
+    "success": true,
+        "code": 100,
+        "locale": "en",
+        "message": "传送成功",
+        "data": {
+            "values": [
+                {
+                    "id": "2",
+                    "name": "Inrusdt"
+                },
+                {
+                    "id": "1",
+                    "name": "ApplePay"
+                }
+            ]
+        }
+}
+```
+
+```json
+{
+    "success": false,
+    "code": 107,
+    "locale": "en",
+    "message": "查无资料",  //無金流商/交易所
+    "data": null,
+    "debug": []
+}
+```
 
 ### 提示字
 

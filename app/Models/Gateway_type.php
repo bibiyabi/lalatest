@@ -9,6 +9,7 @@ class Gateway_type extends Model
 {
 //    use HasFactory;
 
-    protected $table = 'Gateway_type';
+    protected $table = 'Gateway_types';
+
 
 }

@@ -7,12 +7,14 @@ namespace App\Contracts;
 class ResponseCode
 {
     // todo use interface for temp, not testing yet
-    public const SUCCESS            = 100;
-    public const FAIL               = 101;  // 传送失败
-    public const RESOURCE_NOT_FOUND = 107;  // 查無資料
-    public const ERROR_PARAMETERS   = 111; // 请输入完整信息
-    public const DATABASE_FAILED    = 120; // 资料库错误
-    public const DUPLICATE_ORDERID  = 302; // 已有该订单
+    public const SUCCESS                        = 100;
+    public const FAIL                           = 101;  // 传送失败
+    public const RESOURCE_NOT_FOUND             = 107;  // 查無資料
+    public const ERROR_PARAMETERS               = 111;  // 请输入完整信息
+    public const ERROR_CONFIG_PARAMETERS        = 157;  // 設定檔無此參數
+    public const DATABASE_FAILED                = 120;  // 资料库错误
+    public const DUPLICATE_ORDERID              = 302;  // 已有该订单
+
 
 /**  參考error code 以下要用的時候要全部 + 100
     "platFormCode": {

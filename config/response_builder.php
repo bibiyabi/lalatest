@@ -29,12 +29,14 @@ return [
 	*/
 	'map'               => [
 //         YOUR_API_CODE => '<MESSAGE_LOCALISATION_KEY>',
-        CODE::SUCCESS               => '传送成功',
-		CODE::FAIL                  => '传送失败',
-		CODE::RESOURCE_NOT_FOUND    => '查无资料',
-        CODE::ERROR_PARAMETERS      => '请输入完整信息',
-        CODE::DATABASE_FAILED       => '资料库错误',
-        CODE::DUPLICATE_ORDERID     => '订单号重复',
+        CODE::SUCCESS                       => '传送成功',
+		CODE::FAIL                          => '传送失败',
+		CODE::RESOURCE_NOT_FOUND            => '查无资料',
+        CODE::ERROR_PARAMETERS              => '请输入完整信息',
+        CODE::ERROR_CONFIG_PARAMETERS       => '设定档无此参数',
+        CODE::DATABASE_FAILED               => '资料库错误',
+        CODE::DUPLICATE_ORDERID             => '订单号重复',
+
 	],
 
 	/*
