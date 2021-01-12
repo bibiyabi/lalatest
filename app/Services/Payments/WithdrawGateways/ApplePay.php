@@ -26,16 +26,17 @@ class ApplePay extends AbstractWithdrawGateway
        Log::channel('withdraw')->info(__LINE__ , $data);
 
         $validator = Validator::make($data, [
-            'user_pk' => 'required',
-            'sign' => 'required',
-            'bankName' => '中国工商银行'
+            'order_id' => 'required',
+            'address' => 'required',
+            'rate_amount' => 'required'
         ]);
 
         if($validator->fails()){
             return "您輸入的資料有誤";
         }
         # set data
-       $this->curlPostData = $this->genSign();
+       $this->curlPostData['order_id'] = $data['order_id'];
+       $this->curlPostData['sign'] = $this->genSign();
        return $this;
     }
 
@@ -47,9 +48,9 @@ class ApplePay extends AbstractWithdrawGateway
     public function send() {
         echo '@@send';
         $url = $this->getServerUrl(). '/DMAW2KD7/autoPay/sendOrder.zv';
-        $this->curlRes = $this->curl->setUrl($this->curlPostData['url'])
+        $this->curlRes = $this->curl->setUrl( $url)
             ->setHeader([])
-            ->setPost($this->curlPostData['data'])
+            ->setPost($this->curlPostData)
             ->exec();
         if (true) {
             return $this->resSuccess();

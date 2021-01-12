@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Payments;
 
-use app\Constants\WithDrawOrderStatus;
+use App\Constants\WithDrawOrderStatus;
 
 trait ResultTrait
 {

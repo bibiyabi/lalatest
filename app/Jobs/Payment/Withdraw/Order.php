@@ -11,17 +11,16 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Services\AbstractWithdrawGateway;
 
-use App\Repositories\GatewayRepository;
 use App\Repositories\KeyRepository;
 use App\Models\WithdrawOrder;
-use App\Constants\WithDrawOrderStatus;
+use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
-use App\Services\Payments\PlatformNotify;
 
+use Throwable;
 class Order implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    public $timeout = 30;
     private $request;
     private $payment;
     /**
@@ -43,15 +42,17 @@ class Order implements ShouldQueue
      *
      * @return void
      */
-    public function handle(AbstractWithdrawGateway $paymentGateway, KeyRepository $keyRepository, PlatformNotify $platformNotify)
+    public function handle(AbstractWithdrawGateway $paymentGateway, KeyRepository $keyRepository)
     {
+        Log::debug('uuid:' . $this->job->uuid() . ' data:'. json_encode($this->request, true));
+
         echo "handle\r\n";
         print_r($this->request);
         echo "key_id: ".$this->request['key_id']." \r\n";
         $key = collect($keyRepository->filterId($this->request['key_id'])->first());
         # gateway load database load config
 
-        $gatewayConfigs = json_decode($key->get('keys'));
+        $gatewayConfigs = json_decode($key->get('keys'), true);
 
         # gateway load payment
         $paymentGateway->setRequest($gatewayConfigs);
@@ -60,10 +61,7 @@ class Order implements ShouldQueue
         if (!isset($res['code'])) {
             throw new WithdrawException('dw');
         }
-        if ($res['code'] == WithDrawOrderStatus::FAIL) {
-            #notify java
-            $platformNotify->notifyWithdrawSuccess();
-        }
+
 
         # set db
         WithdrawOrder::where('order_id', $this->request['order_id'])
