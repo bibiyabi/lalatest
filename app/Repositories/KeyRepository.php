@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\key;
+use App\Models\Key;
 
 class KeyRepository
 {
