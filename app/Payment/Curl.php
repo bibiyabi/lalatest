@@ -1,6 +1,6 @@
 <?php
 namespace  App\Payment;
-
+use Illuminate\Support\Facades\Log;
 class Curl
 {
     const STATUS_SUCCESS = 1;
@@ -50,6 +50,8 @@ class Curl
     }
 
     public function exec() {
+        $info = curl_getinfo($this->ch);
+        Log::debug('curl:' . ' data:'. json_encode($info, true));
 
         curl_exec($this->ch);
 

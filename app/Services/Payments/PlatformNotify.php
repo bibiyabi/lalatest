@@ -3,7 +3,7 @@ namespace App\Services\Payments;
 
 
 use App\Payment\Curl;
-
+use Illuminate\Support\Facades\Log;
 
 class PlatformNotify
 {
@@ -11,7 +11,7 @@ class PlatformNotify
 
     const SUCCESS = '000';
     const FAIL = '001';
-    const JAVA_DOMAIN = '';
+    const JAVA_DOMAIN = 'http:://65.0.150.38/';
 
     const SIGN_KEY = 'b6687fdce21aabf3d2493c8350d4275f';
 

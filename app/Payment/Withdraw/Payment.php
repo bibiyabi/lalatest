@@ -12,6 +12,8 @@ use App\Constants\PaymentType;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\KeyRepository;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\Payment\Withdraw\Notify;
+
 class Payment implements PaymentInterface
 {
 
@@ -105,7 +107,7 @@ class Payment implements PaymentInterface
 
     private function setOrderToDb() {
 
-        DB::enableQueryLog();
+        //DB::enableQueryLog();
         #$this->postData['user_id'] = 1;
         #$this->postData['user_pk'] = 6;
         $keys = $this->keyRepository->filterCombinePk($this->postData['user_id'], $this->postData['user_pk'])->first();
@@ -127,7 +129,12 @@ class Payment implements PaymentInterface
             'order_param' => json_encode($this->postData, true),
         ]);
     }
-
+/**
+ * php artisan queue:failed-table
+php artisan migrate
+如果我要從 CLI 刪除所有的 failed jobs, 我可以怎麼做
+public $deleteWhenMissingModels = true;
+ */
     public function prepareToQueue()  {
 
         $this->setOrderToDb();
@@ -137,6 +144,7 @@ class Payment implements PaymentInterface
 
         Bus::chain([
             new Order($this->postData),
+            new Notify($this->postData),
         ])->catch(function (Throwable $e) {
             echo $e->getMessage() . __LINE__ . "\r\n";
 

@@ -7,8 +7,9 @@ use App\Jobs\Payment\Withdraw\Order;
 use App\Repositories\KeyRepository;
 use App\Repositories\GatewayRepository;
 use App\Exceptions\WithdrawException;
-
+use App\Services\Payments\PlatformNotify;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\Orders\WithdrawRepository;
 
 
 
@@ -29,7 +30,7 @@ class GatewayServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(GatewayRepository $gatewayRepository, KeyRepository $keyRepository)
+    public function boot(GatewayRepository $gatewayRepository, KeyRepository $keyRepository, PlatformNotify $platformNotify, WithdrawRepository $withdrawRepository)
     {
         $this->app->bindMethod([Order::class, 'handle'], function ($job, $app) use ($gatewayRepository, $keyRepository) {
 
@@ -45,6 +46,11 @@ class GatewayServiceProvider extends ServiceProvider
             $gatewayName = $gateway->get('name');
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
             return $job->handle($app->make($className), $keyRepository);
+        });
+
+
+        $this->app->bindMethod([Notify::class, 'handle'], function ($job, $app) use ($withdrawRepository, $platformNotify) {
+            return $job->handle($app->make(Notify::class), $withdrawRepository, $platformNotify);
         });
 
     }
