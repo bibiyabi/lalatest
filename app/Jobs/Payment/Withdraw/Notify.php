@@ -45,7 +45,17 @@ class Notify implements ShouldQueue
             throw new WithdrawException('aaa');
         }
 
-        if ($order['status'] == WithDrawOrderStatus::FAIL) {
+        if (in_array($order['status'], [
+            WithDrawOrderStatus::CREATE_FAIL,
+            WithDrawOrderStatus::CALLBACK_FAIL
+        ])) {
+            #notify java
+            $platformNotify->notifyWithdrawFailed();
+        }
+
+        if (in_array($order['status'], [
+            WithDrawOrderStatus::CALLBACK_SUCCESS,
+        ])) {
             #notify java
             $platformNotify->notifyWithdrawSuccess();
         }

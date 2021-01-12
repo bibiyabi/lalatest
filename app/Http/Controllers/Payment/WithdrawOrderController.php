@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Contracts\Payments\PaymentInterface;
 use App\Repositories\KeyRepository;
-use App\Services\AbstractWithdrawGateway;
+
 use Illuminate\Support\Facades\Log;
+use App\Services\AbstractWithdrawGateway;
 
 class WithdrawOrderController extends Controller
 {
@@ -33,10 +34,15 @@ class WithdrawOrderController extends Controller
 
 
         $this->request['user_id'] = 123;
-        $payment->checkInputData($this->request)->prepareToQueue();
+        $payment->checkInputData($this->request)->createToQueue();
     }
 
-    public function cancelOrder() {
+    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway ) {
 
+        $res = $payment->callback($request->post(), $gateway);
+
+        print_r($res);
+
+        $payment->callbackNotifyToQueue($res);
     }
 }

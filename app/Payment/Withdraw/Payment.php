@@ -3,6 +3,7 @@ namespace App\Payment\Withdraw;
 
 use App\Exceptions\WithdrawException;
 use App\Jobs\Payment\Withdraw\Order;
+use App\Jobs\Payment\Withdraw\callback;
 use App\Contracts\Payments\PaymentInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Bus;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Validator;
 use App\Repositories\KeyRepository;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\Payment\Withdraw\Notify;
+use Illuminate\Http\Request;
+use App\Services\AbstractWithdrawGateway;
+use App\Constants\WithDrawOrderStatus;
 
 class Payment implements PaymentInterface
 {
@@ -129,13 +133,15 @@ class Payment implements PaymentInterface
             'order_param' => json_encode($this->postData, true),
         ]);
     }
-/**
- * php artisan queue:failed-table
-php artisan migrate
-如果我要從 CLI 刪除所有的 failed jobs, 我可以怎麼做
-public $deleteWhenMissingModels = true;
- */
-    public function prepareToQueue()  {
+
+
+    /**
+     * php artisan queue:failed-table
+    php artisan migrate
+    如果我要從 CLI 刪除所有的 failed jobs, 我可以怎麼做
+    public $deleteWhenMissingModels = true;
+    */
+    public function createToQueue()  {
 
         $this->setOrderToDb();
 
@@ -153,4 +159,27 @@ public $deleteWhenMissingModels = true;
         echo __LINE__ ."\r\n";
         echo 'endOrder';
     }
+
+
+
+    public function callbackNotifyToQueue($callbackRes) {
+
+        if (empty($callbackRes['data']['order_id'])) {
+            Log::channel('withdraw')->error(__LINE__ , $callbackRes->toArray());
+        }
+
+        Bus::chain([
+            new Notify($callbackRes['data']),
+        ])->catch(function (Throwable $e) {
+            echo $e->getMessage() . __LINE__ . "\r\n";
+
+        })->dispatch();
+    }
+
+    public function callback($postData , AbstractWithdrawGateway $gateway) {
+        return $gateway->callback($postData);
+    }
+
+
+
 }

@@ -52,9 +52,36 @@ class ApplePay extends AbstractWithdrawGateway
             ->setHeader([])
             ->setPost($this->curlPostData)
             ->exec();
+
         if (true) {
-            return $this->resSuccess();
+            return $this->resCreateSuccess();
         }
+    }
+
+    public function callback($post) {
+
+        Log::channel('withdraw')->info(__LINE__ , $post);
+
+        $validator = Validator::make($post, [
+            'order_id' => 'required',
+        ]);
+
+        if($validator->fails()){
+            return "您輸入的資料有誤";
+        }
+
+        $checkSign = $this->checkCallbackSign();
+
+        if ($checkSign) {
+            return $this->resCallbackSuccess('', ['order_id' => $post['order_id']]);
+        }
+
+        return $this->resCallbackFailed('', ['order_id' => $post['order_id']]);
+
+    }
+
+    private function checkCallbackSign() {
+
     }
 
 

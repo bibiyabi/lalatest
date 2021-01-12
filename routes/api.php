@@ -52,7 +52,12 @@ Route::group(['middleware' => 'java.api.key'], function()
 });
 
 # 代付下單
-Route::post('/withdraw/order/create', [WithdrawOrderController::class, 'create']);
+Route::prefix('withdraw')->group(function ()
+{
+    Route::post('create', [WithdrawOrderController::class, 'create']);
+    Route::post('callback/{gatewayName}', [WithdrawOrderController::class, 'callback']);
+});
+
 
 Route::prefix('deposit')->group(function ()
 {
