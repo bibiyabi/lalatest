@@ -17,12 +17,7 @@ abstract class AbstractWithdrawGateway
 
     abstract public function send() ;
 
-    /**
-     * 提示字
-     * @return array
-     *
-     */
-    abstract public function getPlaceholder();
+    abstract public function getPlaceholder():array;
 
     public function __get($attribute)
     {

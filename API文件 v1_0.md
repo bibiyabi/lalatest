@@ -110,15 +110,16 @@ Response example:
         }
 }
 ```
-
+無金流商/交易所
 ```json
 {
-    "success": false,
-    "code": 107,
-    "locale": "en",
-    "message": "查无资料",  //無金流商/交易所
-    "data": null,
-    "debug": []
+    "success": true,
+        "code": 107,
+        "locale": "en",
+        "message": "查无资料",
+        "data": {
+            "values": []
+        }
 }
 ```
 
@@ -133,3 +134,35 @@ GET /api/placeholder
 | is_deposit          | integer |  V        | 出款=1 /入款=0             |
 | type                 | string |  V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card                   |
 | gateway_name        | string |  V         | 金流商/交易所名稱            |
+
+
+```json
+{
+    "success": true,
+        "code": 100,
+        "locale": "en",
+        "message": "传送成功",
+        "data": {
+            "publicKey": "hello world",
+            "privateKey": "666",
+            "md5Key": "666",
+            "notifyUrl": "http://google.com",
+            "returnUrl": "http://google.com",
+            "transactionType": [    // 交易方式
+                "UPI",
+                "PAYATM"
+            ],
+            "coin": [   // 幣種
+                "USDT",
+                "BITCOIN"
+            ],
+            "blockchainContract": [  // 區塊練網路
+                       "TR20",
+                       "CC60"
+            ],
+            "apiKey": "key",
+            "note1": "lala",
+            "note2": "yoyo"
+        }
+}
+```
