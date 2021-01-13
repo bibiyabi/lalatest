@@ -6,7 +6,6 @@ namespace App\Constants\Payments;
 
 class ResponseCode
 {
-    // todo use interface for temp, not testing yet
     public const SUCCESS                        = 100;
     public const FAIL                           = 101;  // 传送失败
     public const RESOURCE_NOT_FOUND             = 107;  // 查無資料
