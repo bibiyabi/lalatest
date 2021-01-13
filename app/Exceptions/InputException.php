@@ -1,7 +1,7 @@
 <?php
 namespace App\Exceptions;
 
-class WithdrawException extends \Exception
+class InputException extends \Exception
 {
 
 }

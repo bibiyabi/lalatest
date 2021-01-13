@@ -1,8 +1,6 @@
 <?php
 
-
-namespace App\consts\Payments;
-
+namespace App\Constants\Payments;
 
 class PlaceholderParams
 {
