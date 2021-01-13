@@ -49,7 +49,7 @@ class KeyController extends Controller
             "id"                  => "required|integer",
             "info_title"          => "nullable|string",
             "gateway_id"          => "required|integer",
-            "transaction_type"    => "required|string",
+            "transaction_type"    => "nullable|string",
             "account"             => "nullable|string",
             "merchant_number"     => "nullable|string",
             "md5_key"             => "nullable|string",
