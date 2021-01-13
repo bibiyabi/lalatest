@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
-use App\Contracts\ResponseCode as CODE;
+use App\Constants\Payments\ResponseCode as CODE;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,26 +16,25 @@ class GatewayController extends Controller
     /**
      * 金流商/交易所下拉選單
      *
-     * @return \Illuminate\Http\Response
      * @param Request $request
      */
     public function index(Request $request)
     {
-//        $rules = [
-//            'is_deposit'    => 'required|integer|between:1,0',
-//            'type'          => 'required|string',
-//        ];
-//        $validator = Validator::make($request->all(), $rules);
-//
-//        if ($validator->fails()){
-//            $errMsg = [
-//                'errorPath' => self::class,
-//                'msg'       => $validator->errors()->all(),
-//            ];
-//            Log::info(json_encode($errMsg));
-//
-//            return RB::error(CODE::ERROR_PARAMETERS);
-//        }
+        $rules = [
+            'is_deposit'    => 'required|integer|between:0,1',
+            'type'          => 'required|string',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $validator->errors()->all(),
+            ];
+            Log::info(json_encode($errMsg));
+
+            return RB::error(CODE::ERROR_PARAMETERS);
+        }
 
         $type = 0;
         if (array_key_exists($request->input('type'), config('params.type'))) {
@@ -48,10 +47,10 @@ class GatewayController extends Controller
         switch ($request->input('is_deposit')){
             case 1:
                 $support = 'is_support_deposit';
-
+                break;
             case 0:
                 $support = 'is_support_withdraw';
-
+                break;
             default:
                 break;
         }
@@ -110,14 +109,7 @@ class GatewayController extends Controller
             // todo
         }
 
-
-//        $type = $request->input('gateway_name') == 1 ? 'DepositGateways' : 'WithdrawGateways';
-//
-//        if (! file_exists(APPPATH . '/api/Services/Payments/'. $type .'/'. $vendorName . '.php')) {
-//            // Log
-//        }
-
-        // responseBuilder
+        return RB::success(CODE::SUCCESS);
 
     }
 

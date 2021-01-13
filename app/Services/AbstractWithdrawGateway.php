@@ -17,6 +17,13 @@ abstract class AbstractWithdrawGateway
 
     abstract public function send() ;
 
+    /**
+     * 提示字
+     * @return array
+     *
+     */
+    abstract public function getPlaceholder();
+
     public function __get($attribute)
     {
         if(property_exists($this, $attribute)) {

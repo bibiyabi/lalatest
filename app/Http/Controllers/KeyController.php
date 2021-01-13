@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
-use App\Contracts\ResponseCode as CODE;
+use App\Constants\Payments\ResponseCode as CODE;
 
 class KeyController extends Controller
 {
