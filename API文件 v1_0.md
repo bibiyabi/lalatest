@@ -148,15 +148,15 @@ GET /api/placeholder
             "md5Key": "666",
             "notifyUrl": "http://google.com",
             "returnUrl": "http://google.com",
-            "transactionType": [    // 交易方式
+            "transactionType": [   
                 "UPI",
                 "PAYATM"
             ],
-            "coin": [   // 幣種
+            "coin": [  
                 "USDT",
                 "BITCOIN"
             ],
-            "blockchainContract": [  // 區塊練網路
+            "blockchainContract": [ 
                        "TR20",
                        "CC60"
             ],
