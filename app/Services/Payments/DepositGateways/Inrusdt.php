@@ -2,13 +2,10 @@
 
 namespace App\Services\Payments\DepositGateways;
 
-use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Models\Order;
 use App\Models\Key;
-use Illuminate\Http\Request;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class Inrusdt implements DepositGatewayInterface
 {
@@ -93,5 +90,10 @@ class Inrusdt implements DepositGatewayInterface
     protected function getCallbackSuccessReturn()
     {
         return 'ok';
+    }
+
+    public function getPlaceholder(): array
+    {
+        return [];
     }
 }

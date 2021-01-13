@@ -27,6 +27,6 @@ class Order extends Model
 
     public function merchant()
     {
-        return $this->belongsTo(Merchant::class);
+        return $this->belongsTo(Merchant::class, 'user_id', 'id');
     }
 }

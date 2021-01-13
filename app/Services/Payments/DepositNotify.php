@@ -23,7 +23,6 @@ class DepositNotify
         $merchant = $order->merchant;
         $key = $this->repo->getKey($merchant);
         $url = $this->repo->getNotifyUrl($merchant);
-        dd($url);
 
         $data = [
             'orderId' => $order->order_id,
@@ -33,8 +32,8 @@ class DepositNotify
 
         $response = Http::post($url, $data)->json();
 
-        if ($response['status'] !== '200') {
-            Log::error('Deposit-Notify failed', $response);
+        if (!isset($response['status']) || $response['status'] !== '200') {
+            Log::error('Deposit-Notify failed', $response ?? []);
             return false;
         }
 
