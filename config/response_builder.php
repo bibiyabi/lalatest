@@ -1,6 +1,6 @@
 <?php
 
-use App\Contracts\ResponseCode as CODE;
+use App\Constants\Payments\ResponseCode as CODE;
 
 /**
  * Laravel API Response Builder - configuration file
