@@ -68,11 +68,11 @@ trait DepositGatewayHelper
             !isset($data[$this->getCallbackKeySign()])
             || $data[$this->getCallbackKeySign()] != $this->createCallbackSign($data, $key)
         ) {
-            throw new NotFoundResourceException("Status not found");
+            throw new NotFoundResourceException("Sign error.");
         }
 
         if ($status === false) {
-            return new CallbackResult(false, 'Order failed.', $order);
+            return new CallbackResult(false, $this->getCallbackSuccessReturn(), $order);
         }
 
         return new CallbackResult(true, $this->getCallbackSuccessReturn(), $order, $data[$this->getCallbackKeyAmount()]);
