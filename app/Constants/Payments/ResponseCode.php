@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Contracts\Payments;
+namespace App\Constants\Payments;
 
 
 class ResponseCode
