@@ -2,6 +2,7 @@
 
 namespace App\Contracts\Payments\Deposit;
 
+use App\Contracts\Payments\PlaceholderParams;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
 use App\Contracts\Payments\OrderResult;
@@ -48,4 +49,11 @@ interface DepositGatewayInterface
      * @return OrderResult
      */
     public function depositCallback(Request $order) : CallbackResult;
+
+    /**
+     * 提示字
+     * @return array
+     *
+     */
+    public function getPlaceholder():array;
 }
