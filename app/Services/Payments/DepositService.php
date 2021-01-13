@@ -6,10 +6,12 @@ use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderResult;
 use Illuminate\Http\Request;
 use App\Models\Key;
-use App\Contracts\ResponseCode;
+use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
+use App\Jobs\Payment\Deposit\Notify;
+use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -87,6 +89,7 @@ class DepositService
         }
 
         # push to queue
+        Notify::dispatch($order);
 
         return $result;
     }
