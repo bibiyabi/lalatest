@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Payments;
+namespace App\Constants\Payments;
 
 interface Status
 {

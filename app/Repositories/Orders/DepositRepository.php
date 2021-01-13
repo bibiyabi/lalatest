@@ -3,7 +3,7 @@
 namespace App\Repositories\Orders;
 
 use App\Models\Order;
-use App\Contracts\Payments\Status;
+use App\Constants\Payments\Status;
 use Illuminate\Http\Request;
 
 class DepositRepository

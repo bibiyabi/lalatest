@@ -9,7 +9,7 @@ use App\Models\Key;
 use App\Contracts\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
-use App\Contracts\Payments\Status;
+use App\Constants\Payments\Status;
 use App\Repositories\Orders\DepositRepository;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -78,7 +78,7 @@ class DepositService
         if ($result->getSuccess()) {
             $order->update([
                 'real_amount' => $result->getAmount(),
-                'status' => Status::CALLBACK_SUCCESS,
+                'status' => \App\Constants\Payments\Status::CALLBACK_SUCCESS,
             ]);
         } else {
             $order->update([

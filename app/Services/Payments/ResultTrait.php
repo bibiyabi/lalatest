@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Payments;
 
-use App\Contracts\Payments\Status;
+use App\Constants\Payments\Status;
 
 trait ResultTrait
 {
@@ -11,7 +11,7 @@ trait ResultTrait
     private $createRetry = Status::ORDER_ERROR;
 
     private $callbackSuccess = Status::CALLBACK_SUCCESS;
-    private $callbackFail = Status::CALLBACK_FAILED;
+    private $callbackFail = \App\Constants\Payments\Status::CALLBACK_FAILED;
 
     public function resCreateSuccess($msg ='', $data = []) {
         return collect(['code'=> $this->createSuccess, 'msg'=>'', 'data' => $data]);
