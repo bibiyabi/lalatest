@@ -34,6 +34,7 @@ return [
 		CODE::RESOURCE_NOT_FOUND            => '查无资料',
         CODE::ERROR_PARAMETERS              => '请输入完整信息',
         CODE::ERROR_CONFIG_PARAMETERS       => '设定档无此参数',
+        CODE::ERROR_DATA_IN_PAYMENT         => '第三方資料有誤',
         CODE::DATABASE_FAILED               => '资料库错误',
         CODE::DUPLICATE_ORDERID             => '订单号重复',
 

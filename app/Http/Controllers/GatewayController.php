@@ -96,13 +96,11 @@ class GatewayController extends Controller
         $gatewayName = $request->input('gateway_name');
         $result = [];
         try {
-            if ($request->input('is_deposit') == 1){
-                # for deposit
+            if ($request->input('is_deposit') == 1){# for deposit
                 $gateway = DepositGatewayFactory::createGateway($gatewayName);
                 $result = $gateway->getPlaceholder();
 
-            }else{
-                # for withdraw
+            }else{# for withdraw
                 $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
                 $result = $gateway->getPlaceholder();
 
