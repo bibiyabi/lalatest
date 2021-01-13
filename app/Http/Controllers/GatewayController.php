@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Constants\Payments\ResponseCode as CODE;
+use App\Contracts\Payments\WithdrawGatewayFactory;
 use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,8 +12,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
-use App\consts\Payments\PlaceholderParams as P;
-use App\Constants\Payments\Type;
 
 class GatewayController extends Controller
 {
@@ -67,7 +66,7 @@ class GatewayController extends Controller
                 $result[$key] = (array)$value;
             }
         }else{
-            return RB::error(CODE::RESOURCE_NOT_FOUND);
+            return RB::success([],CODE::RESOURCE_NOT_FOUND);
         }
 
         return RB::success($result,CODE::SUCCESS);
@@ -93,19 +92,33 @@ class GatewayController extends Controller
 //
 //            return RB::error(CODE::ERROR_PARAMETERS);
 //        }
-dd(Type::BANK,P::PRIVATE_KEY);
+
         $gatewayName = $request->input('gateway_name');
-        if ($request->input('is_deposit') == 1){
-            # for deposit
-            $gateway = DepositGatewayFactory::createGateway($gatewayName);
-            $result = $gateway->getPlaceholder();
-    dd($result);
-        }else{
-            # for withdraw
-            // todo
+        $result = [];
+        try {
+            if ($request->input('is_deposit') == 1){
+                # for deposit
+                $gateway = DepositGatewayFactory::createGateway($gatewayName);
+                $result = $gateway->getPlaceholder();
+
+            }else{
+                # for withdraw
+                $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
+                $result = $gateway->getPlaceholder();
+
+                dd($result);
+            }
+        }catch(\Exception $e){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $e->getMessage(),
+            ];
+            Log::info(json_encode($errMsg));
+
+            return RB::error(CODE::ERROR_DATA_IN_PAYMENT);
         }
 
-//        return RB::success($result,CODE::SUCCESS);
+        return RB::success($result,CODE::SUCCESS);
 
     }
 
