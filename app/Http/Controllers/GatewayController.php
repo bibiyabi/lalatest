@@ -11,13 +11,12 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
+use App\consts\Payments\PlaceholderParams as P;
+use App\Constants\Payments\Type;
+
 class GatewayController extends Controller
 {
-    /**
-     * 金流商/交易所下拉選單
-     *
-     * @param Request $request
-     */
+    # 金流商/交易所下拉選單
     public function index(Request $request)
     {
         $rules = [
@@ -74,11 +73,8 @@ class GatewayController extends Controller
         return RB::success($result,CODE::SUCCESS);
     }
 
-    /**
-     * 提示字
-     *
-     * @param Request $request
-     */
+
+    # 提示字
     public function getPlaceholder(Request $request)
     {
 //        $rules = [
@@ -97,19 +93,19 @@ class GatewayController extends Controller
 //
 //            return RB::error(CODE::ERROR_PARAMETERS);
 //        }
-
+dd(Type::BANK,P::PRIVATE_KEY);
         $gatewayName = $request->input('gateway_name');
         if ($request->input('is_deposit') == 1){
             # for deposit
             $gateway = DepositGatewayFactory::createGateway($gatewayName);
             $result = $gateway->getPlaceholder();
-            dd($result);
+    dd($result);
         }else{
             # for withdraw
             // todo
         }
 
-        return RB::success(CODE::SUCCESS);
+//        return RB::success($result,CODE::SUCCESS);
 
     }
 
