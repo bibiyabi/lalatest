@@ -84,6 +84,10 @@ class ApplePay extends AbstractWithdrawGateway
 
     }
 
+    public function getPlaceholder()
+    {
+
+    }
 
 
 
