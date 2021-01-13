@@ -24,4 +24,9 @@ class Order extends Model
     {
         return $this->belongsTo(Key::class);
     }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class);
+    }
 }
