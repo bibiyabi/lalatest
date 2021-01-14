@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
@@ -117,9 +118,34 @@ class SettingController extends Controller
 
     public function destroy(Request $request)
     {
-        $rule = [
-            ''
+        $rules = [
+            'id' => 'required|integer'
         ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $validator->errors()->all(),
+            ];
+            Log::info(json_encode($errMsg));
+
+            return RB::error(CODE::ERROR_PARAMETERS);
+        }
+
+        try{
+            DB::table('settings')->where('id','=',$request->input('id'))->delete();
+        }catch (\Throwable $e){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $e->getMessage(),
+            ];
+            Log::info(json_encode($errMsg));
+
+            return RB::error(CODE::FAIL);
+        }
+
+        return RB::success(null,CODE::SUCCESS);
     }
 
 

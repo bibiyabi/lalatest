@@ -75,6 +75,40 @@ Response example:
 }
 ```
 
+### 刪除資料設置
+
+```plaintext
+DELETE /api/key
+```
+
+
+| 欄位                | 型態    | 必要參數 | 說明                            |
+| ------------------- | ------- | -------- | :------------------------------ |
+| id                  | integer | V        | 設置資料 id (from php)     |
+
+Response example:
+
+```json
+{
+    "success": true,
+    "code": 100,
+    "locale": "en",
+    "message": "传送成功",
+    "data": null
+}
+```
+
+```json
+{
+    "success": false,
+    "code": 101,
+    "locale": "en",
+    "message": "传送失败",
+    "data": null,
+    "debug": []
+}
+```
+
 
 ### 金流商/交易所下拉選單
 
