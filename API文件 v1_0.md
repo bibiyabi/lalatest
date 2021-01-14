@@ -246,7 +246,7 @@ POST /api/deposit/create
 | amount       | integer |          | 訂單金額                           |
 | bank_name    | string  |          | 打款銀行名稱                       |
 | account_name | string  |          | 打款帳戶名                         |
-| txn_time     | time    |          | 打款成功時間 ex: 23:59:59          |
+| txn_time     | time    |          | 打款成功時間 ex: 23-59-59          |
 | screenshot   | image   |          | 支付成功截圖                       |
 | tx_id        | string  |          | 區塊鍊交易ID                       |
 | card_number  | string  |          | 卡號                               |
