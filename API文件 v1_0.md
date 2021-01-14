@@ -183,7 +183,7 @@ GET /api/placeholder
 | `note2`                     |     string               |
 
 
-若沒有提示字
+沒有提示字/ 找不到該第三方檔案
 
 ```json
 {

@@ -77,7 +77,7 @@ class GatewayController extends Controller
     public function getPlaceholder(Request $request)
     {
         $rules = [
-            'is_deposit'    => 'required|integer|between:1,0',
+            'is_deposit'    => 'required|integer|between:0,1',
             'type'          => 'required|string',
             'gateway_name'  => 'required|string',
         ];
