@@ -118,8 +118,8 @@ class Payment implements PaymentInterface
 
         $this->keys = collect($keys);
 
-        if (! $this->keys->has('id')  ) {
-            throw new WithdrawException('aaa', 0 );
+        if (! $this->keys->has('id') ) {
+            throw new WithdrawException('key_id not found , data:'. json_encode($this->postData), 0 );
         }
 
         WithdrawOrder::create([
@@ -177,7 +177,9 @@ class Payment implements PaymentInterface
     }
 
     public function callback($postData , AbstractWithdrawGateway $gateway) {
-        return $gateway->callback($postData);
+        $gatewayRes =  $gateway->callback($postData);
+        return $gatewayRes;
+
     }
 
 

@@ -37,7 +37,7 @@ class GatewayServiceProvider extends ServiceProvider
             use ($gatewayRepository, $keyRepository) {
 
             $request = $job->getRequest();
-            $request['gateway_id'] = 1;
+            $request['gateway_id'] = 3;
             $gateway = $gatewayRepository->filterGatewayId($request['gateway_id'])->first();
 
             $gateway = collect($gateway);
@@ -58,11 +58,7 @@ class GatewayServiceProvider extends ServiceProvider
 
 
         $this->app->bind(AbstractWithdrawGateway::class, function ($app) {
-            echo '@@@';
             $gatewayName =  $app->request->segment(4);
-
-            echo $gatewayName;
-
             if (empty($gatewayName)) {
                 throw new WithdrawException('aaa', 0);
             }

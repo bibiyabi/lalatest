@@ -10,6 +10,7 @@ class Curl
     private $ch;
     private $second;
     private $errorMsg;
+    private $header;
 
     public function __construct() {
         $this->ch = curl_init();
@@ -27,6 +28,7 @@ class Curl
     }
 
     public function setHeader($array) {
+        $this->header = $array;
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $array);
         return $this;
     }
@@ -49,22 +51,37 @@ class Curl
         return $this;
     }
 
-    public function exec() {
-        $info = curl_getinfo($this->ch);
-        Log::debug('curl:' . ' data:'. json_encode($info, true));
+    public function ssl($bollean = false){
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $bollean);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, $bollean);
+        return $this;
+    }
 
-        curl_exec($this->ch);
+    public function exec() {
+
+        $info = curl_getinfo($this->ch);
+        Log::debug('curl:' . ' data:'. json_encode($info, JSON_UNESCAPED_UNICODE) . ' header:' . json_encode($this->header));
+
+        $curlResult = curl_exec($this->ch);
 
         $errorNo = curl_errno($this->ch);
 
         if ($errorNo) {
-            if ($errorNo === 28) {
-                return ['msg' => 'timeout', 'code' => self::TIMEOUT];
-            }
             $this->errorMsg = curl_error($this->ch);
+            if ($errorNo === 28) {
+                return ['msg' => $this->errorMsg, 'code' => self::TIMEOUT];
+            }
             return ['msg' => $this->errorMsg, 'code' => self::FAILED];
         }
         curl_close($this->ch);
+
+        var_dump($curlResult);
+
+        $success = ['msg' => 'ok', 'code' => self::STATUS_SUCCESS, 'data' => $curlResult];
+        Log::debug('curl:' . ' return:'. json_encode($success, JSON_UNESCAPED_UNICODE));
+
+
+        return $success;
     }
 
 }

@@ -13,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use Throwable;
 use App\Repositories\Orders\WithdrawRepository;
 use App\Services\Payments\PlatformNotify;
-use App\Constants\WithDrawOrderStatus;
+use App\Constants\Payments\Status;
 use Illuminate\Support\Facades\Log;
 
 class Notify implements ShouldQueue
@@ -46,15 +46,15 @@ class Notify implements ShouldQueue
         }
 
         if (in_array($order['status'], [
-            WithDrawOrderStatus::CREATE_FAIL,
-            WithDrawOrderStatus::CALLBACK_FAIL
+            Status::CALLBACK_SUCCESS,
+            Status::ORDER_FAILED
         ])) {
             #notify java
             $platformNotify->notifyWithdrawFailed();
         }
 
         if (in_array($order['status'], [
-            WithDrawOrderStatus::CALLBACK_SUCCESS,
+            Status::CALLBACK_SUCCESS,
         ])) {
             #notify java
             $platformNotify->notifyWithdrawSuccess();

@@ -28,6 +28,12 @@ trait Proxy
 
     }
 
+    public function getHeaderHost($domainWithHttp) {
+        $host = str_replace('http://', '', $domainWithHttp);
+        $host = str_replace('https://', '', $host);
+        return $host;
+    }
+
 
 
 }

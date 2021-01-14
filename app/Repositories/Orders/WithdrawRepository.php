@@ -29,4 +29,8 @@ class WithdrawRepository
         return $this;
     }
 
+    public function update($data = []) {
+        $this->order->update($data);
+    }
+
 }
