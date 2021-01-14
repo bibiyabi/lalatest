@@ -5,13 +5,13 @@ use App\Exceptions\WithdrawException;
 use App\Jobs\Payment\Withdraw\Order;
 use App\Jobs\Payment\Withdraw\callback;
 use App\Contracts\Payments\PaymentInterface;
+use App\Repositories\SettingRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Bus;
 use Throwable;
 use App\Models\WithdrawOrder;
 use App\Constants\Payments\Type;
 use Illuminate\Support\Facades\Validator;
-use App\Repositories\KeyRepository;
 use Illuminate\Support\Facades\DB;
 use App\Jobs\Payment\Withdraw\Notify;
 use Illuminate\Http\Request;
@@ -22,13 +22,13 @@ class Payment implements PaymentInterface
 {
 
     private $postData;
-    private $keyRepository;
-    private $keys;
+    private $settingRepository;
+    private $settings;
 
 
-    public function __construct(KeyRepository $k)
+    public function __construct(SettingRepository $k)
     {
-        $this->keyRepository = $k;
+        $this->settingRepository = $k;
     }
 
     public function checkInputData($postData)  {
@@ -114,21 +114,21 @@ class Payment implements PaymentInterface
         //DB::enableQueryLog();
         #$this->postData['user_id'] = 1;
         #$this->postData['user_pk'] = 6;
-        $keys = $this->keyRepository->filterCombinePk($this->postData['user_id'], $this->postData['user_pk'])->first();
+        $settings = $this->settingRepository->filterCombinePk($this->postData['user_id'], $this->postData['user_pk'])->first();
 
-        $this->keys = collect($keys);
+        $this->settings = collect($settings);
 
-        if (! $this->keys->has('id')  ) {
+        if (! $this->settings->has('id')  ) {
             throw new WithdrawException('aaa', 0 );
         }
 
         WithdrawOrder::create([
             'order_id'    => (string) $this->postData['order_id']. uniqid(),
             'user_id'     => $this->postData['user_id'],
-            'key_id'      => $this->keys->get('id'),
+            'key_id'      => $this->settings->get('id'),
             'amount'      => $this->postData['rate_amount'],
             'real_amount' => $this->postData['rate_amount'],
-            'gateway_id'  => $this->keys->get('gateway_id'),
+            'gateway_id'  => $this->settings->get('gateway_id'),
             'status'      => 1,
             'order_param' => json_encode($this->postData, true),
         ]);
@@ -145,8 +145,8 @@ class Payment implements PaymentInterface
 
         $this->setOrderToDb();
 
-        $this->postData['key_id'] = $this->keys->get('id');
-        $this->postData['gateway_id'] = $this->keys->get('gateway_id');
+        $this->postData['key_id'] = $this->settings->get('id');
+        $this->postData['gateway_id'] = $this->settings->get('gateway_id');
 
         Bus::chain([
             new Order($this->postData),

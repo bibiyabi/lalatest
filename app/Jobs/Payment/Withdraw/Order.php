@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Payment\Withdraw;
 
+use App\Repositories\SettingRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,7 +12,6 @@ use Illuminate\Queue\SerializesModels;
 
 use App\Services\AbstractWithdrawGateway;
 
-use App\Repositories\KeyRepository;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
@@ -42,14 +42,14 @@ class Order implements ShouldQueue
      *
      * @return void
      */
-    public function handle(AbstractWithdrawGateway $paymentGateway, KeyRepository $keyRepository)
+    public function handle(AbstractWithdrawGateway $paymentGateway, SettingRepository $settingRepository)
     {
         Log::debug('uuid:' . $this->job->uuid() . ' data:'. json_encode($this->request, true));
 
         echo "handle\r\n";
         print_r($this->request);
         echo "key_id: ".$this->request['key_id']." \r\n";
-        $key = collect($keyRepository->filterId($this->request['key_id'])->first());
+        $key = collect($settingRepository->filterId($this->request['key_id'])->first());
         # gateway load database load config
 
         $gatewayConfigs = json_decode($key->get('keys'), true);
