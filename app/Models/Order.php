@@ -22,6 +22,11 @@ class Order extends Model
 
     public function key()
     {
-        return $this->belongsTo(Key::class);
+        return $this->belongsTo(Setting::class);
+    }
+
+    public function merchant()
+    {
+        return $this->belongsTo(Merchant::class, 'user_id', 'id');
     }
 }

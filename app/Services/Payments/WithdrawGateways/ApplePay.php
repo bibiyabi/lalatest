@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Payments\WithdrawGateways;
 
+use App\Constants\Payments\PlaceholderParams as P;
 use App\Services\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -84,6 +85,31 @@ class ApplePay extends AbstractWithdrawGateway
 
     }
 
+    public function getPlaceholder():array
+    {
+        return [
+            P::PUBLIC_KEY  => 'hello world',
+            P::PRIVATE_KEY => '666',
+            P::MD5_KEY => '666',
+            P::NOTIFY_URL  => 'http://google.com',
+            P::RETURN_URL  => 'http://google.com',
+            P::TRANSACTION_TYPE  => [
+                0 => 'UPI',
+                1 => 'PAYATM',
+            ],
+            P::COIN  => [
+                0 => 'USDT',
+                1 => 'BITCOIN'
+            ],
+            P::BLOCKCHAIN_CONTRACT => [
+                0 => 'TR20',
+                1 => 'CC60'
+            ],
+            P::API_KEY => 'key',
+            P::NOTE1 => 'lala',
+            P::NOTE2 => 'yoyo',
+        ];
+    }
 
 
 

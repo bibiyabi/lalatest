@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class UrlResult implements ResultFactoryInterface
 {
-    public function getResult(HttpParam $param)
+    public function getResult(HttpParam $param): Result
     {
         $method = $param->getMethod();
         if ($method == 'post') {
@@ -16,6 +16,6 @@ class UrlResult implements ResultFactoryInterface
             $result = Http::withOptions(['verify'=>false])->get($param->getUrl(), $param->getBody());
         }
 
-        return $result;
+        return new Result('url', $result);
     }
 }

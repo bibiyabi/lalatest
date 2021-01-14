@@ -6,12 +6,12 @@ namespace App\Constants\Payments;
 
 class ResponseCode
 {
-    // todo use interface for temp, not testing yet
     public const SUCCESS                        = 100;
     public const FAIL                           = 101;  // 传送失败
     public const RESOURCE_NOT_FOUND             = 107;  // 查無資料
     public const ERROR_PARAMETERS               = 111;  // 请输入完整信息
     public const ERROR_CONFIG_PARAMETERS        = 157;  // 設定檔無此參數
+    public const ERROR_DATA_IN_PAYMENT          = 158;  // 第三方資料有誤
     public const DATABASE_FAILED                = 120;  // 资料库错误
     public const DUPLICATE_ORDERID              = 302;  // 已有该订单
 

@@ -221,7 +221,7 @@ return [
         'Password' => Illuminate\Support\Facades\Password::class,
         'Queue' => Illuminate\Support\Facades\Queue::class,
         'Redirect' => Illuminate\Support\Facades\Redirect::class,
-        // 'Redis' => Illuminate\Support\Facades\Redis::class,
+        'Redis' => Illuminate\Support\Facades\Redis::class,
         'Request' => Illuminate\Support\Facades\Request::class,
         'Response' => Illuminate\Support\Facades\Response::class,
         'Route' => Illuminate\Support\Facades\Route::class,
@@ -235,5 +235,17 @@ return [
 
 
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | 自訂常數
+    |--------------------------------------------------------------------------
+    |
+    | 所有寫在 .env 的常數都要寫在這，避免用 env() 取到 null
+    |
+    */
+
+    'java_domain' => env('JAVA_DOMAIN'),
+    'sign_key' => env('SIGN_KEY'),
 
 ];

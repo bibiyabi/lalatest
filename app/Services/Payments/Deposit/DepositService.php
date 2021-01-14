@@ -1,16 +1,19 @@
 <?php
 
-namespace App\Services\Payments;
+namespace App\Services\Payments\Deposit;
 
 use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderResult;
 use Illuminate\Http\Request;
-use App\Models\Key;
-use App\Contracts\ResponseCode;
+use App\Models\Setting;
+use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
+use App\Jobs\Payment\Deposit\Notify;
+use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
+use Log;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class DepositService
@@ -26,7 +29,7 @@ class DepositService
         # create order param
         $user = $request->user();
         $keyId = $request->post('key_id');
-        $key = Key::where('user_id', $user->id)->where('user_pk', $keyId)->first();
+        $key = Setting::where('user_id', $user->id)->where('user_pk', $keyId)->first();
 
         if (empty($key)) {
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
@@ -38,22 +41,23 @@ class DepositService
             return new OrderResult(false, 'Duplicate OrderId.', ResponseCode::DUPLICATE_ORDERID);
         }
 
-        # deside how to return value
-        $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
-        $type = $gateway->getReturnType();
+        # decide how to return value
+        try {
+            $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
+            $type = $gateway->getReturnType();
+        } catch (\App\Exceptions\GatewayNotFountException $e) {
+            return new OrderResult(false, 'Gateway not found.', ResponseCode::RESOURCE_NOT_FOUND);
+        }
 
         # submit param
         $factory = ResultFactory::createResultFactory($type);
         $param = $gateway->genDepositParam($order);
-        $unprocessRs = $factory->getResult($param);
-
-
-
-        # trigger event ?
+        $result = $factory->getResult($param);
 
         # return result
-        $result = $gateway->processOrderResult($unprocessRs);
-        return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result);
+        $processedResult = $gateway->processOrderResult($result);
+        $result->setContent($processedResult);
+        return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result->toArray());
     }
 
     public function search()
@@ -87,6 +91,7 @@ class DepositService
         }
 
         # push to queue
+        Notify::dispatch($order);
 
         return $result;
     }

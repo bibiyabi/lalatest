@@ -2,13 +2,11 @@
 
 namespace App\Services\Payments\DepositGateways;
 
-use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Models\Order;
-use App\Models\Key;
-use Illuminate\Http\Request;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use App\Models\Setting;
+use App\Constants\Payments\PlaceholderParams as P;
 
 class Inrusdt implements DepositGatewayInterface
 {
@@ -24,7 +22,7 @@ class Inrusdt implements DepositGatewayInterface
         return 'https://www.inrusdt.com';
     }
 
-    protected function createParam(Order $order, Key $key): array
+    protected function createParam(Order $order, Setting $key): array
     {
         return [
             'merchantId' => $key->cashflowUserId,
@@ -93,5 +91,31 @@ class Inrusdt implements DepositGatewayInterface
     protected function getCallbackSuccessReturn()
     {
         return 'ok';
+    }
+
+    public function getPlaceholder():array
+    {
+        return [
+            P::PUBLIC_KEY  => 'hello world',
+            P::PRIVATE_KEY => '666',
+            P::MD5_KEY => '666',
+            P::NOTIFY_URL  => 'http://google.com',
+            P::RETURN_URL  => 'http://google.com',
+            P::TRANSACTION_TYPE  => [
+                0 => 'UPI',
+                1 => 'PAYATM',
+            ],
+            P::COIN  => [
+                0 => 'USDT',
+                1 => 'BITCOIN'
+            ],
+            P::BLOCKCHAIN_CONTRACT => [
+                0 => 'TR20',
+                1 => 'CC60'
+            ],
+            P::API_KEY => 'key',
+            P::NOTE1 => 'lala',
+            P::NOTE2 => 'yoyo',
+        ];
     }
 }
