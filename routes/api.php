@@ -62,7 +62,7 @@ Route::prefix('withdraw')->group(function ()
 
 Route::prefix('deposit')->group(function ()
 {
-    Route::post('order', [DepositController::class, 'order']);
+    Route::post('create', [DepositController::class, 'create']);
     Route::post('callback/{gatewayName}', [DepositController::class, 'callback']);
 });
 

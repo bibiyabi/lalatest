@@ -75,6 +75,40 @@ Response example:
 }
 ```
 
+### 刪除資料設置
+
+```plaintext
+DELETE /api/key
+```
+
+
+| 欄位 | 型態    | 必要參數 | 說明                   |
+| ---- | ------- | -------- | :--------------------- |
+| id   | integer | V        | 設置資料 id (from php) |
+
+Response example:
+
+```json
+{
+    "success": true,
+    "code": 100,
+    "locale": "en",
+    "message": "传送成功",
+    "data": null
+}
+```
+
+```json
+{
+    "success": false,
+    "code": 101,
+    "locale": "en",
+    "message": "传送失败",
+    "data": null,
+    "debug": []
+}
+```
+
 
 ### 金流商/交易所下拉選單
 
@@ -203,18 +237,18 @@ GET /api/placeholder
 ### 充值下單
 
 ```plaintext
-POST /api/deposit/order
+POST /api/deposit/create
 ```
 
 | 欄位         | 型態    | 必要參數 | 說明                               |
 | ------------ | ------- | -------- | :--------------------------------- |
 | order_id     | string  | V        | 訂單編號                           |
-| key_id       | integer | V        | 設定檔流水號（同步商戶資料的那份） |
+| pk           | integer | V        | 設定檔流水號（同步商戶資料的那份） |
 | type         | integer | V        | 1 銀行卡 2 電子錢包 3 數字貨幣     |
 | amount       | integer |          | 訂單金額                           |
 | bank_name    | string  |          | 打款銀行名稱                       |
 | account_name | string  |          | 打款帳戶名                         |
-| txn_time     | time    |          | 打款成功時間 ex: 23:59:59          |
+| txn_time     | time    |          | 打款成功時間 ex: 23-59-59          |
 | screenshot   | image   |          | 支付成功截圖                       |
 | tx_id        | string  |          | 區塊鍊交易ID                       |
 | card_number  | string  |          | 卡號                               |
@@ -242,10 +276,29 @@ Response example:
     "locale": "en",
     "message": "OK",
     "data": {
-        "value": "<form action=\"https://www.inrusdt.com\" method=\"post\"><input name=\"merchantId\" value=\"\" hidden=\"true\"><input name=\"userId\" value=\"\" hidden=\"true\"><input name=\"payMethod\" value=\"\" hidden=\"true\"><input name=\"money\" value=\"\" hidden=\"true\"><input name=\"bizNum\" value=\"\" hidden=\"true\"><input name=\"notifyAddress\" value=\"\" hidden=\"true\"><input name=\"type\" value=\"\" hidden=\"true\"><input name=\"sign\" value=\"31cde83a95ba11133ebc69a4abbc09cd\" hidden=\"true\"></form>"
+        "type": "form",
+        "content": "<form action=\"https://www.inrusdt.com\" method=\"post\"><input name=\"merchantId\" value=\"\" hidden=\"true\"><input name=\"userId\" value=\"\" hidden=\"true\"><input name=\"payMethod\" value=\"\" hidden=\"true\"><input name=\"money\" value=\"\" hidden=\"true\"><input name=\"bizNum\" value=\"\" hidden=\"true\"><input name=\"notifyAddress\" value=\"\" hidden=\"true\"><input name=\"type\" value=\"\" hidden=\"true\"><input name=\"sign\" value=\"e49c058e12bbf978ed721c5bd37fe7c1\" hidden=\"true\"></form>"
     }
 }
 ```
+
+```json
+{
+    "success": true,
+    "code": 0,
+    "locale": "en",
+    "message": "OK",
+    "data": {
+        "type": "url",
+        "content": "http://google.com"
+    }
+}
+```
+
+| 欄位           | 說明     |
+| -------------- | -------- |
+| `data.type`    | 跳轉方式 |
+| `data.content` | 跳轉內容 |
 
 
 ## 提現（出款）

@@ -37,6 +37,7 @@ return [
         CODE::ERROR_DATA_IN_PAYMENT         => '第三方資料有誤',
         CODE::DATABASE_FAILED               => '资料库错误',
         CODE::DUPLICATE_ORDERID             => '订单号重复',
+        CODE::GATEWAY_NOT_FOUND             => '无此通道资讯',
 
 	],
 
