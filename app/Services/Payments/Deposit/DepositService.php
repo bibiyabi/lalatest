@@ -52,15 +52,12 @@ class DepositService
         # submit param
         $factory = ResultFactory::createResultFactory($type);
         $param = $gateway->genDepositParam($order);
-        $unprocessedRs = $factory->getResult($param);
-
-
-
-        # trigger event ?
+        $result = $factory->getResult($param);
 
         # return result
-        $result = $gateway->processOrderResult($unprocessedRs);
-        return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result);
+        $processedResult = $gateway->processOrderResult($result);
+        $result->setContent($processedResult);
+        return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result->toArray());
     }
 
     public function search()

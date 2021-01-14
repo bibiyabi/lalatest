@@ -6,7 +6,7 @@ use App\Contracts\Payments\HttpParam;
 
 class FormResult implements ResultFactoryInterface
 {
-    public function getResult(HttpParam $param)
+    public function getResult(HttpParam $param): Result
     {
         $bodies = $param->getBody();
         $rs = '<form action="'.$param->getUrl().'" method="'.$param->getMethod().'">';
@@ -15,7 +15,7 @@ class FormResult implements ResultFactoryInterface
         }
         $rs .= '</form>';
 
-        return $rs;
+        return new Result('form', $rs);
     }
 
     protected function genInputColumn($name, $value)
