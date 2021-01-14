@@ -169,19 +169,19 @@ GET /api/placeholder
 
 回傳欄位說明:回傳值皆不固定輸出
 
-| 欄位                         | 型態                        |
-| ----------------------------| --------------------------- |
-| `publicKey`                 |     string               |
-| `privateKey`                |     string               |
-| `md5Key`                    |     string               |
-| `notifyUrl`                 |     string               |
-| `returnUrl`                 |     string               |
-| `transactionType`           |     array               |
-| `coin`                      |     array               |
-| `blockchainContract`        |     array               |
-| `apiKey`                    |     string               |
-| `note1`                     |     string               |
-| `note2`                     |     string               |
+| 欄位                 | 型態   |
+| -------------------- | ------ |
+| `publicKey`          | string |
+| `privateKey`         | string |
+| `md5Key`             | string |
+| `notifyUrl`          | string |
+| `returnUrl`          | string |
+| `transactionType`    | array  |
+| `coin`               | array  |
+| `blockchainContract` | array  |
+| `apiKey`             | string |
+| `note1`              | string |
+| `note2`              | string |
 
 沒有提示字/ 找不到該第三方檔案
 
@@ -197,6 +197,8 @@ GET /api/placeholder
 ```
 
 ## 充值（入款）
+
+
 
 ### 充值下單
 
@@ -242,5 +244,53 @@ Response example:
     "data": {
         "value": "<form action=\"https://www.inrusdt.com\" method=\"post\"><input name=\"merchantId\" value=\"\" hidden=\"true\"><input name=\"userId\" value=\"\" hidden=\"true\"><input name=\"payMethod\" value=\"\" hidden=\"true\"><input name=\"money\" value=\"\" hidden=\"true\"><input name=\"bizNum\" value=\"\" hidden=\"true\"><input name=\"notifyAddress\" value=\"\" hidden=\"true\"><input name=\"type\" value=\"\" hidden=\"true\"><input name=\"sign\" value=\"31cde83a95ba11133ebc69a4abbc09cd\" hidden=\"true\"></form>"
     }
+}
+```
+
+
+## 提現（出款）
+### 提現下單
+
+```plaintext
+POST /api/withdraw/order
+```
+
+| 欄位         | 型態    | 必要參數 | 說明                               | 對應出入所需欄位NO |
+| ------------ | ------- | -------- | :--------------------------------- | |
+| order_id     | string  | V        | 訂單編號                           | java 傳 |
+| pk           | integer | V        | 設定檔流水號（同步商戶資料的那份） | java 傳 |
+| type         | integer | V        | 1 銀行卡 2 電子錢包 3 數字貨幣     | java 傳 |
+| amount       | integer |         | 訂單金額 (數字貨幣傳貨幣數量)      | |
+| bank_name    | string  |          | 打款銀行名稱                       | |
+| fund_passwd  | string  |          | 資金密碼                           | |
+| account_id   | string  |          | 電子錢包帳號                       | |
+| email        | string  |          | 電子信箱                           | |
+| user_country | string  |          | 使用者國家                               | |
+| user_state   | string  |          | 使用者區                                 | |
+| user_city    | string  |          | 使用者城市                               | |
+| user_address | string  |          | 使用者地址                               | |
+| bank_country | string  |          | 使用者國家                               | |
+| bank_state   | string  |          | 使用者區                                 | |
+| bank_city    | string  |          | 使用者城市                               | |
+| bank_address | string  |          | 銀行地址                               | |
+| last_name    | string  |          | 姓氏                               | |
+| first_name   | string  |          | 名字                               | |
+| mobile       | string  |          | 手機號                             | |
+| telegram     | string  |          | telegram                           | |
+| account_name | string  |          | 帳戶名                         | |
+| withdraw_address  | string  |         | 銀行卡號  、電子錢包帳號 、   數字貨幣地址| | 
+| gateway_code | string  |          | 金流商（銀行） 通道代碼            | |
+| ifsc         | string  |          | ifsc                               | |
+
+
+Response example:
+
+```json
+{
+    "success": true,
+    "code": 0,
+    "locale": "en",
+    "message": "OK",
+    "data": {}
 }
 ```
