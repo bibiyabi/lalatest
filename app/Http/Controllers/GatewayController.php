@@ -76,22 +76,22 @@ class GatewayController extends Controller
     # 提示字
     public function getPlaceholder(Request $request)
     {
-//        $rules = [
-//            'is_deposit'    => 'required|integer|between:1,0',
-//            'type'          => 'required|string',
-//            'gateway_name'  => 'required|string',
-//        ];
-//        $validator = Validator::make($request->all(), $rules);
-//
-//        if ($validator->fails()){
-//            $errMsg = [
-//                'errorPath' => self::class,
-//                'msg'       => $validator->errors()->all(),
-//            ];
-//            Log::info(json_encode($errMsg));
-//
-//            return RB::error(CODE::ERROR_PARAMETERS);
-//        }
+        $rules = [
+            'is_deposit'    => 'required|integer|between:0,1',
+            'type'          => 'required|string',
+            'gateway_name'  => 'required|string',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $validator->errors()->all(),
+            ];
+            Log::info(json_encode($errMsg));
+
+            return RB::error(CODE::ERROR_PARAMETERS);
+        }
 
         $gatewayName = $request->input('gateway_name');
         $result = [];
@@ -99,14 +99,14 @@ class GatewayController extends Controller
             if ($request->input('is_deposit') == 1){# for deposit
                 $gateway = DepositGatewayFactory::createGateway($gatewayName);
                 $result = $gateway->getPlaceholder();
+                throw new \Exception('error');
 
             }else{# for withdraw
                 $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
-                $result = $gateway->getPlaceholder();
 
-                dd($result);
+                $result = $gateway->getPlaceholder();
             }
-        }catch(\Exception $e){
+        }catch(\Throwable $e){
             $errMsg = [
                 'errorPath' => self::class,
                 'msg'       => $e->getMessage(),
