@@ -30,7 +30,6 @@ Route::prefix('test')->group(function() {
 
 # Java設置資料API
 Route::post('key',[SettingController::class, 'store']);
-Route::patch('key',[SettingController::class, 'update']);
 Route::delete('key',[SettingController::class, 'destroy']);
 
 # 金流商/交易所下拉選單

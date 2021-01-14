@@ -13,7 +13,7 @@
 | name | string | java   | API呼叫者 |
 
 
-### 新增資料設置
+### 新增/修改資料設置
 
 ```plaintext
 POST /api/key
