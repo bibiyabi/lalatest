@@ -16,7 +16,7 @@ class DepositController extends Controller
 
         $request->validate([
             'order_id' => 'required',
-            'key_id'   => 'required',
+            'pk'   => 'required',
             'amount'   => 'required|numeric|min:0'
         ]);
 

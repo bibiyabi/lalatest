@@ -82,9 +82,9 @@ DELETE /api/key
 ```
 
 
-| 欄位                | 型態    | 必要參數 | 說明                            |
-| ------------------- | ------- | -------- | :------------------------------ |
-| id                  | integer | V        | 設置資料 id (from php)     |
+| 欄位 | 型態    | 必要參數 | 說明                   |
+| ---- | ------- | -------- | :--------------------- |
+| id   | integer | V        | 設置資料 id (from php) |
 
 Response example:
 
@@ -203,19 +203,19 @@ GET /api/placeholder
 
 回傳欄位說明:回傳值皆不固定輸出
 
-| 欄位                         | 型態                        |
-| ----------------------------| --------------------------- |
-| `publicKey`                 |     string               |
-| `privateKey`                |     string               |
-| `md5Key`                    |     string               |
-| `notifyUrl`                 |     string               |
-| `returnUrl`                 |     string               |
-| `transactionType`           |     array               |
-| `coin`                      |     array               |
-| `blockchainContract`        |     array               |
-| `apiKey`                    |     string               |
-| `note1`                     |     string               |
-| `note2`                     |     string               |
+| 欄位                 | 型態   |
+| -------------------- | ------ |
+| `publicKey`          | string |
+| `privateKey`         | string |
+| `md5Key`             | string |
+| `notifyUrl`          | string |
+| `returnUrl`          | string |
+| `transactionType`    | array  |
+| `coin`               | array  |
+| `blockchainContract` | array  |
+| `apiKey`             | string |
+| `note1`              | string |
+| `note2`              | string |
 
 沒有提示字/ 找不到該第三方檔案
 
@@ -235,13 +235,13 @@ GET /api/placeholder
 ### 充值下單
 
 ```plaintext
-POST /api/deposit/order
+POST /api/deposit/create
 ```
 
 | 欄位         | 型態    | 必要參數 | 說明                               |
 | ------------ | ------- | -------- | :--------------------------------- |
 | order_id     | string  | V        | 訂單編號                           |
-| key_id       | integer | V        | 設定檔流水號（同步商戶資料的那份） |
+| pk           | integer | V        | 設定檔流水號（同步商戶資料的那份） |
 | type         | integer | V        | 1 銀行卡 2 電子錢包 3 數字貨幣     |
 | amount       | integer |          | 訂單金額                           |
 | bank_name    | string  |          | 打款銀行名稱                       |
@@ -274,7 +274,26 @@ Response example:
     "locale": "en",
     "message": "OK",
     "data": {
-        "value": "<form action=\"https://www.inrusdt.com\" method=\"post\"><input name=\"merchantId\" value=\"\" hidden=\"true\"><input name=\"userId\" value=\"\" hidden=\"true\"><input name=\"payMethod\" value=\"\" hidden=\"true\"><input name=\"money\" value=\"\" hidden=\"true\"><input name=\"bizNum\" value=\"\" hidden=\"true\"><input name=\"notifyAddress\" value=\"\" hidden=\"true\"><input name=\"type\" value=\"\" hidden=\"true\"><input name=\"sign\" value=\"31cde83a95ba11133ebc69a4abbc09cd\" hidden=\"true\"></form>"
+        "type": "form",
+        "content": "<form action=\"https://www.inrusdt.com\" method=\"post\"><input name=\"merchantId\" value=\"\" hidden=\"true\"><input name=\"userId\" value=\"\" hidden=\"true\"><input name=\"payMethod\" value=\"\" hidden=\"true\"><input name=\"money\" value=\"\" hidden=\"true\"><input name=\"bizNum\" value=\"\" hidden=\"true\"><input name=\"notifyAddress\" value=\"\" hidden=\"true\"><input name=\"type\" value=\"\" hidden=\"true\"><input name=\"sign\" value=\"e49c058e12bbf978ed721c5bd37fe7c1\" hidden=\"true\"></form>"
     }
 }
 ```
+
+```json
+{
+    "success": true,
+    "code": 0,
+    "locale": "en",
+    "message": "OK",
+    "data": {
+        "type": "url",
+        "content": "http://google.com"
+    }
+}
+``
+
+| 欄位           | 說明     |
+| -------------- | -------- |
+| `data.type`    | 跳轉方式 |
+| `data.content` | 跳轉內容 |

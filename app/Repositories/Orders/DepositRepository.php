@@ -13,7 +13,7 @@ class DepositRepository
     {
         $user = $request->user();
         $order_param = $request->post();
-        $key = Setting::where('user_id', $user->id)->where('user_pk', $request->post('key_id'))->first();
+        $key = Setting::where('user_id', $user->id)->where('user_pk', $request->post('pk'))->first();
         unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
 
         return Order::create([
