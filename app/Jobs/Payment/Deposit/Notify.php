@@ -3,7 +3,7 @@
 namespace App\Jobs\Payment\Deposit;
 
 use App\Models\Order;
-use App\Services\Payments\DepositNotify;
+use App\Services\Payments\Deposit\DepositNotify;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;

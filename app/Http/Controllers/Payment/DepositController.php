@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Payment;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
-use App\Services\Payments\DepositService;
+use App\Services\Payments\Deposit\DepositService;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class DepositController extends Controller

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Services\Payments;
+namespace App\Services\Payments\Deposit;
 
 use App\Models\Order;
 use App\Constants\Payments\Status;

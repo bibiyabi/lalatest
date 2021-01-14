@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payments;
+namespace App\Services\Payments\Deposit;
 
 use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderResult;
@@ -13,6 +13,7 @@ use App\Constants\Payments\Status;
 use App\Jobs\Payment\Deposit\Notify;
 use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
+use Log;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class DepositService
@@ -40,21 +41,21 @@ class DepositService
             return new OrderResult(false, 'Duplicate OrderId.', ResponseCode::DUPLICATE_ORDERID);
         }
 
-        # deside how to return value
+        # decide how to return value
         $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
         $type = $gateway->getReturnType();
 
         # submit param
         $factory = ResultFactory::createResultFactory($type);
         $param = $gateway->genDepositParam($order);
-        $unprocessRs = $factory->getResult($param);
+        $unprocessedRs = $factory->getResult($param);
 
 
 
         # trigger event ?
 
         # return result
-        $result = $gateway->processOrderResult($unprocessRs);
+        $result = $gateway->processOrderResult($unprocessedRs);
         return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result);
     }
 
