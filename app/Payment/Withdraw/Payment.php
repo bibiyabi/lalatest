@@ -177,7 +177,9 @@ class Payment implements PaymentInterface
     }
 
     public function callback($postData , AbstractWithdrawGateway $gateway) {
-        return $gateway->callback($postData);
+        $gatewayRes =  $gateway->callback($postData);
+        return $gatewayRes;
+
     }
 
 

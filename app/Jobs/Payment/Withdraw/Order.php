@@ -55,12 +55,21 @@ class Order implements ShouldQueue
         $gatewayConfigs = json_decode($key->get('keys'), true);
 
         # gateway load payment
-        $paymentGateway->setRequest($gatewayConfigs);
-        $res = $paymentGateway->send();
+        try {
+            $paymentGateway->setRequest($gatewayConfigs);
+            $res = $paymentGateway->send();
 
-        if (!isset($res['code'])) {
-            throw new WithdrawException('dw');
+            if (!isset($res['code'])) {
+                throw new WithdrawException('dw');
+            }
+
+        } catch (\Exception $e) {
+            echo __LINE__. $e->getMessage();
+            Log::channel('withdraw')->error(__LINE__ . 'uuid:' . $this->job->uuid() . $e->getMessage() , $gatewayConfigs);
+            return;
         }
+
+
 
 
         # set db

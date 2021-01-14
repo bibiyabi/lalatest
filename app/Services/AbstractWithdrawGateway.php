@@ -1,10 +1,7 @@
 <?php
 namespace App\Services;
 use Illuminate\Http\Request;
-use App\Services\InputService;
-use App\Collections\ApplePayCollection;
-use App\Collections\BanksCollection;
-use App\Collections\ApplePayBanksCollection;
+
 abstract class AbstractWithdrawGateway
 {
 

@@ -12,7 +12,7 @@ class OrderResult
 
     private $result;
 
-    public function __construct(bool $success, string $msg, int $errorCode=0, string $result='') {
+    public function __construct(bool $success, string $msg, int $errorCode=0, array $result=[]) {
         $this->success = $success;
         $this->msg = $msg;
         $this->errorCode = $errorCode;
