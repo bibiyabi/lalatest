@@ -3,30 +3,44 @@ namespace App\Services\Payments;
 
 
 use App\Payment\Curl;
-use Illuminate\Support\Facades\Log;
+use App\Repositories\MerchantRepository;
 
 class PlatformNotify
 {
     private $curl;
+    private $order;
+    private $javaKey;
+    private $javaUrl;
+
 
     const SUCCESS = '000';
     const FAIL = '001';
-    const JAVA_DOMAIN = 'http:://65.0.150.38/';
 
-    const SIGN_KEY = 'b6687fdce21aabf3d2493c8350d4275f';
-
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl, MerchantRepository $repo) {
         $this->curl = $curl;
+        $this->repo = $repo;
+
+    }
+
+    public function setOrder($order){
+        $this->order = $order;
+        var_dump($this->order->order_id);
+        $merchant = $order->merchant;
+        var_dump($merchant);
+
+        $this->javaKey = $this->repo->getKey($merchant);
+        $this->javaUrl = $this->repo->getNotifyUrl($merchant);
+        return $this;
     }
 
     public function notifyWithdrawSuccess() {
 
-        $url = self::JAVA_DOMAIN . 'withdraw/result';
+        $url = $this->javaUrl . 'withdraw/result';
 
         $postData = [];
-        $postData['order_id'] = '';
+        $postData['order_id'] = $this->order->order_id;
         $postData['status'] = self::SUCCESS;
-        $postData['signature'] = $this->makeSign($postData);
+        $postData['signature'] = $this->makeSign($postData, $this->javaKey);
 
         $this->curlRes = $this->curl->setUrl($url)
             ->setPost([])
@@ -35,12 +49,12 @@ class PlatformNotify
 
     public function notifyWithdrawFailed() {
 
-        $url = self::JAVA_DOMAIN . 'withdraw/result';
+        $url = $this->javaUrl . 'withdraw/result';
 
         $postData = [];
-        $postData['order_id'] = '';
+        $postData['order_id'] = $this->order->order_id;
         $postData['status'] = self::FAIL;
-        $postData['signature'] = $this->makeSign($postData);
+        $postData['signature'] = $this->makeSign($postData, $this->javaKey);
 
         $this->curlRes = $this->curl->setUrl($url)
             ->setPost([])
@@ -56,12 +70,12 @@ class PlatformNotify
         return $data;
     }
 
-    private function makeSign($data)
+    private function makeSign($data, $ukey)
     {
         $data = $this->removeEmptyData($data);
         ksort($data);
         $sign_str = urldecode(http_build_query($data));
-        $signature = md5($sign_str . self::SIGN_KEY);
+        $signature = md5($sign_str . $ukey);
 
         return $signature;
     }

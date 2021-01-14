@@ -106,13 +106,13 @@ class ShineUPay extends AbstractWithdrawGateway
 
 
         if ($curlRes['code'] == Curl::STATUS_SUCCESS) {
-            return $this->resCreateSuccess();
+            return $this->resCreateSuccess('', ['order_id' => $this->curlPostData['body']['orderId']]);
         }
         if ($curlRes['code'] == Curl::FAILED) {
-            return $this->resCreateSuccess();
+            return $this->resCreateSuccess('', ['order_id' => $this->curlPostData['body']['orderId']]);
         }
         if ($curlRes['code'] == Curl::TIMEOUT) {
-            return $this->resCreateRetry();
+            return $this->resCreateRetry('', ['order_id' => $this->curlPostData['body']['orderId']]);
         }
     }
 

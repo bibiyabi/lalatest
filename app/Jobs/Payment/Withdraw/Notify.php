@@ -21,43 +21,32 @@ class Notify implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $timeout = 30;
 
-    private $request;
-    private $withdrawRepository;
+    private $order;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request)
+    public function __construct($order)
     {
-        $this->request = $request;
+        $this->order = $order;
     }
 
-    public function handle(WithdrawRepository $withdrawRepository, PlatformNotify $platformNotify)
+    public function handle(PlatformNotify $platformNotify)
     {
-        Log::debug('uuid:' . $this->job->uuid() . ' data:'. json_encode($this->request, true));
-
-        $orderId  = $this->request['order_id'];
-        $order = $withdrawRepository->filterOrderId($orderId)->first();
-
-        if (!isset($order['order_id'])) {
-            throw new WithdrawException('aaa');
-        }
-
-        if (in_array($order['status'], [
+        $platformNotify->setOrder($this->order)->notifyWithdrawFailed();
+        if (in_array($this->order->status, [
             Status::CALLBACK_SUCCESS,
             Status::ORDER_FAILED
         ])) {
-            #notify java
-            $platformNotify->notifyWithdrawFailed();
+            $platformNotify->setOrder($this->order)->notifyWithdrawFailed();
         }
 
-        if (in_array($order['status'], [
+        if (in_array($this->order->status, [
             Status::CALLBACK_SUCCESS,
         ])) {
-            #notify java
-            $platformNotify->notifyWithdrawSuccess();
+            $platformNotify->setOrder($this->order)->notifyWithdrawSuccess();
         }
 
     }

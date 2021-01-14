@@ -17,6 +17,7 @@ use App\Jobs\Payment\Withdraw\Notify;
 use Illuminate\Http\Request;
 use App\Services\AbstractWithdrawGateway;
 use App\Constants\WithDrawOrderStatus;
+use App\Repositories\Orders\WithdrawRepository;
 
 class Payment implements PaymentInterface
 {
@@ -24,110 +25,90 @@ class Payment implements PaymentInterface
     private $postData;
     private $settingRepository;
     private $settings;
+    private $withdrawRepository;
 
 
-    public function __construct(SettingRepository $k)
+    public function __construct(SettingRepository $k, WithdrawRepository $withdrawRepository)
     {
         $this->settingRepository = $k;
+        $this->withdrawRepository = $withdrawRepository;
     }
 
     public function checkInputData($postData)  {
 
+        var_dump($postData);
+
         $this->postData = $postData;
 
-        $this->postData['merchant_name'] = 'java';
-        $this->postData['user_id'] = '1';
+        $validator = Validator::make($this->postData, [
+            'payment_type' => 'required',
+            'order_id'     => 'required',
+            'pk'      => 'required',
+        ]);
 
-
-
-        switch ($this->postData['payment_type']) {
-            case Type::BANK:
-                $this->check_bank_post();
-                break;
-            case Type::WALLET:
-                $this->check_wallet_post();
-                break;
-            case Type::DIGITAL_CURRENCY:
-                $this->check_digital_currency_post();
-                break;
-            default:
-                throw new WithdrawException("asdsd");
+        if ($validator->fails()) {
+            throw new WithdrawException('input fail');
         }
+
+        $this->defaultOrderParams($this->postData);
 
         return $this;
     }
 
-    private function check_bank_post() {
 
-        $validator = Validator::make($this->postData, [
+    private function defaultOrderParams($data) {
 
-            'payment_type' => 'required',
-            'order_id'     => 'required',
-            'user_pk'      => 'required',
-            'address'      => 'required',
-            'rate_amount'  => 'required',
+        $defaultArrays = [
+            'amount',
+            'fund_passwd',
+            'email',
+            'user_country',
+            'user_state',
+            'user_city',
+            'user_address',
+            'bank_province',
+            'bank_city',
+            'bank_address',
+            'last_name',
+            'first_name',
+            'mobile',
+            'telegram',
+            'withdraw_address',
+            'gateway_code',
+            'ifsc',
+        ];
 
-            'bank_code'    => 'required',
-            'phone_number' => 'required',
-            //'bank_privince' => '', //
-            //'bank_area' => '', //
-            'email' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return "您輸入的資料有誤";
+        foreach ($defaultArrays as $key) {
+            if (!isset($data[$key])) {
+                $data[$key] = '';
+            }
         }
+        return $data;
+
     }
 
-    private function check_wallet_post() {
-
-        $validator = Validator::make($this->postData, [
-            'payment_type' => 'required',
-            'order_id'     => 'required',
-            'user_pk'      => 'required',
-            'address'      => 'required',
-            'rate_amount'  => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return "您輸入的資料有誤";
-        }
-    }
-
-    private function check_digital_currency_post() {
-
-        $validator = Validator::make($this->postData, [
-            'payment_type' => 'required',
-            'order_id'     => 'required',
-            'user_pk'      => 'required',
-            'address'      => 'required',
-            'rate_amount'  => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return "您輸入的資料有誤";
-        }
-    }
 
     private function setOrderToDb() {
 
         //DB::enableQueryLog();
         #$this->postData['user_id'] = 1;
-        #$this->postData['user_pk'] = 6;
-        $settings = $this->settingRepository->filterCombinePk($this->postData['user_id'], $this->postData['user_pk'])->first();
+        #$this->postData['pk'] = 6;
+        $settings = $this->settingRepository->filterCombinePk($this->postData['user_id'], $this->postData['pk'])->first();
 
         $this->settings = collect($settings);
 
-        if (! $this->settings->has('id')  ) {
-            throw new WithdrawException('aaa', 0 );
+        if (! $this->settings->has('id')) {
+            throw new WithdrawException('setting not has user_id', 0 );
         }
 
+        $this->postData['order_id'] = $this->postData['order_id']. uniqid();
+
         WithdrawOrder::create([
-            'order_id'    => (string) $this->postData['order_id']. uniqid(),
+            'order_id'    => $this->postData['order_id'],
             'user_id'     => $this->postData['user_id'],
             'key_id'      => $this->settings->get('id'),
-            'amount'      => $this->postData['rate_amount'],
-            'real_amount' => $this->postData['rate_amount'],
+            'amount'      => $this->postData['amount'],
+            'real_amount' => $this->postData['amount'],
             'gateway_id'  => $this->settings->get('gateway_id'),
             'status'      => 1,
             'order_param' => json_encode($this->postData, true),
@@ -148,12 +129,13 @@ class Payment implements PaymentInterface
         $this->postData['key_id'] = $this->settings->get('id');
         $this->postData['gateway_id'] = $this->settings->get('gateway_id');
 
+        $order = $this->withdrawRepository->filterOrderId($this->postData['order_id'])->first();
+
         Bus::chain([
             new Order($this->postData),
-            new Notify($this->postData),
+            new Notify($order),
         ])->catch(function (Throwable $e) {
             echo $e->getMessage() . __LINE__ . "\r\n";
-
         })->dispatch();
 
         echo __LINE__ ."\r\n";

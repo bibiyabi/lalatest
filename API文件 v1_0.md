@@ -308,32 +308,28 @@ Response example:
 POST /api/withdraw/order
 ```
 
-| 欄位         | 型態    | 必要參數 | 說明                               | 對應出入所需欄位NO |
-| ------------ | ------- | -------- | :--------------------------------- | |
-| order_id     | string  | V        | 訂單編號                           | java 傳 |
-| pk           | integer | V        | 設定檔流水號（同步商戶資料的那份） | java 傳 |
-| type         | integer | V        | 1 銀行卡 2 電子錢包 3 數字貨幣     | java 傳 |
-| amount       | integer |         | 訂單金額 (數字貨幣傳貨幣數量)      | |
-| bank_name    | string  |          | 打款銀行名稱                       | |
-| fund_passwd  | string  |          | 資金密碼                           | |
-| account_id   | string  |          | 電子錢包帳號                       | |
-| email        | string  |          | 電子信箱                           | |
-| user_country | string  |          | 使用者國家                               | |
-| user_state   | string  |          | 使用者區                                 | |
-| user_city    | string  |          | 使用者城市                               | |
-| user_address | string  |          | 使用者地址                               | |
-| bank_country | string  |          | 使用者國家                               | |
-| bank_state   | string  |          | 使用者區                                 | |
-| bank_city    | string  |          | 使用者城市                               | |
-| bank_address | string  |          | 銀行地址                               | |
-| last_name    | string  |          | 姓氏                               | |
-| first_name   | string  |          | 名字                               | |
-| mobile       | string  |          | 手機號                             | |
-| telegram     | string  |          | telegram                           | |
-| account_name | string  |          | 帳戶名                         | |
-| withdraw_address  | string  |         | 銀行卡號  、電子錢包帳號 、   數字貨幣地址| | 
-| gateway_code | string  |          | 金流商（銀行） 通道代碼            | |
-| ifsc         | string  |          | ifsc                               | |
+| 欄位             | 型態    | 必要參數 | 對應出入所需欄位Excel號碼 | 說明                                       |
+| ---------------- | ------- | -------- | ------------------ | :----------------------------------------- |
+| order_id         | string  | V        | java               | 訂單編號                                   |
+| pk               | integer | V        | java               | 設定檔流水號（同步商戶資料的那份）         |
+| type             | integer | V        | java               | 1 銀行卡 2 電子錢包 3 數字貨幣             |
+| amount           | integer |          | 1                  | 訂單金額 (數字貨幣傳貨幣數量)              |
+| fund_passwd      | string  |          | 3                  | 資金密碼                                   |
+| email            | string  |          | 5                  | 電子信箱                                   |
+| user_country     | string  |          | 6                  | 使用者國家                                 |
+| user_state       | string  |          | 7                  | 使用者區                                   |
+| user_city        | string  |          | 8                  | 使用者城市                                 |
+| user_address     | string  |          | 9                  | 使用者地址                                 |
+| bank_province    | string  |          |                    | 銀行省                                     |
+| bank_city        | string  |          |                    | 銀行城市                                   |
+| bank_address     | string  |          |                    | 銀行地址                                   |
+| last_name        | string  |          | 10                 | 姓氏                                       |
+| first_name       | string  |          | 11                 | 名字                                       |
+| mobile           | string  |          | 12                 | 手機號                                     |
+| telegram         | string  |          | 13                 | telegram                                   |
+| withdraw_address | string  |          | 16                 | 銀行卡號  、電子錢包帳號 、   數字貨幣地址 |
+| gateway_code     | string  |          |                    | 金流商（銀行） 通道代碼                    |
+| ifsc             | string  |          |                    | ifsc                                       |
 
 
 Response example:

@@ -17,6 +17,8 @@ class WithdrawOrderController extends Controller
 {
     public function create(Request $request, PaymentInterface $payment) {
 
+        $this->request = $request->post();
+        /*
         $this->request = [];
         $this->request['payment_type'] = 2; // 1 銀行卡 2 電子錢包 3 數字貨幣
         $this->request['user_pk'] = 876;
@@ -37,11 +39,12 @@ class WithdrawOrderController extends Controller
         $this->request['phone_number'] = 123456;
         $this->request['user_email'] = 123456; // 用戶郵箱
         $this->request['bank_ifsc'] = ''; // 分行代碼
+        */
 
         Log::channel('withdraw')->info(__LINE__ , $request->post());
 
 
-        $this->request['user_id'] = 123;
+        $this->request['user_id'] = $request->user()->id;
         $payment->checkInputData($this->request)->createToQueue();
     }
 
