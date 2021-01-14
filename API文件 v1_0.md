@@ -166,3 +166,32 @@ GET /api/placeholder
         }
 }
 ```
+回傳欄位說明:回傳值皆不固定輸出
+
+| 欄位                         | 型態                        |
+| ----------------------------| --------------------------- |
+| `publicKey`                 |     string               |
+| `privateKey`                |     string               |
+| `md5Key`                    |     string               |
+| `notifyUrl`                 |     string               |
+| `returnUrl`                 |     string               |
+| `transactionType`           |     array               |
+| `coin`                      |     array               |
+| `blockchainContract`        |     array               |
+| `apiKey`                    |     string               |
+| `note1`                     |     string               |
+| `note2`                     |     string               |
+
+
+若沒有提示字
+
+```json
+{
+     "success": false,
+        "code": 158,
+        "locale": "en",
+        "message": "第三方資料有誤",
+        "data": null,
+        "debug": []
+}
+```
