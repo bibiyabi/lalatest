@@ -24,7 +24,7 @@ class DepositService
         $this->orderRepo = $orderRepo;
     }
 
-    public function order(Request $request): OrderResult
+    public function create(Request $request): OrderResult
     {
         # create order param
         $user = $request->user();

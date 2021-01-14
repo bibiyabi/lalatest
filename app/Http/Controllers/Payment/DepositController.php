@@ -10,9 +10,9 @@ use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class DepositController extends Controller
 {
-    public function order(Request $request)
+    public function create(Request $request)
     {
-        \Log::info('Deposit-order', $request->post());
+        \Log::info('Deposit-create', $request->post());
 
         $request->validate([
             'order_id' => 'required',
@@ -21,7 +21,7 @@ class DepositController extends Controller
         ]);
 
         $service = App::make(DepositService::class);
-        $rs = App::call([$service, 'order'], ['request' => $request]);
+        $rs = App::call([$service, 'create'], ['request' => $request]);
 
         return $rs->getSuccess()
             ? RB::success($rs->getResult())
