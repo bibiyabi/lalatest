@@ -13,7 +13,7 @@
 | name | string | java   | API呼叫者 |
 
 
-### 新增資料設置
+### 新增/修改資料設置
 
 ```plaintext
 POST /api/key
@@ -240,32 +240,32 @@ GET /api/placeholder
 POST /api/deposit/create
 ```
 
-| 欄位         | 型態    | 必要參數 | 說明                               |
-| ------------ | ------- | -------- | :--------------------------------- |
-| order_id     | string  | V        | 訂單編號                           |
-| pk           | integer | V        | 設定檔流水號（同步商戶資料的那份） |
-| type         | integer | V        | 1 銀行卡 2 電子錢包 3 數字貨幣     |
-| amount       | integer |          | 訂單金額                           |
-| bank_name    | string  |          | 打款銀行名稱                       |
-| account_name | string  |          | 打款帳戶名                         |
-| txn_time     | time    |          | 打款成功時間 ex: 23-59-59          |
-| screenshot   | image   |          | 支付成功截圖                       |
-| tx_id        | string  |          | 區塊鍊交易ID                       |
-| card_number  | string  |          | 卡號                               |
-| mobile       | string  |          | 手機號                             |
-| account_id   | string  |          | 電子錢包帳號                       |
-| email        | string  |          | 電子信箱                           |
-| country      | string  |          | 國家                               |
-| state        | string  |          | 區                                 |
-| city         | string  |          | 城市                               |
-| address      | string  |          | 地址                               |
-| zip          | string  |          | 郵遞區號                           |
-| last_name    | string  |          | 姓氏                               |
-| first_name   | string  |          | 名字                               |
-| telegram     | string  |          | telegram                           |
-| expired_date | string  |          | 到期日期 mm/yyyy                   |
-| gateway_code | string  |          | 金流商（銀行） 通道代碼            |
-| ifsc         | string  |          | ifsc                               |
+| 欄位         | 型態    | 必要參數 | 對應出入所需欄位NO | 說明                               |
+| ------------ | ------- | -------- | ------------------ | ---------------------------------- |
+| order_id     | string  | V        | java               | 訂單編號                           |
+| pk           | integer | V        | java               | 設定檔流水號（同步商戶資料的那份） |
+| type         | integer | V        | java               | 1 銀行卡 2 電子錢包 3 數字貨幣     |
+| amount       | integer |          | 6 11 16            | 訂單金額                           |
+| bank_name    | string  |          | 7 17               | 打款銀行名稱                       |
+| account_name | string  |          | 8                  | 打款帳戶名                         |
+| txn_time     | time    |          | 9                  | 打款成功時間 ex: 23-59-59          |
+| screenshot   | image   |          | 10                 | 支付成功截圖                       |
+| tx_id        | string  |          | 15                 | 區塊鍊交易ID                       |
+| card_number  | string  |          | 18                 | 卡號                               |
+| mobile       | string  |          | 19                 | 手機號                             |
+| account_id   | string  |          | 20                 | 電子錢包帳號                       |
+| email        | string  |          | 21                 | 電子信箱                           |
+| country      | string  |          | 22                 | 國家                               |
+| state        | string  |          | 23                 | 區                                 |
+| city         | string  |          | 24                 | 城市                               |
+| address      | string  |          | 25                 | 地址                               |
+| zip          | string  |          | 26                 | 郵遞區號                           |
+| last_name    | string  |          | 27                 | 姓氏                               |
+| first_name   | string  |          | 28                 | 名字                               |
+| telegram     | string  |          | 29                 | telegram                           |
+| expired_date | string  |          | 30                 | 到期日期 mm/yyyy                   |
+| gateway_code | string  |          | -                  | 金流商（銀行） 通道代碼            |
+| ifsc         | string  |          | -                  | ifsc                               |
 
 Response example:
 

@@ -18,11 +18,6 @@ use App\Http\Controllers\GatewayController;
 */
 
 Route::prefix('test')->group(function() {
-    Route::get('aaa', function () {
-        echo '@@@';
-        return DB::select('select * FROM keys');
-    });
-
     Route::get('bbb', function (){
         return 123;
     });
@@ -35,13 +30,13 @@ Route::prefix('test')->group(function() {
 
 # Java設置資料API
 Route::post('key',[SettingController::class, 'store']);
-Route::patch('key',[SettingController::class, 'update']);
 Route::delete('key',[SettingController::class, 'destroy']);
 
 # 金流商/交易所下拉選單
 Route::get('vendor/list',[GatewayController::class,'index']);
 
 # 提示字
+Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 
 # JAVA出款傳遞出款參數API
@@ -63,7 +58,7 @@ Route::prefix('withdraw')->group(function ()
 Route::prefix('deposit')->group(function ()
 {
     Route::post('create', [DepositController::class, 'create']);
-    Route::post('callback/{gatewayName}', [DepositController::class, 'callback']);
+    Route::match(['get', 'post'], 'callback/{gatewayName}', [DepositController::class, 'callback']);
 });
 
 

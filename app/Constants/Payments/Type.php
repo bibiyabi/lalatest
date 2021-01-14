@@ -3,7 +3,8 @@ namespace App\Constants\Payments;
 
 class Type
 {
-    const BANK = '1';
-    const WALLET = '2';
-    const DIGITAL_CURRENCY = '3';
+    const CREDIC_CARD = '1';
+    const BANK = '2';
+    const WALLET = '3';
+    const DIGITAL_CURRENCY = '4';
 }
