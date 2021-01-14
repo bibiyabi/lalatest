@@ -134,6 +134,15 @@ class SettingController extends Controller
         }
 
         try{
+            $settingId = DB::table('settings')
+                ->select('id')
+                ->where('id','=',$request->input('id'))
+                ->get();
+
+            if (empty($settingId->id)){
+                return RB::error(CODE::FAIL);
+            }
+
             DB::table('settings')->where('id','=',$request->input('id'))->delete();
         }catch (\Throwable $e){
             $errMsg = [
