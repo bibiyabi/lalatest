@@ -30,6 +30,8 @@ class WithdrawOrderController extends Controller
 
         // 銀行卡
         //bankAddress 所在地区名称
+        //bankAddress
+
         $this->request['bank_user_name'] = 'colin';
         $this->request['bank_code'] = 123456;
         $this->request['phone_number'] = 123456;

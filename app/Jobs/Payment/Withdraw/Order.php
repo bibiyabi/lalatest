@@ -56,7 +56,7 @@ class Order implements ShouldQueue
 
         # gateway load payment
         try {
-            $paymentGateway->setRequest($gatewayConfigs);
+            $paymentGateway->setRequest($this->request);
             $res = $paymentGateway->send();
 
             if (!isset($res['code'])) {

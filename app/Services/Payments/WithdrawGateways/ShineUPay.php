@@ -24,8 +24,7 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->curl = $curl;
     }
 
-    public function setRequest($data) {
-
+    public function setRequest($data = []) {
        Log::channel('withdraw')->info(__LINE__ , $data);
 
        $data['order_id'] = '123456'.uniqid();
@@ -139,9 +138,19 @@ class ShineUPay extends AbstractWithdrawGateway
 
     }
 
-    private function checkCallbackSign() {
-
+    public function getPlaceholder():array {
+        return [];
     }
+
+    public function getRequireColumns() {
+        return [
+            ['no'=> 1, 'data' => []]
+        ];
+    }
+
+
+
+
 
 
 
