@@ -24,11 +24,11 @@ class DepositService
         $this->orderRepo = $orderRepo;
     }
 
-    public function order(Request $request): OrderResult
+    public function create(Request $request): OrderResult
     {
         # create order param
         $user = $request->user();
-        $keyId = $request->post('key_id');
+        $keyId = $request->post('pk');
         $key = Setting::where('user_id', $user->id)->where('user_pk', $keyId)->first();
 
         if (empty($key)) {
@@ -55,7 +55,7 @@ class DepositService
         $result = $factory->getResult($param);
 
         # return result
-        $processedResult = $gateway->processOrderResult($result);
+        $processedResult = $gateway->processOrderResult($result->getContent());
         $result->setContent($processedResult);
         return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result->toArray());
     }
