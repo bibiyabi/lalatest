@@ -291,7 +291,7 @@ Response example:
         "content": "http://google.com"
     }
 }
-``
+```
 
 | 欄位           | 說明     |
 | -------------- | -------- |
