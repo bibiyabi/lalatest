@@ -5,7 +5,7 @@ namespace App\Services\Payments\DepositGateways;
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Models\Order;
-use App\Models\Key;
+use App\Models\Setting;
 use App\Constants\Payments\PlaceholderParams as P;
 
 class Inrusdt implements DepositGatewayInterface
@@ -22,7 +22,7 @@ class Inrusdt implements DepositGatewayInterface
         return 'https://www.inrusdt.com';
     }
 
-    protected function createParam(Order $order, Key $key): array
+    protected function createParam(Order $order, Setting $key): array
     {
         return [
             'merchantId' => $key->cashflowUserId,

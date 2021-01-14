@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Key;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use App\Constants\Payments\ResponseCode as CODE;
 
-class KeyController extends Controller
+class SettingController extends Controller
 {
     private $keys;
 
-    public function __construct()
-    {
-
-    }
 
     /**
      * Display a listing of the resource.
@@ -38,11 +34,7 @@ class KeyController extends Controller
 //        //
 //    }
 
-    /**
-     * Setting payment keys from java.
-     * @param Request $request
-     *
-     */
+    # Setting payment keys from java.
     public function store(Request $request)
     {
         $rules = [
@@ -78,14 +70,14 @@ class KeyController extends Controller
 
         # store into keys table
         try {
-            $key = new Key();
+            $key = new Setting();
             $key->user_id = $request->user()->id;
             $key->gateway_id = $request->input('gateway_id');
             $key->user_pk = $request->input('id');
-            $key->keys = json_encode($request->all());
+            $key->settings = json_encode($request->all());
             $key->save();
 
-        }catch (\Exception $e){
+        }catch (\Throwable $e){
             $errMsg = [
                 'errorPath' => self::class,
                 'msg'       => $e->getMessage(),
@@ -98,16 +90,6 @@ class KeyController extends Controller
         return RB::success(null,CODE::SUCCESS);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Keys  $keys
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Keys $keys)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -132,15 +114,12 @@ class KeyController extends Controller
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Keys  $keys
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Keys $keys)
+
+    public function destroy(Request $request)
     {
-        //
+        $rule = [
+            ''
+        ];
     }
 
 

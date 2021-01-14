@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Key extends Model
+class Setting extends Model
 {
 //    use HasFactory;
 
-    protected $table = 'keys';
+    protected $table = 'settings';
 
     protected $fillable = [
         'user_id',
         'gateway_type_id',
-        'keys',
+        'settings',
     ];
 
     public function gateway()
