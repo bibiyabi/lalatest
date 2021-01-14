@@ -5,7 +5,7 @@ namespace App\Services\Payments\Deposit;
 use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderResult;
 use Illuminate\Http\Request;
-use App\Models\Key;
+use App\Models\Setting;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
@@ -29,7 +29,7 @@ class DepositService
         # create order param
         $user = $request->user();
         $keyId = $request->post('key_id');
-        $key = Key::where('user_id', $user->id)->where('user_pk', $keyId)->first();
+        $key = Setting::where('user_id', $user->id)->where('user_pk', $keyId)->first();
 
         if (empty($key)) {
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);

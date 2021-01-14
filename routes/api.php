@@ -2,10 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\KeyController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
-use App\Http\Controllers\PlaceholderController;
 use App\Http\Controllers\GatewayController;
 /*
 |--------------------------------------------------------------------------
@@ -35,9 +34,9 @@ Route::prefix('test')->group(function() {
 });
 
 # Java設置資料API
-Route::post('key',[KeyController::class, 'store']);
-Route::patch('key',[KeyController::class, 'update']);
-Route::delete('key',[KeyController::class, 'destroy']);
+Route::post('key',[SettingController::class, 'store']);
+Route::patch('key',[SettingController::class, 'update']);
+Route::delete('key',[SettingController::class, 'destroy']);
 
 # 金流商/交易所下拉選單
 Route::get('vendor/list',[GatewayController::class,'index']);

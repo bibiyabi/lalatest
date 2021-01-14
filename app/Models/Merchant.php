@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Models\Key;
+use App\Models\Setting;
 
 class Merchant extends Authenticatable
 {
@@ -32,6 +32,6 @@ class Merchant extends Authenticatable
 
     public function keys()
     {
-        return $this->hasMany(Key::class);
+        return $this->hasMany(Setting::class);
     }
 }

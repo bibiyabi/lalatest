@@ -2,41 +2,41 @@
 
 namespace App\Repositories;
 
-use App\Models\Key;
+use App\Models\Setting;
 
-class KeyRepository
+class SettingRepository
 {
-    private $key;
+    private $setting;
 
     public function __construct()
     {
-        $this->key = Key::query();
+        $this->setting = Setting::query();
     }
 
     public function first()
     {
-        return $this->key->first();
+        return $this->setting->first();
     }
 
     public function get()
     {
-        return $this->key->get();
+        return $this->setting->get();
     }
 
     public function filterId($id)
     {
-        return $this->key->where('id', '=', $id);
+        return $this->setting->where('id', '=', $id);
     }
 
     public function filterByUserPk($id)
     {
-        $this->key->where('user_pk', '=', $id);
+        $this->setting->where('user_pk', '=', $id);
         return $this;
     }
 
     public function filterByUserId($id)
     {
-        $this->key->where('user_id', '=', $id);
+        $this->setting->where('user_id', '=', $id);
         return $this;
     }
 

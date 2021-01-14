@@ -5,7 +5,7 @@ namespace App\Contracts\Payments\Deposit;
 use App\Contracts\Payments\CallbackResult;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
-use App\Models\Key;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -19,9 +19,9 @@ trait DepositGatewayHelper
         return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
     }
 
-    abstract protected function createParam(Order $order, Key $key): array;
+    abstract protected function createParam(Order $order, Setting $key): array;
 
-    abstract protected function createSign(array $param, Key $key): string;
+    abstract protected function createSign(array $param, Setting $key): string;
 
     abstract protected function getUrl(): string;
 
