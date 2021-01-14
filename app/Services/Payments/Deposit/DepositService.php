@@ -46,7 +46,7 @@ class DepositService
             $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
             $type = $gateway->getReturnType();
         } catch (\App\Exceptions\GatewayNotFountException $e) {
-            return new OrderResult(false, 'Gateway not found.', ResponseCode::RESOURCE_NOT_FOUND);
+            return new OrderResult(false, 'Gateway not found.', ResponseCode::GATEWAY_NOT_FOUND);
         }
 
         # submit param

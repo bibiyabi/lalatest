@@ -14,6 +14,7 @@ class ResponseCode
     public const ERROR_DATA_IN_PAYMENT          = 158;  // 第三方資料有誤
     public const DATABASE_FAILED                = 120;  // 资料库错误
     public const DUPLICATE_ORDERID              = 302;  // 已有该订单
+    public const GATEWAY_NOT_FOUND              = 303;  // 无此通道资讯
 
 
 /**  參考error code 以下要用的時候要全部 + 100

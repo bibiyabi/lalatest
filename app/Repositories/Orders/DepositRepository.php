@@ -4,7 +4,7 @@ namespace App\Repositories\Orders;
 
 use App\Models\Order;
 use App\Constants\Payments\Status;
-use App\Models\Key;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class DepositRepository
@@ -13,7 +13,7 @@ class DepositRepository
     {
         $user = $request->user();
         $order_param = $request->post();
-        $key = Key::where('user_id', $user->id)->where('user_pk', $request->post('key_id'))->first();
+        $key = Setting::where('user_id', $user->id)->where('user_pk', $request->post('key_id'))->first();
         unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
 
         return Order::create([
