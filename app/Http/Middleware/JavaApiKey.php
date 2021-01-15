@@ -7,7 +7,6 @@ use App\Repositories\MerchantRepository;
 use App\Services\Signature;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class JavaApiKey
