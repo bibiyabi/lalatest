@@ -132,6 +132,7 @@ GET /api/vendor/list
 | type       | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 
 Response example:
+備註: data裡的資料會被urlencode
 
 ```json
 {
@@ -178,6 +179,7 @@ GET /api/placeholder
 | type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | gateway_name | string  | V        | 金流商/交易所名稱                                         |
 
+備註: data裡的資料會被urlencode
 
 ```json
 {
