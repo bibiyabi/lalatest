@@ -19,88 +19,82 @@ class ShineUPay extends AbstractWithdrawGateway
     private $curlRes;
     private $curl;
     private $headerApiSign = '';
+    private $setting;
 
     public function __construct(Curl $curl) {
         $this->curl = $curl;
     }
 
-    public function setRequest($data = []) {
+    public function setRequest($data = [], $setting = []) {
+       $this->setting = $setting;
        Log::channel('withdraw')->info(__LINE__ , $data);
 
-       $data['order_id'] = '123456'.uniqid();
-       $data['md5'] = 'fed8b982f9044290af5aba64d156e0d9';
-       $data['other_key1'] = 'https://testgateway.shineupay.com';
-       $data['bank_user_name'] = 'aaaa';
-       $data['user_phone'] = '123456';
-       $data['user_email'] = 'eee@gmail.com.tw';
-       $data['bank_ifsc'] = '123456';
-       $data['rate_amount'] = '10';
-       $data['payment_address'] = '10ss';
+       $data['order_id']         = '123456'.uniqid();
+       $data['email']            = 'aaa';
+       $data['withdraw_address'] = '10ss';
+       $data['first_name']       = 'aaa';
+       $data['last_name']        = 'bbb';
+       $data['mobile']           = '123456';
+       $data['ifsc']             = '123456';
+       $data['amount']           = 10;
+       $data['bank_address']     = '123456';
+
+       $setting['merchantId'] = 'A5LB093F045C2322';
+       $setting['md5'] = 'fed8b982f9044290af5aba64d156e0d9';
+       $setting['other_key1'] = 'https://testgateway.shineupay.com'; // 網域
+       $setting['other_key2'] = '673835da9a3458e88e8d483bdae9c9f1';  // 交易密碼MD5
+       $setting['async_address'] =  config('app.url') . '/withdraw/callback/ShineUpay';
 
         $validator = Validator::make($data, [
-            'order_id'        => 'required',
-            'bank_user_name'  => 'required',
-            'user_phone'      => 'required',
-            'payment_address' => 'required',
-            'user_email'      => 'required',
-            'bank_ifsc'       => 'required',
-            'rate_amount'     => 'required',
-            'other_key1'     => 'required',
+            'order_id'         => 'required',
+            'withdraw_address' => 'required',
+            'first_name'       => 'required',
+            'last_name'        => 'required',
+            'mobile'           => 'required',
+            'bank_address'     => 'required',
+            'ifsc'             => 'required',
+            'amount'           => 'required',
+            'email'            => 'required',
         ]);
 
-
         if ($validator->fails()) {
-            throw new WithdrawException('input check error'. json_encode($validator->errors()) );
+            throw new WithdrawException('input check error'. json_encode($validator->errors()));
         }
-        echo __CLASS__;
 
         # set data
-       $this->curlPostData['merchantId'] = 'A5LB093F045C2322';
-       $this->curlPostData['timestamp'] = time() . '000';
-       $this->curlPostData['body']['advPasswordMd5'] = '673835da9a3458e88e8d483bdae9c9f1';
-       $this->curlPostData['body']['orderId'] = $data['order_id'];
-       $this->curlPostData['body']['flag'] = 0;
-       $this->curlPostData['body']['bankCode'] = $data['payment_address'];
-       $this->curlPostData['body']['bankUser'] = $data['bank_user_name'];
-       $this->curlPostData['body']['bankUserPhone'] = $data['bank_user_name'];
-       $this->curlPostData['body']['bankAddress'] = 'aaa';
-       $this->curlPostData['body']['bankUserEmail'] = $data['user_email'];
-       $this->curlPostData['body']['bankUserIFSC'] = $data['bank_ifsc'];
-       $this->curlPostData['body']['amount'] = 100;
-       $this->curlPostData['body']['realAmount'] = 100;
-       $this->curlPostData['body']['notifyUrl'] = env('APP_URL') . '/withdraw/callback/ShineUpay';
+       $this->curlPostData['merchantId']             = $setting['merchantId'];
+       $this->curlPostData['timestamp']              = time() . '000';
+       $this->curlPostData['body']['advPasswordMd5'] = $setting['other_key2'];
+       $this->curlPostData['body']['orderId']        = $data['order_id'];
+       $this->curlPostData['body']['flag']           = 0;
+       $this->curlPostData['body']['bankCode']       = $data['withdraw_address'];
+       $this->curlPostData['body']['bankUser']       = $data['first_name'] . $data['last_name'];
+       $this->curlPostData['body']['bankUserPhone']  = $data['mobile'];
+       $this->curlPostData['body']['bankAddress']    = $data['bank_address'];
+       $this->curlPostData['body']['bankUserEmail']  = $data['email'];
+       $this->curlPostData['body']['bankUserIFSC']   = $data['ifsc'];
+       $this->curlPostData['body']['amount']         = $data['amount'];
+       $this->curlPostData['body']['realAmount']     = $data['amount'];
+       $this->curlPostData['body']['notifyUrl']      = $setting['async_address'];
 
-
-       $this->headerApiSign = $this->genSign($this->curlPostData, 'fed8b982f9044290af5aba64d156e0d9');
-
+       $this->headerApiSign = $this->genSign($this->curlPostData, $setting['md5']);
 
        return $this;
     }
 
     private function genSign($postData, $sign) {
-        echo '@@sign:'. json_encode($postData) . '|'. $sign;
         return md5(json_encode($postData) . '|'. $sign);
     }
 
 
     public function send() {
-        echo '@@send';
 
-        var_dump( $this->curlPostData);
-
-        /*
-        $url = $this->getServerUrl(1). '/withdraw/create';
-        $this->curlRes = $this->curl->setUrl($url)
-            ->setHeader([
-                "HOST: ". $this->getHeaderHost($this->curlPostData['other_key1']),
-                'Content-Type: application/json; charset=UTF-8'
-            ]);
-*/
-        $url = 'https://testgateway.shineupay.com/withdraw/create';
+        $url = $this->getServerUrl(1) . '/withdraw/create';
         $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
             'Content-Type: application/json; charset=UTF-8',
             'Accept: application/json',
-            'Api-Sign:'. $this->headerApiSign
+            'Api-Sign:'. $this->headerApiSign,
+            "HOST: ". $this->getHeaderHost($this->setting['other_key1']),
 
         ])->setPost(json_encode($this->curlPostData))->exec();
 
@@ -125,7 +119,7 @@ class ShineUPay extends AbstractWithdrawGateway
         ]);
 
         if($validator->fails()){
-            return "您輸入的資料有誤";
+            throw new WithdrawException('callback input check error'. json_encode($validator->errors()));
         }
 
         $checkSign = $this->checkCallbackSign();

@@ -49,14 +49,14 @@ class Order implements ShouldQueue
         echo "handle\r\n";
         print_r($this->request);
         echo "key_id: ".$this->request['key_id']." \r\n";
-        $key = collect($settingRepository->filterId($this->request['key_id'])->first());
+        $setting = collect($settingRepository->filterId($this->request['key_id'])->first());
         # gateway load database load config
 
-        $gatewayConfigs = json_decode($key->get('keys'), true);
+        $gatewayConfigs = json_decode($setting->get('keys'), true);
 
         # gateway load payment
         try {
-            $paymentGateway->setRequest($this->request);
+            $paymentGateway->setRequest($this->request, $setting);
             $res = $paymentGateway->send();
 
             if (!isset($res['code'])) {
