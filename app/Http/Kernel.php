@@ -42,6 +42,8 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            'auth',
+            'java.api.key',
         ],
     ];
 
@@ -63,5 +65,10 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'java.api.key' => \App\Http\Middleware\JavaApiKey::class,
+    ];
+
+    protected $middlewarePriority = [
+        \App\Http\Middleware\Authenticate::class,
+        \App\Http\Middleware\JavaApiKey::class,
     ];
 }

@@ -44,11 +44,6 @@ Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 
 # JAVA出款傳遞出款參數API
 
-Route::group(['middleware' => 'java.api.key'], function()
-{
-    //All the routes that belongs to the group goes here
-
-});
 
 # 代付下單
 Route::prefix('withdraw')->group(function ()

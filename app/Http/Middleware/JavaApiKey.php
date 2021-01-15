@@ -2,12 +2,25 @@
 
 namespace App\Http\Middleware;
 
+use App\Constants\Payments\ResponseCode;
+use App\Repositories\MerchantRepository;
+use App\Services\Signature;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class JavaApiKey
 {
+    private $repo;
+
+    private $signService;
+
+    public function __construct(MerchantRepository $repo, Signature $signService) {
+        $this->repo = $repo;
+        $this->signService = $signService;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -17,28 +30,17 @@ class JavaApiKey
      */
     public function handle(Request $request, Closure $next)
     {
+        $user = $request->user();
+        $key = $this->repo->getKey($user);
 
-        $ukey = env('JAVA_API_KEY');
+        $input = $request->input();
+        $userSign = $input['sign'] ?? '';
+        unset($input['sign']);
 
-        $input = $request->except('signature');
+        $sign = $this->signService->makeSign($request->input(), $key);
 
-        $inputSignature = $request->signature;
-
-        ksort($input);
-
-        $sign_str = '';
-        foreach ($input as $key => $value) {
-            $sign_str  .= $key . '=' . $value . '&';
-        }
-
-        $sign_str = substr($sign_str, 0 , -1);
-
-
-        $signature = md5($sign_str . $ukey);
-
-        if ( $signature !== strtolower($inputSignature)) {
-
-            return Response()->json(['java api key '=>' error ']);
+        if ($sign !== $userSign && config('app.env') !== 'local') {
+            return RB::error(ResponseCode::ERROR_SIGN);
         }
 
         return $next($request);
