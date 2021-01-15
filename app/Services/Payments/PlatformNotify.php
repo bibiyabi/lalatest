@@ -24,9 +24,7 @@ class PlatformNotify
 
     public function setOrder($order){
         $this->order = $order;
-        var_dump($this->order->order_id);
         $merchant = $order->merchant;
-        var_dump($merchant);
 
         $this->javaKey = $this->repo->getKey($merchant);
         $this->javaUrl = $this->repo->getNotifyUrl($merchant);

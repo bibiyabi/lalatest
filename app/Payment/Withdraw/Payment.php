@@ -131,14 +131,10 @@ class Payment implements PaymentInterface
         echo 'endOrder';
     }
 
-    public function callbackNotifyToQueue($callbackRes) {
-
-        if (empty($callbackRes['data']['order_id'])) {
-            Log::channel('withdraw')->error(__LINE__ , $callbackRes->toArray());
-        }
+    public function callbackNotifyToQueue($order) {
 
         Bus::chain([
-            new Notify($callbackRes['data']),
+            new Notify($order),
         ])->catch(function (Throwable $e) {
             echo $e->getMessage() . __LINE__ . "\r\n";
 

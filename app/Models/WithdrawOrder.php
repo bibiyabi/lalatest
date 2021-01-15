@@ -29,4 +29,5 @@ class WithdrawOrder extends Model
     {
         return $this->belongsTo(Merchant::class, 'user_id', 'id');
     }
+
 }
