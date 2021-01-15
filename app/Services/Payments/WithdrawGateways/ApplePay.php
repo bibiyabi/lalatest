@@ -22,7 +22,7 @@ class ApplePay extends AbstractWithdrawGateway
         $this->curl = $curl;
     }
 
-    public function setRequest($data) {
+    public function setRequest($data=[],$setting=[]) {
 
        Log::channel('withdraw')->info(__LINE__ , $data);
 

@@ -38,6 +38,8 @@ return [
         CODE::DATABASE_FAILED               => '资料库错误',
         CODE::DUPLICATE_ORDERID             => '订单号重复',
         CODE::GATEWAY_NOT_FOUND             => '无此通道资讯',
+        CODE::ERROR_SIGN                    => '签章错误',
+        CODE::AUTHENTICATE_FAILED           => '登入异常',
 
 	],
 
