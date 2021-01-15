@@ -69,7 +69,9 @@ class GatewayController extends Controller
             return RB::success([],CODE::RESOURCE_NOT_FOUND);
         }
 
-        return RB::success($result,CODE::SUCCESS);
+        $resultEncode = urlencode(json_encode($result));
+
+        return RB::success($resultEncode,CODE::SUCCESS);
     }
 
 
@@ -114,7 +116,9 @@ class GatewayController extends Controller
             return RB::error(CODE::ERROR_DATA_IN_PAYMENT);
         }
 
-        return RB::success($result,CODE::SUCCESS);
+        $resultEncode = urlencode(json_encode($result));
+
+        return RB::success($resultEncode,CODE::SUCCESS);
 
     }
 
