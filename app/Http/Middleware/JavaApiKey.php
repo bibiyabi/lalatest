@@ -37,7 +37,7 @@ class JavaApiKey
         $userSign = $input['sign'] ?? '';
         unset($input['sign']);
 
-        $sign = $this->signService->makeSign($request->input(), $key);
+        $sign = $this->signService->makeSign($input, $key);
 
         if ($sign !== $userSign && config('app.env') !== 'local') {
             return RB::error(ResponseCode::ERROR_SIGN);
