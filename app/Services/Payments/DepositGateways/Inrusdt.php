@@ -12,15 +12,21 @@ class Inrusdt implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
-    public function getDepositHttpMethod(): string
-    {
-        return 'post';
-    }
+    private $method = 'post';
 
-    protected function getUrl(): string
-    {
-        return 'https://www.inrusdt.com';
-    }
+    private $url = 'https://www.inrusdt.com';
+
+    private $returnType = 'form';
+
+    private $keyStatus = 'status';
+
+    private $keyOrderId = 'orderId';
+
+    private $keySign = 'sign';
+
+    private $keyAmount = 'amount';
+
+    private $successReturn = 'success';
 
     protected function createParam(Order $order, Setting $key): array
     {
@@ -42,11 +48,6 @@ class Inrusdt implements DepositGatewayInterface
         return md5($str . '&key=' . $key);
     }
 
-    public function getReturnType(): string
-    {
-        return 'form';
-    }
-
     public function processOrderResult($unprocessed): string
     {
         return $unprocessed;
@@ -66,31 +67,6 @@ class Inrusdt implements DepositGatewayInterface
         ];
 
         return strtoupper(md5(http_build_query($data)));
-    }
-
-    protected function getCallbackKeyStatus()
-    {
-        return 'status';
-    }
-
-    protected function getCallbackKeyOrderId()
-    {
-        return 'merchantBizNum';
-    }
-
-    protected function getCallbackKeySign()
-    {
-        return 'sign';
-    }
-
-    protected function getCallbackKeyAmount()
-    {
-        return 'money';
-    }
-
-    protected function getCallbackSuccessReturn()
-    {
-        return 'ok';
     }
 
     public function getPlaceholder():array
