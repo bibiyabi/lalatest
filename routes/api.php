@@ -6,6 +6,8 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawOrderController;
 use App\Http\Controllers\GatewayController;
+use App\Models\Order;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,8 +20,10 @@ use App\Http\Controllers\GatewayController;
 */
 
 Route::prefix('test')->group(function() {
-    Route::get('bbb', function (){
-        return 123;
+    Route::post('bbb', function (){
+        $order = Order::first();
+        // dd($order->toArray());
+        return $order->merchant;
     });
 
     Route::get('user', function (Request $request)
@@ -36,7 +40,6 @@ Route::delete('key',[SettingController::class, 'destroy']);
 Route::get('vendor/list',[GatewayController::class,'index']);
 
 # 提示字
-Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 
 # JAVA出款傳遞出款參數API

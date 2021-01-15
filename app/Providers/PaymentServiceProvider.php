@@ -43,12 +43,5 @@ class PaymentServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        $this->app->when(DepositService::class)
-            ->needs(DepositGatewayInterface::class)
-            ->give(function () {
-                return new Inrusdt();
-            });
-
-
     }
 }
