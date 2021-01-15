@@ -4,14 +4,9 @@
 return [
     #渠道名稱
     'type' => [
-        'bank_card'         => 1,
-        'e_wallet'          => 2,
-        'cryptocurrency'    => 3,
-        'credit_card'       => 4,
+        'credit_card'       => 1,
+        'bank_card'         => 2,
+        'e_wallet'          => 3,
+        'cryptocurrency'    => 4,
     ],
-
-
-
-
-
 ];
