@@ -9,4 +9,12 @@ return [
         'e_wallet'          => 3,
         'cryptocurrency'    => 4,
     ],
+
+    #所有渠道
+    'typeName' => [
+        1 => 'credit_card',
+        2 => 'bank_card',
+        3 => 'e_wallet',
+        4 => 'cryptocurrency',
+    ],
 ];

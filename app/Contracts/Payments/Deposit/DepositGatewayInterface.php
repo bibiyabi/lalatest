@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Payments\Deposit;
 
-use App\Contracts\Payments\PlaceholderParams;
+use App\Contracts\Payments\Placeholder;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
 use App\Contracts\Payments\OrderResult;
@@ -38,22 +38,22 @@ interface DepositGatewayInterface
     /**
      * 取得返回格式 form url
      *
-     * @return void
+     * @return string
      */
     public function getReturnType(): string;
 
     /**
      * 處裡下單回調
      *
-     * @param Order $order
-     * @return OrderResult
+     * @param Request $order
+     * @return CallbackResult
      */
     public function depositCallback(Request $order) : CallbackResult;
 
     /**
      * 提示字
-     * @return array
-     *
+     * @param $type
+     * @return Placeholder
      */
-    public function getPlaceholder():array;
+    public function getPlaceholder($type):Placeholder;
 }

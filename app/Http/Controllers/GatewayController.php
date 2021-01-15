@@ -98,13 +98,12 @@ class GatewayController extends Controller
         try {
             if ($request->input('is_deposit') == 1){# for deposit
                 $gateway = DepositGatewayFactory::createGateway($gatewayName);
-                $result = $gateway->getPlaceholder();
-
             }else{# for withdraw
                 $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
-
-                $result = $gateway->getPlaceholder();
             }
+            $placeholder = $gateway->getPlaceholder($request->input('type'));
+            $result = $placeholder->toArray();
+
         }catch(\Throwable $e){
             $errMsg = [
                 'errorPath' => self::class,

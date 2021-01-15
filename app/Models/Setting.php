@@ -11,6 +11,8 @@ class Setting extends Model
 
     protected $table = 'settings';
 
+//    public $timestamps = true;
+
     protected $fillable = [
         'user_id',
         'gateway_type_id',

@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Payments\WithdrawGateways;
 
+use App\Contracts\Payments\Placeholder;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
@@ -165,7 +166,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
     }
 
-    public function getPlaceholder():array
+    public function getPlaceholder($type):Placeholder
     {
         return [
             P::PRIVATE_KEY => '提现密码',
