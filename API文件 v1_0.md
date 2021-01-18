@@ -1,4 +1,4 @@
-# API文件 V2
+# API文件 V3
 
 ## API必帶參數
 
@@ -17,6 +17,11 @@
 ### V2
 
 * 提現下單、充值下單 ，type 改吃字串，gateway_coe 改名 transaction_type
+
+### V3
+
+* 提現新增 bank_province、bank_address、bank_city 三個參數。
+* 提現 transaction_type、ifsc 補上對應欄位序號。
 
 ---
 
@@ -175,7 +180,7 @@ GET /api/placeholder
 
 | 欄位         | 型態    | 必要參數 | 說明                                                      |
 | ------------ | ------- | -------- | :-------------------------------------------------------- |
-| is_deposit   | integer | V        | 入款=1 / 出款=0                                            |
+| is_deposit   | integer | V        | 入款=1 / 出款=0                                           |
 | type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | gateway_name | string  | V        | 金流商/交易所名稱                                         |
 
@@ -277,8 +282,11 @@ POST /api/deposit/create
 | first_name       | string  |          | 28                 | 名字                                                      |
 | telegram         | string  |          | 29                 | telegram                                                  |
 | expired_date     | string  |          | 30                 | 到期日期 mm/yyyy                                          |
-| transaction_type | string  |          | -                  | 金流商（銀行） 通道代碼                                   |
-| ifsc             | string  |          | -                  | ifsc                                                      |
+| transaction_type | string  |          | 31                 | 金流商（銀行） 通道代碼                                   |
+| ifsc             | string  |          | 32                 | ifsc                                                      |
+| bank_province    | string  |          | 33                 | 銀行所在省                                                |
+| bank_address     | string  |          | 34                 | 銀行地址                                                  |
+| bank_city        | string  |          | 35                 | 銀行所在城市                                              |
 
 Response example:
 
