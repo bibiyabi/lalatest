@@ -11,8 +11,8 @@ use App\Payment\Withdraw\Payment;
 use App\Services\Payments\Deposit\DepositService;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Services\Payments\Gateways\Inrusdt;
-
-class PaymentServiceProvider extends ServiceProvider
+use Illuminate\Contracts\Support\DeferrableProvider;
+class PaymentServiceProvider extends ServiceProvider implements DeferrableProvider
 {
 
 
@@ -23,16 +23,10 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
         $this->app->bind(
             PaymentInterface::class,
             Payment::class
         );
-
-
-
-
-
     }
 
     /**
@@ -43,5 +37,10 @@ class PaymentServiceProvider extends ServiceProvider
     public function boot()
     {
 
+    }
+
+    public function provides()
+    {
+        return [PaymentInterface::class];
     }
 }

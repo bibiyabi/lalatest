@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Jobs\Payment\Withdraw\Notify;
 use App\Services\AbstractWithdrawGateway;
 use App\Repositories\Orders\WithdrawRepository;
+use Illuminate\Http\Request;
+use App\Constants\Payments\ResponseCode;
 
 class Payment implements PaymentInterface
 {
@@ -21,28 +23,28 @@ class Payment implements PaymentInterface
     private $settingRepository;
     private $settings;
     private $withdrawRepository;
+    private $user;
 
 
-    public function __construct(SettingRepository $k, WithdrawRepository $withdrawRepository)
+    public function __construct(WithdrawRepository $withdrawRepository, SettingRepository $settingRepository)
     {
-        $this->settingRepository = $k;
         $this->withdrawRepository = $withdrawRepository;
+        $this->settingRepository = $settingRepository;
     }
 
-    public function checkInputData($postData)  {
+    public function checkInputData(Request $request)  {
 
-        var_dump($postData);
-
-        $this->postData = $postData;
+        $this->postData = $request->post();
+        $this->user = $request->user();
 
         $validator = Validator::make($this->postData, [
             'payment_type' => 'required',
             'order_id'     => 'required',
-            'pk'      => 'required',
+            'pk'           => 'required',
         ]);
 
         if ($validator->fails()) {
-            throw new WithdrawException('input fail');
+            throw new WithdrawException($validator->fails(), ResponseCode::ERROR_PARAMETERS);
         }
 
         $this->defaultOrderParams($this->postData);
@@ -82,25 +84,21 @@ class Payment implements PaymentInterface
 
     }
 
+    public function setOrderToDb() {
 
-    private function setOrderToDb() {
-
-        //DB::enableQueryLog();
-        #$this->postData['user_id'] = 1;
-        #$this->postData['pk'] = 6;
-        $settings = $this->settingRepository->filterCombinePk($this->postData['user_id'], $this->postData['pk'])->first();
+        $settings = $this->settingRepository->filterCombinePk($this->user->id, $this->postData['pk'])->first();
 
         $this->settings = collect($settings);
 
         if (! $this->settings->has('id')) {
-            throw new WithdrawException('setting not has user_id', 0 );
+            throw new WithdrawException('setting not found, pk' . $this->postData['pk'] , ResponseCode::RESOURCE_NOT_FOUND);
         }
 
-        $this->postData['order_id'] = $this->postData['order_id']. uniqid();
+        //$this->postData['order_id'] = $this->postData['order_id']. uniqid();
 
         WithdrawOrder::create([
             'order_id'    => $this->postData['order_id'],
-            'user_id'     => $this->postData['user_id'],
+            'user_id'     => $this->user->id,
             'key_id'      => $this->settings->get('id'),
             'amount'      => $this->postData['amount'],
             'real_amount' => $this->postData['amount'],
@@ -108,12 +106,12 @@ class Payment implements PaymentInterface
             'status'      => 1,
             'order_param' => json_encode($this->postData, true),
         ]);
+
+        return $this;
     }
 
 
-    public function createToQueue()  {
-
-        $this->setOrderToDb();
+    public function dispatchOrderQueue()  {
 
         $this->postData['key_id'] = $this->settings->get('id');
         $this->postData['gateway_id'] = $this->settings->get('gateway_id');
@@ -127,8 +125,6 @@ class Payment implements PaymentInterface
             echo $e->getMessage() . __LINE__ . "\r\n";
         })->dispatch();
 
-        echo __LINE__ ."\r\n";
-        echo 'endOrder';
     }
 
     public function callbackNotifyToQueue($order) {
@@ -141,9 +137,8 @@ class Payment implements PaymentInterface
         })->dispatch();
     }
 
-    public function callback($postData , AbstractWithdrawGateway $gateway) {
-        $gatewayRes =  $gateway->callback($postData);
-        return $gatewayRes;
+    public function callback(Request $request , AbstractWithdrawGateway $gateway) {
+        return $gateway->callback($request);
     }
 
 

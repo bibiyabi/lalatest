@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\Payment\DepositController;
-use App\Http\Controllers\Payment\WithdrawOrderController;
+use App\Http\Controllers\Payment\WithdrawController;
 use App\Http\Controllers\GatewayController;
 use App\Models\Order;
 
@@ -43,13 +43,17 @@ Route::get('vendor/list',[GatewayController::class,'index']);
 Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 
 # JAVA出款傳遞出款參數API
+Route::post('aaa',function (Request $request)
+{
+    echo '@@@';
+});
 
 
 # 代付下單
 Route::prefix('withdraw')->group(function ()
 {
-    Route::post('create', [WithdrawOrderController::class, 'create']);
-    Route::post('callback/{gatewayName}', [WithdrawOrderController::class, 'callback']);
+    Route::post('create', [WithdrawController::class, 'create']);
+    Route::post('callback/{gatewayName}', [WithdrawController::class, 'callback']);
 });
 
 

@@ -13,7 +13,7 @@ trait Proxy
     */
     public function getServerUrl($https = 0) {
 
-        if (env('APP_ENV', false) == 'ONLINE') {
+        if (config('app.env') == 'ONLINE') {
             if ($https) {
                 return 'http://' . $this->production_ip.':8443';
             }

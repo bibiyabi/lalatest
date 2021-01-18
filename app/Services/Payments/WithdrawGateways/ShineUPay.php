@@ -11,6 +11,8 @@ use App\Services\Payments\ResultTrait;
 use App\Constants\Payments\PlaceholderParams as P;
 use App\Repositories\Orders\WithdrawRepository;
 use Exception;
+use App\Constants\Payments\ResponseCode;
+use Illuminate\Http\Request;
 
 class ShineUPay extends AbstractWithdrawGateway
 {
@@ -85,6 +87,8 @@ class ShineUPay extends AbstractWithdrawGateway
 
        $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $setting['md5_key']);
 
+
+
        return $this;
     }
 
@@ -95,62 +99,73 @@ class ShineUPay extends AbstractWithdrawGateway
 
 
     public function send() {
-       // $url = $this->getServerUrl(1) . '/withdraw/create';
+        $url = 'https://testgateway.shineupay.com/withdraw/create';
+
+        /*
+      $url = $this->getServerUrl(1) . '/withdraw/create';
+       //
+
+        echo '@@@@@@@@@@@@@@'.$url;
+
+        $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
+            'Content-Type: application/json',
+            'Api-Sign: '. $this->headerApiSign,
+            "HOST: testgateway.shineupay.com",
+        ])->setPost([])->exec();
+exit;*/
 
 
        $url = 'https://'.$this->domain. '/withdraw/create';
         $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
-            'Content-Type: application/json; charset=UTF-8',
-            'Accept: application/json',
+            'Content-Type: application/json',
             'Api-Sign: '. $this->headerApiSign,
-            //  "HOST: ".$this->domain,
+            "HOST: ".'testgateway.shineupay.com',
         ])->setPost(json_encode($this->curlPostData))->exec();
 
         # todo check order status
         if ($curlRes['code'] == Curl::STATUS_SUCCESS) {
-            return $this->resCreateSuccess('', ['order_id' => $this->curlPostData['body']['orderId']]);
+            $resData = json_decode($curlRes['data'], true);
+            if (isset($resData['body']['platformOrderId']) && $resData['status'] == 0) {
+                return $this->resCreateSuccess('', ['order_id' => $this->curlPostData['body']['orderId']]);
+            } else {
+                return $this->resCreateFailed('', ['order_id' => $this->curlPostData['body']['orderId']]);
+            }
         }
         if ($curlRes['code'] == Curl::FAILED) {
-            return $this->resCreateSuccess('', ['order_id' => $this->curlPostData['body']['orderId']]);
+            return $this->resCreateFailed('', ['order_id' => $this->curlPostData['body']['orderId']]);
         }
         if ($curlRes['code'] == Curl::TIMEOUT) {
             return $this->resCreateRetry('', ['order_id' => $this->curlPostData['body']['orderId']]);
         }
     }
 
-    public function callback($post) {
+    public function callback(Request $request) {
 
-        var_dump($post);
+        $postData  = $request->post();
 
-        $post['post'] = '{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchantId":"A5LB093F045C2322","timestamp":"1610691875552"}';
+        $postDecode = json_decode($postData, true);
 
-        Log::channel('withdraw')->info(__LINE__ . json_encode($post));
-
-        $postDecode = json_decode($post['post'], true);
-        $post['headers']['HTTP_API_SIGN'] = '5142aade809d9a4038392426c74f859a';
-        $postMd5 = $post['headers']['HTTP_API_SIGN'];
+        $postMd5  = $request->header('HTTP_API_SIGN');
 
         $validator = Validator::make($postDecode, [
             'body.orderId' => 'required',
         ]);
 
         if($validator->fails()){
-            throw new WithdrawException('callback input check error'. json_encode($validator->errors()));
+            throw new WithdrawException('callback input check error'. json_encode($validator->errors()), ResponseCode::EXCEPTION);
         }
 
         $order = $this->withdrawRepository->filterOrderId($postDecode['body']['orderId'])->first();
         if (empty($order)) {
-            #throw new WithdrawException("Order not found.");
-        }
-        /*
-        $key = $order->key;
-        if (empty($key)) {
-            throw new WithdrawException("Order not found.");
+            throw new WithdrawException("Order not found." , ResponseCode::EXCEPTION);
         }
 
-        $checkSign = $this->genSign($post, $key->md5_key);
-        */
-        $checkSign = $this->genSign($post['post'], 'fed8b982f9044290af5aba64d156e0d9');
+        $key = $order->key;
+        if (empty($key)) {
+            throw new WithdrawException("key not found." , ResponseCode::EXCEPTION);
+        }
+
+        $checkSign = $this->genSign($postData, $key->md5_key);
 
         if ($checkSign == $postMd5) {
 
@@ -171,10 +186,6 @@ class ShineUPay extends AbstractWithdrawGateway
             P::PRIVATE_KEY => '提现密码',
             P::MD5_KEY => '商户秘钥',
         ];
-    }
-
-    public function checkCallbackSign() {
-
     }
 
     public function getRequireColumns() {

@@ -179,8 +179,8 @@ return [
 
         App\Providers\GatewayServiceProvider::class,
         App\Providers\PaymentServiceProvider::class,
-
-
+        App\Providers\WithdrawOrderQueueServiceProvider::class,
+        App\Providers\WithdrawNotifyQueueServiceProvider::class,
     ],
 
     /*

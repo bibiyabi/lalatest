@@ -7,15 +7,17 @@ use App\Jobs\Payment\Withdraw\Order;
 
 use App\Repositories\GatewayRepository;
 use App\Exceptions\WithdrawException;
+use App\Http\Controllers\Payment\WithdrawController;
 use App\Repositories\SettingRepository;
 use App\Services\Payments\PlatformNotify;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Orders\WithdrawRepository;
 use App\Services\AbstractWithdrawGateway;
-
-
-
-class GatewayServiceProvider extends ServiceProvider
+use Exception;
+use Illuminate\Support\Facades\App;
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Http\Request;
+class GatewayServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Register services.
@@ -24,7 +26,8 @@ class GatewayServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
+        // queue.php 為sync 測試再打開
+        $this->createGateway('ShineUPay');
     }
 
     /**
@@ -32,45 +35,39 @@ class GatewayServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(GatewayRepository $gatewayRepository, SettingRepository $settingRepository, PlatformNotify $platformNotify, WithdrawRepository $withdrawRepository)
+    public function boot()
     {
-        $this->app->bindMethod([Order::class, 'handle'], function ($job, $app)
-            use ($gatewayRepository, $settingRepository) {
 
-            $request = $job->getRequest();
-            $request['gateway_id'] = 3;
-            $gateway = $gatewayRepository->filterGatewayId($request['gateway_id'])->first();
+        if ($this->app->request->segment(3) == 'withdraw' && $this->app->request->segment(4) == 'callback') {
+            $gatewayName = $this->app->request->segment(4);
 
-            $gateway = collect($gateway);
-            if (! $gateway->has('name')) {
-                throw new WithdrawException('aaa', 0);
-            }
+            $this->createGateway($gatewayName);
+        }
 
-            $gatewayName = $gateway->get('name');
-            $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
-            return $job->handle($app->make($className), $settingRepository);
-        });
+    }
 
+    public function createGateway($gatewayName) {
 
-        $this->app->bindMethod([Notify::class, 'handle'], function ($job, $app)
-            use ($withdrawRepository, $platformNotify) {
-            return $job->handle($app->make(Notify::class), $withdrawRepository, $platformNotify);
-        });
+        if (empty($gatewayName)) {
+            throw new WithdrawException(__LINE__ . 'gateway name not found s', 22);
+        }
+        $filePath = app_path(). '\Services\Payments\WithdrawGateways\\' . $gatewayName. '.php';
 
+        if (! file_exists($filePath)) {
+            throw new WithdrawException($gatewayName . 'gateway not found', 22);
+        }
 
-        $this->app->bind(AbstractWithdrawGateway::class, function ($app) {
-            $gatewayName =  $app->request->segment(4);
-            if (empty($gatewayName)) {
-                throw new WithdrawException('aaa', 0);
-            }
+        $this->app->bind(AbstractWithdrawGateway::class, function ($app) use ($gatewayName){
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
             return $app->make($className);
         });
 
 
 
+    }
 
-
-
+    public function provides()
+    {
+        return [AbstractWithdrawGateway::class];
     }
 }
