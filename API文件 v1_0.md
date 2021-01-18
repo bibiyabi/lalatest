@@ -32,8 +32,10 @@ POST /api/key
 | 欄位                | 型態    | 必要參數 | 說明                            |
 | ------------------- | ------- | -------- | :------------------------------ |
 | id                  | integer | V        | 出/入款id /java unique  id      |
-| info_title          | string  |          | 信息名稱                        |
 | gateway_id          | integer | V        | 金流商/交易所 id                |
+| data                | string | V        |  將以下欄位全部urlencode再json_encode |
+
+| info_title          | string  |          | 信息名稱                        |
 | transaction_type    | string  |          | 交易方式-出入款:信用卡/電子錢包 |
 | account             | string  |          | 金流帳戶號                      |
 | merchant_number     | string  |          | 金流商戶號                      |

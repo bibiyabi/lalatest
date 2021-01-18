@@ -15,6 +15,20 @@ class SettingController extends Controller
     # Setting payment keys from java.
     public function store(Request $request)
     {
+        if (empty($request->all())|| empty($request->input('data'))){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => 'INPUT PARAMS IS EMPTY.',
+            ];
+            Log::info(json_encode($errMsg));
+            return RB::error(CODE::ERROR_PARAMETERS);
+        }
+
+        $dataJson = urldecode($request->input('data'));
+        $data = json_decode($dataJson, true);
+        $data['id'] = $request->input('id');
+        $data['gateway_id'] = $request->input('gateway_id');
+
         $rules = [
             "id"                  => "required|integer",
             "info_title"          => "nullable|string",
@@ -34,7 +48,7 @@ class SettingController extends Controller
             "note1"               => "nullable|string",
             "note2"               => "nullable|string",
         ];
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($data, $rules);
 
         if ($validator->fails()){
             $errMsg = [
@@ -48,20 +62,17 @@ class SettingController extends Controller
 
         $settingId = DB::table('settings')
             ->select('id')
-            ->where('user_pk','=',$request->input('id'))
+            ->where('user_pk','=',$data['id'])
             ->get();
-
-        $setting_json = $request->all();
-        unset($setting_json['id'],$setting_json['gateway_id']);
 
         try {
             if (empty($settingId[0]->id)){
                 # create
                 DB::table('settings')->insert([
                     'user_id'       => $request->user()->id,
-                    'gateway_id'    => $request->input('gateway_id'),
-                    'user_pk'       => $request->input('id'),
-                    'settings'      => json_encode($setting_json),
+                    'gateway_id'    => $data['gateway_id'],
+                    'user_pk'       => $data['id'],
+                    'settings'      => $dataJson,
                     'created_at'    => date('Y-m-d H:i:s', time()),
                     'updated_at'    => date('Y-m-d H:i:s', time()),
                 ]);
@@ -69,11 +80,10 @@ class SettingController extends Controller
                 # update
                 DB::table('settings')->where('id', '=', $settingId[0]->id)
                     ->update([
-                        'gateway_id'    => $request->input('gateway_id'),
-                        'settings'      => json_encode($setting_json),
+                        'gateway_id'    => $data['gateway_id'],
+                        'settings'      => $dataJson,
                         'updated_at'    => date('Y-m-d H:i:s', time()),
                 ]);
-
             }
         }catch (\Throwable $e){
             $errMsg = [
