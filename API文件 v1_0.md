@@ -128,10 +128,11 @@ GET /api/vendor/list
 
 | 欄位       | 型態    | 必要參數 | 說明                                                      |
 | ---------- | ------- | -------- | :-------------------------------------------------------- |
-| is_deposit | integer | V        | 出款=1 / 入款=0                                           |
+| is_deposit | integer | V        | 入款=1 / 出款=0                                           |
 | type       | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 
 Response example:
+備註: data裡的資料會被urlencode
 
 ```json
 {
@@ -174,10 +175,11 @@ GET /api/placeholder
 
 | 欄位         | 型態    | 必要參數 | 說明                                                      |
 | ------------ | ------- | -------- | :-------------------------------------------------------- |
-| is_deposit   | integer | V        | 出款=1 /入款=0                                            |
+| is_deposit   | integer | V        | 入款=1 / 出款=0                                            |
 | type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | gateway_name | string  | V        | 金流商/交易所名稱                                         |
 
+備註: data裡的資料會被urlencode
 
 ```json
 {
@@ -204,13 +206,14 @@ GET /api/placeholder
                        "CC60"
             ],
             "apiKey": "key",
+            "cryptoAddress": "add",
             "note1": "lala",
             "note2": "yoyo"
         }
 }
 ```
 
-回傳欄位說明:回傳值皆不固定輸出
+回傳欄位說明:回傳值依據出入款及渠道不同而不固定輸出
 
 | 欄位                 | 型態   |
 | -------------------- | ------ |
@@ -222,6 +225,7 @@ GET /api/placeholder
 | `transactionType`    | array  |
 | `coin`               | array  |
 | `blockchainContract` | array  |
+| `cryptoAddress`      | string |
 | `apiKey`             | string |
 | `note1`              | string |
 | `note2`              | string |

@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+use App\Contracts\Payments\Placeholder;
 use Illuminate\Http\Request;
 
 abstract class AbstractWithdrawGateway
@@ -14,7 +15,7 @@ abstract class AbstractWithdrawGateway
 
     abstract public function send() ;
 
-    abstract public function getPlaceholder():array;
+    abstract public function getPlaceholder($type):Placeholder;
 
     public function __get($attribute)
     {

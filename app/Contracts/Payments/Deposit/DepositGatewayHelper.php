@@ -11,6 +11,16 @@ use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 trait DepositGatewayHelper
 {
+    public function getDepositHttpMethod(): string
+    {
+        return $this->method;
+    }
+
+    public function getReturnType(): string
+    {
+        return $this->returnType;
+    }
+
     public function genDepositParam(Order $order): HttpParam
     {
         $param = $this->createParam($order, $order->key);
@@ -23,7 +33,10 @@ trait DepositGatewayHelper
 
     abstract protected function createSign(array $param, Setting $key): string;
 
-    abstract protected function getUrl(): string;
+    protected function getUrl(): string
+    {
+        return $this->url;
+    }
 
     protected function getHeader(): array
     {
@@ -42,19 +55,19 @@ trait DepositGatewayHelper
 
     protected function getMethod()
     {
-        return 'post';
+        return $this->method;
     }
 
     public function depositCallback(Request $request): CallbackResult
     {
         $data = $request->all();
-        $status = isset($data[$this->getCallbackKeyStatus()])  ? (bool)$data[$this->getCallbackKeyStatus()] : false;
+        $status = isset($data[$this->getKeyStatus()])  ? (bool)$data[$this->getKeyStatus()] : false;
 
-        if (!isset($data[$this->getCallbackKeyOrderId()])) {
+        if (!isset($data[$this->getKeyOrderId()])) {
             throw new NotFoundResourceException("OrderId not found.");
         }
 
-        $order = Order::where('order_id', $data[$this->getCallbackKeyOrderId()])->first();
+        $order = Order::where('order_id', $data[$this->getKeyOrderId()])->first();
         if (empty($order)) {
             throw new NotFoundResourceException("Order not found.");
         }
@@ -65,8 +78,8 @@ trait DepositGatewayHelper
         }
 
         if (
-            !isset($data[$this->getCallbackKeySign()])
-            || $data[$this->getCallbackKeySign()] != $this->createCallbackSign($data, $key)
+            !isset($data[$this->getKeySign()])
+            || $data[$this->getKeySign()] != $this->createCallbackSign($data, $key)
         ) {
             throw new NotFoundResourceException("Sign error.");
         }
@@ -75,6 +88,31 @@ trait DepositGatewayHelper
             return new CallbackResult(false, $this->getCallbackSuccessReturn(), $order);
         }
 
-        return new CallbackResult(true, $this->getCallbackSuccessReturn(), $order, $data[$this->getCallbackKeyAmount()]);
+        return new CallbackResult(true, $this->getCallbackSuccessReturn(), $order, $data[$this->getKeyAmount()]);
+    }
+
+    protected function getKeyStatus()
+    {
+        return $this->keyStatus;
+    }
+
+    protected function getKeyOrderId()
+    {
+        return $this->keyOrderId;
+    }
+
+    protected function getKeySign()
+    {
+        return $this->keySign;
+    }
+
+    protected function getKeyAmount()
+    {
+        return $this->keyAmount;
+    }
+
+    protected function getCallbackSuccessReturn()
+    {
+        return $this->successReturn;
     }
 }
