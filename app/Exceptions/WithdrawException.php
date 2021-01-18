@@ -8,6 +8,6 @@ class WithdrawException extends Exception
 {
     public function render(Request $request)
     {
-        return RB::asError(ResponseCode::ERROR_CONFIG_PARAMETERS)->withMessage($this->getMessage())->build();
+        return RB::asError($this->getCode())->withMessage($this->getMessage())->build();
     }
 }
