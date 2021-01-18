@@ -175,7 +175,7 @@ GET /api/placeholder
 
 | 欄位         | 型態    | 必要參數 | 說明                                                      |
 | ------------ | ------- | -------- | :-------------------------------------------------------- |
-| is_deposit   | integer | V        | 入款=1 / 出款=0                                            |
+| is_deposit   | integer | V        | 入款=1 / 出款=0                                           |
 | type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | gateway_name | string  | V        | 金流商/交易所名稱                                         |
 
@@ -333,16 +333,16 @@ POST /api/withdraw/order
 | user_state       | string  |          | 7                         | 使用者區                                                  |
 | user_city        | string  |          | 8                         | 使用者城市                                                |
 | user_address     | string  |          | 9                         | 使用者地址                                                |
-| bank_province    | string  |          |                           | 銀行省                                                    |
-| bank_city        | string  |          |                           | 銀行城市                                                  |
-| bank_address     | string  |          |                           | 銀行地址                                                  |
+| bank_province    | string  |          | 19                        | 銀行省                                                    |
+| bank_city        | string  |          | 21                        | 銀行城市                                                  |
+| bank_address     | string  |          | 20                        | 銀行地址                                                  |
 | last_name        | string  |          | 10                        | 姓氏                                                      |
 | first_name       | string  |          | 11                        | 名字                                                      |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
 | withdraw_address | string  |          | 16                        | 銀行卡號  、電子錢包帳號 、   數字貨幣地址                |
-| transaction_type | string  |          |                           | 金流商（銀行） 通道代碼                                   |
-| ifsc             | string  |          |                           | ifsc                                                      |
+| transaction_type | string  |          | 17                        | 金流商（銀行） 通道代碼                                   |
+| ifsc             | string  |          | 18                        | ifsc                                                      |
 
 
 Response example:
