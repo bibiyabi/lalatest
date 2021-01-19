@@ -3,6 +3,7 @@
 
 namespace App\Contracts\Payments;
 
+use App\Constants\Payments\Type;
 
 class Placeholder
 {
@@ -55,7 +56,7 @@ class Placeholder
     public function toArray()
     {
         $type = $this->type;
-        $typeArray = config('params')['typeName'];
+        $typeArray = Type::typeName;
         $result = [];
         if ($type == $typeArray[4]){  # 加密貨幣
             $result = [

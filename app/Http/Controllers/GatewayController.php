@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\Payments\Type;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Constants\Payments\ResponseCode as CODE;
 use App\Contracts\Payments\WithdrawGatewayFactory;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
-
 
 class GatewayController extends Controller
 {
@@ -34,8 +34,8 @@ class GatewayController extends Controller
         }
 
         $type = 0;
-        if (array_key_exists($request->input('type'), config('params.type'))) {
-            $type = config('params.type')[$request->input('type')];
+        if (array_key_exists($request->input('type'), Type::type)) {
+            $type = Type::type[$request->input('type')];
         }else{
             return RB::error(CODE::ERROR_CONFIG_PARAMETERS);
         }

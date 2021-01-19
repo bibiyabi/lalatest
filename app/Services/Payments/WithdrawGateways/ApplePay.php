@@ -89,12 +89,7 @@ class ApplePay extends AbstractWithdrawGateway
     public function getPlaceholder($type):Placeholder
     {
         $transactionType = [];
-        if ($type == config('params')['typeName'][3]){
-            $transactionType = [
-                0 => 'inrpay',
-                1 => 'upi'
-            ];
-        }
+
 
         return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
             '',$transactionType);
