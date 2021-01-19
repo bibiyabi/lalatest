@@ -5,10 +5,11 @@ namespace App\Services\Payments\Deposit;
 
 use App\Models\Order;
 use App\Constants\Payments\Status;
+use App\Exceptions\NotifyException;
 use Illuminate\Support\Facades\Http;
 use App\Repositories\MerchantRepository;
 use App\Services\Signature;
-use Log;
+use Illuminate\Support\Facades\Log;
 
 class DepositNotify
 {
@@ -22,7 +23,7 @@ class DepositNotify
     {
         $merchant = $order->merchant;
         $key = $this->repo->getKey($merchant);
-        $url = $this->repo->getNotifyUrl($merchant);
+        $url = $this->repo->getNotifyUrl($merchant) . '/deposit/result';
 
         $data = [
             'orderId' => $order->order_id,
@@ -30,11 +31,12 @@ class DepositNotify
         ];
         $data['signature'] = Signature::makeSign($data, $key);
 
+        Log::info('Deposit-Notify Url:' . $url . '. Data:', $data);
         $response = Http::post($url, $data)->json();
 
         if (!isset($response['status']) || $response['status'] !== '200') {
-            Log::error('Deposit-Notify failed', $response ?? []);
-            return false;
+            Log::info('Deposit-Notify failed', $response ?? []);
+            throw new NotifyException();
         }
 
         Log::info('Deposit-Notify success');
