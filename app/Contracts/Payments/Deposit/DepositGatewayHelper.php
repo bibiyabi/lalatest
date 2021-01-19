@@ -63,7 +63,7 @@ trait DepositGatewayHelper
     public function depositCallback(Request $request): CallbackResult
     {
         $data = $request->all();
-        $status = isset($data[$this->getKeyStatus()]) ? $this->getKeyStatus() == $this->getKeyStatusSuccess() : true;
+        $status = isset($data[$this->getKeyStatus()]) ? $data[$this->getKeyStatus()] == $this->getKeyStatusSuccess() : true;
 
         if (!isset($data[$this->getKeyOrderId()])) {
             throw new NotFoundResourceException("OrderId not found.");
