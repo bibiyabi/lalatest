@@ -109,7 +109,6 @@ class GatewayController extends Controller
                 'msg'       => $e->getMessage(),
             ];
             Log::info(json_encode($errMsg));
-
             return RB::error(CODE::ERROR_DATA_IN_PAYMENT);
         }
 

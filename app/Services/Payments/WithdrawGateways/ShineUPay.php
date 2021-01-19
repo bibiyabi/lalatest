@@ -101,10 +101,10 @@ class ShineUPay extends AbstractWithdrawGateway
             'Api-Sign: '. $this->headerApiSign,
             "HOST: testgateway.shineupay.com",
         ])->setPost([])->exec();
-exit;*/
+        exit;*/
 
 
-       $url = 'https://'.$this->domain. '/withdraw/create';
+        $url = 'https://'.$this->domain. '/withdraw/create';
         $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
             'Content-Type: application/json',
             'Api-Sign: '. $this->headerApiSign,
@@ -171,10 +171,8 @@ exit;*/
 
     public function getPlaceholder($type):Placeholder
     {
-        return [
-            P::PRIVATE_KEY => '提现密码',
-            P::MD5_KEY => '商户秘钥',
-        ];
+        return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
+        '');
     }
 
     public function getRequireColumns() {
