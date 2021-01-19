@@ -29,6 +29,9 @@ class DepositNotify
             'orderId' => $order->order_id,
             'status' => $order->status === Status::CALLBACK_SUCCESS ? '000' : '001',
         ];
+        if ($order->status === Status::CALLBACK_SUCCESS) {
+            $data['amount'] = $order->real_amount;
+        }
         $data['signature'] = Signature::makeSign($data, $key);
 
         Log::info('Deposit-Notify Url:' . $url . '. Data:', $data);
