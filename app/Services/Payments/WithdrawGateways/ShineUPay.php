@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Payments\WithdrawGateways;
 
+use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\WithdrawRequireInfo;
 use App\Exceptions\WithdrawException;
@@ -185,11 +186,11 @@ class ShineUPay extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-        if ($type == config('params')['typeName'][2]){
+        if ($type == Type::typeName[2]){
             $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT);
-        }elseif($type == config('params')['typeName'][3]){
+        }elseif($type == Type::typeName[3]){
             $column = array(C::ADDRESS,C::AMOUNT,C::ADDRESS);
-        }elseif($type == config('params')['typeName'][4]){
+        }elseif($type == Type::typeName[4]){
             $column = array(C::CRYPTO_ADDRESS,C::CRYPTO_AMOUNT);
         }
 
