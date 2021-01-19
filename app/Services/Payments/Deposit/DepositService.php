@@ -10,6 +10,7 @@ use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
+use App\Exceptions\StatusLockedException;
 use App\Jobs\Payment\Deposit\Notify;
 use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
@@ -75,6 +76,8 @@ class DepositService
             $result = $gateway->depositCallback($request);
         } catch (NotFoundResourceException $e) {
             return new CallbackResult(false, $e->getMessage());
+        } catch (StatusLockedException $e) {
+            return new CallbackResult(true, $e->getMessage());
         }
 
         # update order

@@ -8,6 +8,8 @@ use App\Contracts\Payments\HttpParam;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use App\Constants\Payments\Status;
+use App\Exceptions\StatusLockedException;
 
 trait DepositGatewayHelper
 {
@@ -61,7 +63,7 @@ trait DepositGatewayHelper
     public function depositCallback(Request $request): CallbackResult
     {
         $data = $request->all();
-        $status = isset($data[$this->getKeyStatus()]) && $this->getKeyStatus() === $this->getKeyStatusSuccess();
+        $status = isset($data[$this->getKeyStatus()]) ? $this->getKeyStatus() === $this->getKeyStatusSuccess() : false;
 
         if (!isset($data[$this->getKeyOrderId()])) {
             throw new NotFoundResourceException("OrderId not found.");
@@ -78,10 +80,18 @@ trait DepositGatewayHelper
         }
 
         if (
-            !isset($data[$this->getKeySign()])
-            || $data[$this->getKeySign()] != $this->createCallbackSign($data, $key)
+            config('app.env') !== 'local'
+            && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $key))
         ) {
             throw new NotFoundResourceException("Sign error.");
+        }
+
+        if (in_array($order->status, [
+            Status::CALLBACK_SUCCESS,
+            Status::CALLBACK_FAILED,
+            Status::TERMINATED,
+        ])) {
+            throw new StatusLockedException($this->getKeyStatusSuccess());
         }
 
         if ($status === false) {
