@@ -35,7 +35,7 @@ trait DepositGatewayHelper
 
     protected function getUrl(): string
     {
-        return $this->url;
+        return $this->url . $this->orderUri;
     }
 
     protected function getHeader(): array
@@ -61,7 +61,7 @@ trait DepositGatewayHelper
     public function depositCallback(Request $request): CallbackResult
     {
         $data = $request->all();
-        $status = isset($data[$this->getKeyStatus()])  ? (bool)$data[$this->getKeyStatus()] : false;
+        $status = isset($data[$this->getKeyStatus()]) && $this->getKeyStatus() === $this->getKeyStatusSuccess();
 
         if (!isset($data[$this->getKeyOrderId()])) {
             throw new NotFoundResourceException("OrderId not found.");
@@ -94,6 +94,11 @@ trait DepositGatewayHelper
     protected function getKeyStatus()
     {
         return $this->keyStatus;
+    }
+
+    protected function getKeyStatusSuccess()
+    {
+        return $this->keyStatusSuccess;
     }
 
     protected function getKeyOrderId()

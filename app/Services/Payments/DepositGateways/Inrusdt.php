@@ -19,9 +19,13 @@ class Inrusdt implements DepositGatewayInterface
 
     private $url = 'https://www.inrusdt.com';
 
+    private $orderUri = '/b/recharge';
+
     private $returnType = 'form';
 
     private $keyStatus = 'status';
+
+    private $keyStatusSuccess = 1;
 
     private $keyOrderId = 'orderId';
 
