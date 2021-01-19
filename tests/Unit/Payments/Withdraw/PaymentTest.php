@@ -53,8 +53,17 @@ class PaymentTest extends TestCase
         $payment = new Payment(new WithdrawRepository, $settingMock);
 
         $request = Mockery::mock('Illuminate\Http\Request');
+
+
         $request->shouldReceive('post')
-        ->once()
+        ->andReturn([
+            'payment_type' => 1,
+            'order_id'     => $orderId,
+            'pk'      => 1,
+            'amount' => 10
+        ]);
+
+        $request->shouldReceive('all')
         ->andReturn([
             'payment_type' => 1,
             'order_id'     => $orderId,
@@ -108,6 +117,8 @@ class PaymentTest extends TestCase
             'order_id' => $orderId
         ]);
 
+        return ['payment' => $payment];
+
     }
 
     public function test_callback() {
@@ -124,9 +135,6 @@ class PaymentTest extends TestCase
         $o= new \stdClass();
         $o->key = $key;
 
-
-
-
         $withdrawMock = Mockery::mock(WithdrawRepository::class);
 
         $withdrawMock->shouldReceive('filterOrderId')
@@ -135,12 +143,18 @@ class PaymentTest extends TestCase
         $withdrawMock->shouldReceive('first')
         ->andReturn($o);
 
-
-
         $shineUPay = new ShineUPay(new Curl, $withdrawMock);
         $res = $shineUPay->callback($request);
         $this->assertEquals('success', $res->get('msg'));
 
+    }
+
+     /**
+     * @depends test_set_order_to_db
+     */
+    public function test_dispatch_order_queue($data) {
+        $payment=$data['payment'];
+        $payment->dispatchOrderQueue();
     }
 
 

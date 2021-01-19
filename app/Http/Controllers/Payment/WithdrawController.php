@@ -19,13 +19,13 @@ class WithdrawController extends Controller
     public function create(Request $request, PaymentInterface $payment) {
 
         try {
-            Log::channel('Withdraw-create')->info(__LINE__ , $request->post());
+            Log::channel('Withdraw')->info(__LINE__ , $request->post());
 
             $payment->checkInputData($request)->setOrderToDb()->dispatchOrderQueue();
 
             return RB::success();
         } catch (Exception $e) {
-            Log::channel('Withdraw-create')->info(__LINE__ , [$e->getCode(), $e->getMessage(), $e->getLine(), $e->getFile()]);
+            Log::channel('Withdraw')->info(__LINE__ , [$e->getCode(), $e->getMessage(), $e->getLine(), $e->getFile()]);
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
 
@@ -33,15 +33,16 @@ class WithdrawController extends Controller
 
     public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway, WithdrawRepository $withdrawRepository) {
 
-        try {
-            Log::channel('Withdraw-callback')->info(__LINE__ , [$request->post(), $request->headers]);
 
-            $post = [];
-            $post['post'] = $request->post();
-            $post['headers'] = getallheaders();
+
+
+
+        try {
+            Log::channel('Withdraw')->info(__LINE__ , [$request->post(), $request->headers]);
+
             $res = $payment->callback($request, $gateway);
             $orderId = data_get($res, 'data.order_id');
-            $orderId = '1234560000160001708d1e9e';
+
             $withdrawRepository->filterOrderId($orderId)->update(['status'=> $res->get('code')]);
             $order = $withdrawRepository->filterOrderId($orderId)->first();
 
@@ -49,9 +50,10 @@ class WithdrawController extends Controller
                 throw new WithdrawException('order not found in repository' . json_encode($request->post()), ResponseCode::RESOURCE_NOT_FOUND);
             }
             $payment->callbackNotifyToQueue($order);
+
             echo $res->get('msg');
         } catch (Exception $e) {
-            Log::channel('Withdraw-callback')->info(__LINE__ , [$e->getCode(), $e->getMessage(), $e->getLine(), $e->getFile()]);
+            Log::channel('Withdraw')->info(__LINE__ , [$e->getCode(), $e->getMessage(), $e->getLine(), $e->getFile()]);
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
     }

@@ -49,7 +49,7 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
             if (! file_exists($filePath)) {
                 throw new Exception(__LINE__ . $gatewayName . 'gateway not found', 22);
             }
-            echo '@@@@@@@@@@@@1';
+
             return $job->handle($app->make($className), $settingRepository);
         });
     }

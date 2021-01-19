@@ -27,45 +27,23 @@ class ShineUPay extends AbstractWithdrawGateway
     private $setting;
     private $domain='testgateway.shineupay.com';
     private $withdrawRepository;
+    private $callbackUrl;
 
     public function __construct(Curl $curl, WithdrawRepository $withdrawRepository) {
         $this->curl = $curl;
         $this->withdrawRepository = $withdrawRepository;
+        $this->callbackUrl = config('app.url') . '/withdraw/callback/'. __CLASS__;
     }
 
     public function setRequest($data = [], $setting = []) {
+
        $this->setting = $setting;
-       Log::channel('withdraw')->info(__LINE__ , $data);
+       Log::channel('withdraw')->info(__LINE__ , [$data, $setting]);
 
-       $data['order_id']         = '123456'.uniqid();
-       $data['email']            = 'aaa';
-       $data['withdraw_address'] = '10ss';
-       $data['first_name']       = 'aaa';
-       $data['last_name']        = 'bbb';
-       $data['mobile']           = '123456';
-       $data['ifsc']             = '123456';
-       $data['amount']           = 10;
-       $data['bank_address']     = '123456';
-
-       $setting['merchantId'] = 'A5LB093F045C2322';
-       $setting['md5_key'] = 'fed8b982f9044290af5aba64d156e0d9';
-       $setting['other_key1'] = 'https://testgateway.shineupay.com'; // 網域
-       $setting['private_key'] = '673835da9a3458e88e8d483bdae9c9f1';  // 交易密碼MD5
-
-        $validator = Validator::make($data, [
-            'order_id'         => 'required',
-            'withdraw_address' => 'required',
-            'first_name'       => 'required',
-            'last_name'        => 'required',
-            'mobile'           => 'required',
-            'bank_address'     => 'required',
-            'ifsc'             => 'required',
-            'amount'           => 'required',
-            'email'            => 'required',
-        ]);
+        $validator = Validator::make($data, $this->getNeedValidateParams());
 
         if ($validator->fails()) {
-            throw new WithdrawException('input check error'. json_encode($validator->errors()));
+            throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
         }
 
         # set data
@@ -82,15 +60,25 @@ class ShineUPay extends AbstractWithdrawGateway
        $this->curlPostData['body']['bankUserIFSC']   = $data['ifsc'];
        $this->curlPostData['body']['amount']         = $data['amount'];
        $this->curlPostData['body']['realAmount']     = $data['amount'];
-       $this->curlPostData['body']['notifyUrl']     = 'http://zlcai88mb.1201s.com/api/notify/CGPay';
-
-      // $this->curlPostData['body']['notifyUrl']      = config('app.url') . '/withdraw/callback/ShineUpay';
+       $this->curlPostData['body']['notifyUrl']      = $this->callbackUrl;
 
        $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $setting['md5_key']);
 
-
-
        return $this;
+    }
+
+    private function getNeedValidateParams() {
+        return [
+            'order_id'         => 'required',
+            'withdraw_address' => 'required',
+            'first_name'       => 'required',
+            'last_name'        => 'required',
+            'mobile'           => 'required',
+            'bank_address'     => 'required',
+            'ifsc'             => 'required',
+            'amount'           => 'required',
+            'email'            => 'required',
+        ];
     }
 
     private function genSign($postData, $sign) {
@@ -113,10 +101,10 @@ class ShineUPay extends AbstractWithdrawGateway
             'Api-Sign: '. $this->headerApiSign,
             "HOST: testgateway.shineupay.com",
         ])->setPost([])->exec();
-exit;*/
+        exit;*/
 
 
-       $url = 'https://'.$this->domain. '/withdraw/create';
+        $url = 'https://'.$this->domain. '/withdraw/create';
         $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
             'Content-Type: application/json',
             'Api-Sign: '. $this->headerApiSign,
@@ -183,10 +171,8 @@ exit;*/
 
     public function getPlaceholder($type):Placeholder
     {
-        return [
-            P::PRIVATE_KEY => '提现密码',
-            P::MD5_KEY => '商户秘钥',
-        ];
+        return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
+        '');
     }
 
     public function getRequireColumns() {

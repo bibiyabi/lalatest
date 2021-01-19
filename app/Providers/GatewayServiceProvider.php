@@ -2,21 +2,10 @@
 
 namespace App\Providers;
 
-use App\Jobs\Payment\Withdraw\Order;
-
-
-use App\Repositories\GatewayRepository;
 use App\Exceptions\WithdrawException;
-use App\Http\Controllers\Payment\WithdrawController;
-use App\Repositories\SettingRepository;
-use App\Services\Payments\PlatformNotify;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Orders\WithdrawRepository;
 use App\Services\AbstractWithdrawGateway;
-use Exception;
-use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Http\Request;
 class GatewayServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
@@ -27,7 +16,7 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
     public function register()
     {
         // queue.php 為sync 測試再打開
-        $this->createGateway('ShineUPay');
+        //$this->createGateway('ShineUPay');
     }
 
     /**

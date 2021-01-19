@@ -9,13 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-
+use App\Constants\Payments\ResponseCode;
 use App\Services\AbstractWithdrawGateway;
 
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
-
+use Illuminate\Http\Request;
 use Throwable;
 class Order implements ShouldQueue
 {
@@ -28,9 +28,9 @@ class Order implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($request)
+    public function __construct($postData)
     {
-        $this->request = $request;
+        $this->request = $postData;
     }
 
     public function getRequest() {
@@ -44,15 +44,8 @@ class Order implements ShouldQueue
      */
     public function handle(AbstractWithdrawGateway $paymentGateway, SettingRepository $settingRepository)
     {
-        Log::debug('uuid:' . $this->job->uuid() . ' data:'. json_encode($this->request, true));
 
-        echo "handle\r\n";
-        print_r($this->request);
-        echo "key_id: ".$this->request['key_id']." \r\n";
         $setting = collect($settingRepository->filterId($this->request['key_id'])->first());
-        # gateway load database load config
-
-        $gatewayConfigs = json_decode($setting->get('keys'), true);
 
         # gateway load payment
         try {
@@ -60,24 +53,19 @@ class Order implements ShouldQueue
             $res = $paymentGateway->send();
 
             if (!isset($res['code'])) {
-                throw new WithdrawException('dw');
+                throw new WithdrawException('res code not set' , ResponseCode::EXCEPTION);
             }
 
         } catch (\Exception $e) {
-            echo __LINE__. $e->getMessage();
-            Log::channel('withdraw')->error(__LINE__ . 'uuid:' . $this->job->uuid() . $e->getMessage() , $gatewayConfigs);
+
+            throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);
             return;
         }
-
-
-
 
         # set db
         WithdrawOrder::where('order_id', $this->request['order_id'])
         ->update(['status' => $res['code']]);
 
-        echo 'end';
-        # sned request
     }
 
     /**

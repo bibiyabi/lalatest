@@ -8,7 +8,7 @@ use App\Repositories\SettingRepository;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Bus;
 use Throwable;
-use App\Models\WithdrawOrder;
+
 use Illuminate\Support\Facades\Validator;
 use App\Jobs\Payment\Withdraw\Notify;
 use App\Services\AbstractWithdrawGateway;
@@ -23,7 +23,7 @@ class Payment implements PaymentInterface
     private $settingRepository;
     private $settings;
     private $withdrawRepository;
-    private $user;
+    private $request;
 
 
     public function __construct(WithdrawRepository $withdrawRepository, SettingRepository $settingRepository)
@@ -34,10 +34,9 @@ class Payment implements PaymentInterface
 
     public function checkInputData(Request $request)  {
 
-        $this->postData = $request->post();
-        $this->user = $request->user();
+        $this->request = $request;
 
-        $validator = Validator::make($this->postData, [
+        $validator = Validator::make($this->request->post(), [
             'payment_type' => 'required',
             'order_id'     => 'required',
             'pk'           => 'required',
@@ -47,7 +46,7 @@ class Payment implements PaymentInterface
             throw new WithdrawException($validator->fails(), ResponseCode::ERROR_PARAMETERS);
         }
 
-        $this->defaultOrderParams($this->postData);
+        $this->defaultOrderParams($this->request->post());
 
         return $this;
     }
@@ -86,26 +85,15 @@ class Payment implements PaymentInterface
 
     public function setOrderToDb() {
 
-        $settings = $this->settingRepository->filterCombinePk($this->user->id, $this->postData['pk'])->first();
+        $settings = $this->settingRepository->filterCombinePk($this->request->user()->id, $this->request->pk)->first();
 
         $this->settings = collect($settings);
 
         if (! $this->settings->has('id')) {
-            throw new WithdrawException('setting not found, pk' . $this->postData['pk'] , ResponseCode::RESOURCE_NOT_FOUND);
+            throw new WithdrawException('setting not found, pk' . $this->request->pk , ResponseCode::RESOURCE_NOT_FOUND);
         }
 
-        //$this->postData['order_id'] = $this->postData['order_id']. uniqid();
-
-        WithdrawOrder::create([
-            'order_id'    => $this->postData['order_id'],
-            'user_id'     => $this->user->id,
-            'key_id'      => $this->settings->get('id'),
-            'amount'      => $this->postData['amount'],
-            'real_amount' => $this->postData['amount'],
-            'gateway_id'  => $this->settings->get('gateway_id'),
-            'status'      => 1,
-            'order_param' => json_encode($this->postData, true),
-        ]);
+        $this->withdrawRepository->create($this->request, $settings);
 
         return $this;
     }
@@ -113,16 +101,18 @@ class Payment implements PaymentInterface
 
     public function dispatchOrderQueue()  {
 
-        $this->postData['key_id'] = $this->settings->get('id');
-        $this->postData['gateway_id'] = $this->settings->get('gateway_id');
+        $post = $this->request->all();
 
-        $order = $this->withdrawRepository->filterOrderId($this->postData['order_id'])->first();
+        $post['key_id'] = $this->settings->get('id');
+        $post['gateway_id'] = $this->settings->get('gateway_id');
+
+        $order = $this->withdrawRepository->filterOrderId($this->request->order_id)->first();
 
         Bus::chain([
-            new Order($this->postData),
+            new Order($post),
             new Notify($order),
         ])->catch(function (Throwable $e) {
-            echo $e->getMessage() . __LINE__ . "\r\n";
+            throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);
         })->dispatch();
 
     }
@@ -132,8 +122,7 @@ class Payment implements PaymentInterface
         Bus::chain([
             new Notify($order),
         ])->catch(function (Throwable $e) {
-            echo $e->getMessage() . __LINE__ . "\r\n";
-
+            throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
         })->dispatch();
     }
 
