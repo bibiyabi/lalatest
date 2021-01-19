@@ -91,14 +91,14 @@ trait DepositGatewayHelper
             Status::CALLBACK_FAILED,
             Status::TERMINATED,
         ])) {
-            throw new StatusLockedException($this->getKeyStatusSuccess());
+            throw new StatusLockedException($this->getSuccessReturn());
         }
 
         if ($status === false) {
-            return new CallbackResult(false, $this->getCallbackSuccessReturn(), $order);
+            return new CallbackResult(false, $this->getSuccessReturn(), $order);
         }
 
-        return new CallbackResult(true, $this->getCallbackSuccessReturn(), $order, $data[$this->getKeyAmount()]);
+        return new CallbackResult(true, $this->getSuccessReturn(), $order, $data[$this->getKeyAmount()]);
     }
 
     protected function getKeyStatus()
@@ -126,7 +126,7 @@ trait DepositGatewayHelper
         return $this->keyAmount;
     }
 
-    protected function getCallbackSuccessReturn()
+    protected function getSuccessReturn()
     {
         return $this->successReturn;
     }
