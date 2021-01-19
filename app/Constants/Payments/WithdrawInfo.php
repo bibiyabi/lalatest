@@ -6,25 +6,25 @@ namespace App\Constants\Payments;
 
 class WithdrawInfo
 {
-    public const AMOUNT = 1;
-    public const BANK_CARD = 2;
-    public const FUND_PASSWORD = 3;
-    public const ACCOUNT = 4;
-    public const EMAIL =5;
-    public const COUNTRY =6;
-    public const STATE =7;
-    public const CITY=8;
-    public const ADDRESS=9;
-    public const FIRST_NAME =10;
-    public const LAST_NAME = 11;
-    public const MOBILE=12;
-    public const TELEGRAM =13;
-    public const CRYPTO_AMOUNT =14;
-    public const NETWORK=15;
-    public const CRYPTO_ADDRESS =16;
-    public const BANK =17;
-    public const IFSC=18;
-    public const BANK_PROVINCE=19;
-    public const BANK_ADDRESS=20;
-    public const BANK_CITY=21;
+    public const amount         = 1;
+    public const bank_card      = 2;
+    public const fund_password  = 3;
+    public const account        = 4;
+    public const email          = 5;
+    public const country        = 6;
+    public const state          = 7;
+    public const city           = 8;
+    public const address        = 9;
+    public const first_name     = 10;
+    public const last_name      = 11;
+    public const mobile         = 12;
+    public const telegram       = 13;
+    public const crypto_amount  = 14;
+    public const network        = 15;
+    public const crypto_address = 16;
+    public const bank           = 17;
+    public const ifsc           = 18;
+    public const bank_province  = 19;
+    public const bank_address   = 20;
+    public const bank_city      = 21;
 }

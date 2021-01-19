@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Services\Payments\Deposit\DepositService;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
+use Illuminate\Support\Facades\Log;
 
 class DepositController extends Controller
 {
     public function create(Request $request)
     {
-        \Log::info('Deposit-create', $request->post());
+        Log::info('Deposit-create', $request->post());
 
         $request->validate([
             'order_id' => 'required',

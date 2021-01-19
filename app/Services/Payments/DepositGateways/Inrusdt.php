@@ -95,11 +95,11 @@ class Inrusdt implements DepositGatewayInterface
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
         if ($type == config('params')['typeName'][2]){
-            $column = array(C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT);
+            $column = array(C::acct_fn,C::acct_ln,C::acct_no,C::amount);
         }elseif($type == config('params')['typeName'][3]){
-            $column = array(C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT);
+            $column = array(C::acct_name,C::account_id,C::amount);
         }elseif($type == config('params')['typeName'][4]){
-            $column = array(C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK);
+            $column = array(C::crypto_amount,C::address,C::amount);
         }
 
         return new DepositRequireInfo($type, $column);
