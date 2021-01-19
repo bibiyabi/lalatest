@@ -2,7 +2,6 @@
 
 namespace App\Services\Payments\DepositGateways;
 
-use App\Constants\Payments\Type;
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\DepositRequireInfo;
