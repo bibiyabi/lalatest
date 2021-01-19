@@ -1,4 +1,4 @@
-# API文件 V2
+# API文件 V3
 
 ## API必帶參數
 
@@ -18,6 +18,15 @@
 
 * 提現下單、充值下單 ，type 改吃字串，gateway_coe 改名 transaction_type
 
+### V3
+
+* 提現新增 bank_province、bank_address、bank_city 三個參數。
+* 提現 transaction_type、ifsc 補上對應欄位序號。
+
+
+### V4
+
+* 新增前台的出/入款應顯示欄位及下拉選單
 ---
 
 ## 資料設置
@@ -32,8 +41,10 @@ POST /api/key
 | 欄位                | 型態    | 必要參數 | 說明                            |
 | ------------------- | ------- | -------- | :------------------------------ |
 | id                  | integer | V        | 出/入款id /java unique  id      |
-| info_title          | string  |          | 信息名稱                        |
 | gateway_id          | integer | V        | 金流商/交易所 id                |
+| data                | string | V        |  將以下欄位全部urlencode再json_encode |
+
+| info_title          | string  |          | 信息名稱                        |
 | transaction_type    | string  |          | 交易方式-出入款:信用卡/電子錢包 |
 | account             | string  |          | 金流帳戶號                      |
 | merchant_number     | string  |          | 金流商戶號                      |
@@ -243,6 +254,54 @@ GET /api/placeholder
 }
 ```
 
+
+### 前台的出/入款應顯示欄位及下拉選單
+
+```plaintext
+GET /api/requirement
+```
+
+| 欄位         | 型態    | 必要參數 | 說明                                                      |
+| ------------ | ------- | -------- | :-------------------------------------------------------- |
+| is_deposit   | integer | V        | 入款=1 / 出款=0                                           |
+| type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
+| gateway_name | string  | V        | 金流商/交易所名稱                                         |
+
+備註: data裡的資料會被urlencode
+
+```json
+{
+     "success": true,
+        "code": 100,
+        "locale": "en",
+        "message": "传送成功",
+        "data": {
+            "value": "%7B%22column%22%3A%5B2%2C3%2C4%2C6%5D%7D"
+        }
+}
+```
+
+回傳欄位說明:column為顯示欄位代號(參考出入款所需欄位整理), select為下拉選單如銀行卡,不一定回傳
+
+| 欄位                 | 型態   |
+| -------------------- | ------ |
+| `column`          | array |
+| `select`         | array |
+
+
+沒有提示字/ 找不到該第三方檔案
+
+```json
+{
+     "success": false,
+        "code": 158,
+        "locale": "en",
+        "message": "第三方資料有誤",
+        "data": null,
+        "debug": []
+}
+```
+
 ## 充值（入款）
 
 
@@ -277,8 +336,11 @@ POST /api/deposit/create
 | first_name       | string  |          | 28                 | 名字                                                      |
 | telegram         | string  |          | 29                 | telegram                                                  |
 | expired_date     | string  |          | 30                 | 到期日期 mm/yyyy                                          |
-| transaction_type | string  |          | -                  | 金流商（銀行） 通道代碼                                   |
-| ifsc             | string  |          | -                  | ifsc                                                      |
+| transaction_type | string  |          | 31                 | 金流商（銀行） 通道代碼                                   |
+| ifsc             | string  |          | 32                 | ifsc                                                      |
+| bank_province    | string  |          | 33                 | 銀行所在省                                                |
+| bank_address     | string  |          | 34                 | 銀行地址                                                  |
+| bank_city        | string  |          | 35                 | 銀行所在城市                                              |
 
 Response example:
 

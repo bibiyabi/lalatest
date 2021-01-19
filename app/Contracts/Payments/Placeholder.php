@@ -20,8 +20,6 @@ class Placeholder
     protected $note1;
     protected $note2;
 
-    protected $aaa;
-
     public function __construct(
         string $type = null,
         string $publicKey = null,
@@ -67,7 +65,7 @@ class Placeholder
                 'apiKey'                => $this->apiKey,
                 'cryptoAddress'         => $this->cryptoAddress,
             ];
-        }elseif($type == $typeArray[1]){  # 銀行卡
+        }elseif($type == $typeArray[1]){  # 信用卡
             $result = [
                 'transactionType'       => $this->transactionType,
             ];

@@ -2,6 +2,7 @@
 
 namespace App\Contracts\Payments\Deposit;
 
+use App\Contracts\Payments\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
@@ -56,4 +57,6 @@ interface DepositGatewayInterface
      * @return Placeholder
      */
     public function getPlaceholder($type):Placeholder;
+
+    public function getRequireInfo($type):DepositRequireInfo;
 }

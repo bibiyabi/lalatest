@@ -48,6 +48,9 @@ Route::get('vendor/list',[GatewayController::class,'index']);
 # 提示字
 Route::get('placeholder',[GatewayController::class, 'getPlaceholder']);
 
+# 前台提示字
+Route::get('requirement',[GatewayController::class, 'getRequireInfo']);
+
 # JAVA出款傳遞出款參數API
 Route::post('aaa',function (Request $request)
 {
