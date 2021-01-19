@@ -37,8 +37,14 @@ class ShineUPay extends AbstractWithdrawGateway
 
     public function setRequest($data = [], $setting = []) {
 
-       $this->setting = $setting;
-       Log::channel('withdraw')->info(__LINE__ , [$data, $setting]);
+        if (empty($setting)) {
+            throw new WithdrawException('setting empty ', ResponseCode::ERROR_PARAMETERS);
+        }
+
+        $this->setting = $setting;
+
+
+        Log::channel('withdraw')->info(__LINE__ , [$data, $setting]);
 
         $validator = Validator::make($data, $this->getNeedValidateParams());
 
@@ -47,22 +53,22 @@ class ShineUPay extends AbstractWithdrawGateway
         }
 
         # set data
-       $this->curlPostData['merchantId']             = $setting['merchantId'];
-       $this->curlPostData['timestamp']              = time() . '000';
-       $this->curlPostData['body']['advPasswordMd5'] = $setting['private_key'];
-       $this->curlPostData['body']['orderId']        = $data['order_id'];
-       $this->curlPostData['body']['flag']           = 0;
-       $this->curlPostData['body']['bankCode']       = $data['withdraw_address'];
-       $this->curlPostData['body']['bankUser']       = $data['first_name'] . $data['last_name'];
-       $this->curlPostData['body']['bankUserPhone']  = $data['mobile'];
-       $this->curlPostData['body']['bankAddress']    = $data['bank_address'];
-       $this->curlPostData['body']['bankUserEmail']  = $data['email'];
-       $this->curlPostData['body']['bankUserIFSC']   = $data['ifsc'];
-       $this->curlPostData['body']['amount']         = $data['amount'];
-       $this->curlPostData['body']['realAmount']     = $data['amount'];
-       $this->curlPostData['body']['notifyUrl']      = $this->callbackUrl;
+        $this->curlPostData['merchantId']             = $setting->get('merchantId');
+        $this->curlPostData['timestamp']              = time() . '000';
+        $this->curlPostData['body']['advPasswordMd5'] = $setting->get('private_key');
+        $this->curlPostData['body']['orderId']        = $data['order_id'];
+        $this->curlPostData['body']['flag']           = 0;
+        $this->curlPostData['body']['bankCode']       = $data['withdraw_address'];
+        $this->curlPostData['body']['bankUser']       = $data['first_name'] . $data['last_name'];
+        $this->curlPostData['body']['bankUserPhone']  = $data['mobile'];
+        $this->curlPostData['body']['bankAddress']    = $data['bank_address'];
+        $this->curlPostData['body']['bankUserEmail']  = $data['email'];
+        $this->curlPostData['body']['bankUserIFSC']   = $data['ifsc'];
+        $this->curlPostData['body']['amount']         = $data['amount'];
+        $this->curlPostData['body']['realAmount']     = $data['amount'];
+        $this->curlPostData['body']['notifyUrl']      = $this->callbackUrl;
 
-       $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $setting['md5_key']);
+        $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $setting->get('md5_key'));
 
        return $this;
     }

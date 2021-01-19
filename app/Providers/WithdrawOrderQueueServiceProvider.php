@@ -3,14 +3,11 @@
 namespace App\Providers;
 
 use App\Repositories\GatewayRepository;
-use App\Exceptions\WithdrawException;
 use App\Repositories\SettingRepository;
-use App\Services\Payments\PlatformNotify;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Orders\WithdrawRepository;
-use App\Services\AbstractWithdrawGateway;
 use Exception;
-
+use Illuminate\Support\Facades\Log;
+use App\Jobs\Payment\Withdraw\Order;
 class WithdrawOrderQueueServiceProvider extends ServiceProvider
 {
     /**
@@ -21,6 +18,7 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
     public function register()
     {
         //
+
     }
 
     /**
@@ -30,11 +28,12 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
      */
     public function boot(GatewayRepository $gatewayRepository, SettingRepository $settingRepository)
     {
+
         $this->app->bindMethod([Order::class, 'handle'], function ($job, $app)
         use ($gatewayRepository, $settingRepository) {
 
+            Log::channel('withdraw')->info(__FUNCTION__ . __LINE__, $job->getRequest());
             $request = $job->getRequest();
-            $request['gateway_id'] = 3;
             $gateway = $gatewayRepository->filterGatewayId($request['gateway_id'])->first();
 
             $gateway = collect($gateway);

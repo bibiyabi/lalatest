@@ -12,6 +12,7 @@ use App\Services\AbstractWithdrawGateway;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Exception;
 use App\Constants\Payments\ResponseCode;
+use App\Contracts\Payments\LogLine;
 
 
 class WithdrawController extends Controller
@@ -19,13 +20,13 @@ class WithdrawController extends Controller
     public function create(Request $request, PaymentInterface $payment) {
 
         try {
-            Log::channel('Withdraw')->info(__LINE__ , $request->post());
+            Log::channel('withdraw')->info(new LogLine('input'), $request->post());
 
             $payment->checkInputData($request)->setOrderToDb()->dispatchOrderQueue();
 
             return RB::success();
         } catch (Exception $e) {
-            Log::channel('Withdraw')->info(__LINE__ , [$e->getCode(), $e->getMessage(), $e->getLine(), $e->getFile()]);
+            Log::channel('withdraw')->info(new LogLine('exception'), $request->post());
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
 
@@ -33,27 +34,28 @@ class WithdrawController extends Controller
 
     public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway, WithdrawRepository $withdrawRepository) {
 
-
-
-
-
         try {
-            Log::channel('Withdraw')->info(__LINE__ , [$request->post(), $request->headers]);
+            Log::channel('withdraw')->info(new LogLine('input'), ['post' => $request->post(), 'header' => $request->headers]);
 
             $res = $payment->callback($request, $gateway);
             $orderId = data_get($res, 'data.order_id');
+
+            if (empty($orderId)) {
+                throw new WithdrawException('order id not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
+            }
 
             $withdrawRepository->filterOrderId($orderId)->update(['status'=> $res->get('code')]);
             $order = $withdrawRepository->filterOrderId($orderId)->first();
 
             if (empty($order)) {
-                throw new WithdrawException('order not found in repository' . json_encode($request->post()), ResponseCode::RESOURCE_NOT_FOUND);
+                throw new WithdrawException('order not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
             }
+
             $payment->callbackNotifyToQueue($order);
 
             echo $res->get('msg');
         } catch (Exception $e) {
-            Log::channel('Withdraw')->info(__LINE__ , [$e->getCode(), $e->getMessage(), $e->getLine(), $e->getFile()]);
+            Log::channel('withdraw')->info(new LogLine('exception'));
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
     }

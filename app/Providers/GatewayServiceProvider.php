@@ -33,6 +33,9 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
             $this->createGateway($gatewayName);
         }
 
+
+
+
     }
 
     public function createGateway($gatewayName) {

@@ -28,14 +28,15 @@ class Order implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($postData)
+    public function __construct($request)
     {
-        $this->request = $postData;
+        $this->request = $request;
     }
 
     public function getRequest() {
         return $this->request;
     }
+
 
     /**
      * Execute the job.
@@ -44,9 +45,13 @@ class Order implements ShouldQueue
      */
     public function handle(AbstractWithdrawGateway $paymentGateway, SettingRepository $settingRepository)
     {
+        Log::channel('withdraw')->info(__FUNCTION__ . __LINE__, $this->request);
 
         $setting = collect($settingRepository->filterId($this->request['key_id'])->first());
 
+        if (empty($setting)) {
+            throw new WithdrawException('res code not set' , ResponseCode::EXCEPTION);
+        }
         # gateway load payment
         try {
             $paymentGateway->setRequest($this->request, $setting);

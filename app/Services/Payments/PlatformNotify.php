@@ -28,6 +28,7 @@ class PlatformNotify
 
         $this->javaKey = $this->repo->getKey($merchant);
         $this->javaUrl = $this->repo->getNotifyUrl($merchant);
+
         return $this;
     }
 

@@ -101,7 +101,7 @@ class Payment implements PaymentInterface
 
     public function dispatchOrderQueue()  {
 
-        $post = $this->request->all();
+        $post = $this->request->post();
 
         $post['key_id'] = $this->settings->get('id');
         $post['gateway_id'] = $this->settings->get('gateway_id');
