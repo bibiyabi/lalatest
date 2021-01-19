@@ -7,6 +7,7 @@ use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawController;
 use App\Http\Controllers\GatewayController;
 use App\Models\Order;
+use App\Models\WithdrawOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,14 +22,19 @@ use App\Models\Order;
 
 Route::prefix('test')->group(function() {
     Route::post('bbb', function (){
-        $order = Order::first();
-        // dd($order->toArray());
-        return $order->merchant;
+
+        DB::enableQueryLog();
+        $order = WithdrawOrder::first();
+        dd(DB::getQueryLog());
+
+        dd($order);
+
     });
 
-    Route::get('user', function (Request $request)
+    Route::post('user', function (Request $request)
     {
-        return $request->user();
+       print_r($request->json()->all());
+
     });
 });
 

@@ -91,7 +91,6 @@ class GatewayController extends Controller
                 'msg'       => $validator->errors()->all(),
             ];
             Log::info(json_encode($errMsg));
-
             return RB::error(CODE::ERROR_PARAMETERS);
         }
 
