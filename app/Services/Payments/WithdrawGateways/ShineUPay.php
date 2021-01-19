@@ -2,6 +2,7 @@
 namespace App\Services\Payments\WithdrawGateways;
 
 use App\Contracts\Payments\Placeholder;
+use App\Contracts\Payments\WithdrawRequireInfo;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
@@ -9,11 +10,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Payment\Curl;
 use App\Payment\Proxy;
 use App\Services\Payments\ResultTrait;
-use App\Constants\Payments\PlaceholderParams as P;
 use App\Repositories\Orders\WithdrawRepository;
-use Exception;
 use App\Constants\Payments\ResponseCode;
 use Illuminate\Http\Request;
+use App\Constants\Payments\WithdrawInfo as C;
 
 class ShineUPay extends AbstractWithdrawGateway
 {
@@ -195,11 +195,20 @@ exit;*/
         ];
     }
 
+    public function getRequireInfo($type): WithdrawRequireInfo
+    {
+        # 該支付有支援的渠道  指定前台欄位
+        $column = [];
+        if ($type == config('params')['typeName'][2]){
+            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT);
+        }elseif($type == config('params')['typeName'][3]){
+            $column = array(C::ADDRESS,C::AMOUNT,C::ADDRESS);
+        }elseif($type == config('params')['typeName'][4]){
+            $column = array(C::CRYPTO_ADDRESS,C::CRYPTO_AMOUNT);
+        }
 
-
-
-
-
+        return new WithdrawRequireInfo($type, $column, [], ['CC','DD']);
+    }
 
 
 }

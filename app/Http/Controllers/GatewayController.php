@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Constants\Payments\ResponseCode as CODE;
 use App\Contracts\Payments\WithdrawGatewayFactory;
-use App\Models\Gateway;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -96,7 +95,6 @@ class GatewayController extends Controller
         }
 
         $gatewayName = $request->input('gateway_name');
-        $result = [];
         try {
             if ($request->input('is_deposit') == 1){# for deposit
                 $gateway = DepositGatewayFactory::createGateway($gatewayName);
@@ -122,69 +120,49 @@ class GatewayController extends Controller
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    # 前台的提示字
+    public function getRequireInfo(Request $request)
     {
-        //
-    }
+        $rules = [
+            'is_deposit'    => 'required|integer|between:0,1',
+            'type'          => 'required|string',
+            'gateway_name'  => 'required|string',
+        ];
+        $validator = Validator::make($request->all(), $rules);
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if ($validator->fails()){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $validator->errors()->all(),
+            ];
+            Log::info(json_encode($errMsg));
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Gateway  $gateway
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Gateway $gateway)
-    {
+            return RB::error(CODE::ERROR_PARAMETERS);
+        }
 
-    }
+        $gatewayName = $request->input('gateway_name');
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Gateway  $gateway
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Gateway $gateway)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Gateway  $gateway
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Gateway $gateway)
-    {
-        //
-    }
+        try{
+            if ($request->input('is_deposit') == 1){# for deposit
+                $gateway = DepositGatewayFactory::createGateway($gatewayName);
+            }else{# for withdraw
+                $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
+            }
+        }catch(\Throwable $e){
+            $errMsg = [
+                'errorPath' => self::class,
+                'msg'       => $e->getMessage(),
+            ];
+            Log::info(json_encode($errMsg));
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Gateway  $gateway
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Gateway $gateway)
-    {
-        //
+            return RB::error(CODE::ERROR_DATA_IN_PAYMENT);
+        }
+        $info = $gateway->getRequireInfo($request->input('type'));
+        $result = $info->toArray();
+
+        $resultEncode = urlencode(json_encode($result));
+        return RB::success($resultEncode,CODE::SUCCESS);
+
     }
 }

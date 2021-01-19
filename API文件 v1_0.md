@@ -23,6 +23,10 @@
 * 提現新增 bank_province、bank_address、bank_city 三個參數。
 * 提現 transaction_type、ifsc 補上對應欄位序號。
 
+
+### V4
+
+* 新增前台的出/入款應顯示欄位及下拉選單
 ---
 
 ## 資料設置
@@ -236,6 +240,54 @@ GET /api/placeholder
 | `apiKey`             | string |
 | `note1`              | string |
 | `note2`              | string |
+
+沒有提示字/ 找不到該第三方檔案
+
+```json
+{
+     "success": false,
+        "code": 158,
+        "locale": "en",
+        "message": "第三方資料有誤",
+        "data": null,
+        "debug": []
+}
+```
+
+
+### 前台的出/入款應顯示欄位及下拉選單
+
+```plaintext
+GET /api/requirement
+```
+
+| 欄位         | 型態    | 必要參數 | 說明                                                      |
+| ------------ | ------- | -------- | :-------------------------------------------------------- |
+| is_deposit   | integer | V        | 入款=1 / 出款=0                                           |
+| type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
+| gateway_name | string  | V        | 金流商/交易所名稱                                         |
+
+備註: data裡的資料會被urlencode
+
+```json
+{
+     "success": true,
+        "code": 100,
+        "locale": "en",
+        "message": "传送成功",
+        "data": {
+            "value": "%7B%22column%22%3A%5B2%2C3%2C4%2C6%5D%7D"
+        }
+}
+```
+
+回傳欄位說明:column為顯示欄位代號(參考出入款所需欄位整理), select為下拉選單如銀行卡,不一定回傳
+
+| 欄位                 | 型態   |
+| -------------------- | ------ |
+| `column`          | array |
+| `select`         | array |
+
 
 沒有提示字/ 找不到該第三方檔案
 
