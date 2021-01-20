@@ -14,7 +14,7 @@ class Type
         'bank_card'         => 2,
         'e_wallet'          => 3,
         'cryptocurrency'    => 4,
-        ];
+    ];
 
     const typeName = [
         1 => self::CREDIT_CARD,
