@@ -171,7 +171,7 @@ class ShineUPay extends AbstractWithdrawGateway
     public function getPlaceholder($type):Placeholder
     {
         return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
-        '');
+        '',['好好吃銀行','QQ銀行']);
     }
 
 

@@ -9,6 +9,7 @@ use App\Contracts\Payments\Placeholder;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Constants\Payments\DepositInfo as C;
+use App\Constants\Payments\Type;
 
 class Inrusdt implements DepositGatewayInterface
 {
