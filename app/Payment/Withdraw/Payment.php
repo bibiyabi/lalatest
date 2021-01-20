@@ -32,11 +32,20 @@ class Payment implements PaymentInterface
         $this->settingRepository = $settingRepository;
     }
 
-    public function checkInputData(Request $request)  {
+    public function checkInputSetDbSendOrderToQueue(Request $request) {
+        $this->checkInputData($request);
+        $this->setOrderToDb($request);
+        $this->dispatchOrderQueue($request);
+    }
 
-        $this->request = $request;
+    private function checkInputData(Request $request)  {
+        $this->validatePost($request->post());
+        $this->defaultOrderParams($request->post());
+        return $this;
+    }
 
-        $validator = Validator::make($this->request->post(), [
+    private function validatePost($post) {
+        $validator = Validator::make($post, [
             'payment_type' => 'required',
             'order_id'     => 'required',
             'pk'           => 'required',
@@ -45,16 +54,20 @@ class Payment implements PaymentInterface
         if ($validator->fails()) {
             throw new WithdrawException($validator->fails(), ResponseCode::ERROR_PARAMETERS);
         }
-
-        $this->defaultOrderParams($this->request->post());
-
-        return $this;
     }
 
-
     private function defaultOrderParams($data) {
+        $defaultArrays = $this->getNeedDefaultValueParams();
+        foreach ($defaultArrays as $key) {
+            if (!isset($data[$key])) {
+                $data[$key] = '';
+            }
+        }
+        return $data;
+    }
 
-        $defaultArrays = [
+    private function getNeedDefaultValueParams() {
+        return  [
             'amount',
             'fund_passwd',
             'email',
@@ -73,40 +86,32 @@ class Payment implements PaymentInterface
             'gateway_code',
             'ifsc',
         ];
-
-        foreach ($defaultArrays as $key) {
-            if (!isset($data[$key])) {
-                $data[$key] = '';
-            }
-        }
-        return $data;
-
     }
 
-    public function setOrderToDb() {
+    private function setOrderToDb(Request $request) {
 
-        $settings = $this->settingRepository->filterCombinePk($this->request->user()->id, $this->request->pk)->first();
-
+        $settings = $this->settingRepository->filterCombinePk($request->user()->id, $request->pk)->first();
         $this->settings = collect($settings);
 
         if (! $this->settings->has('id')) {
-            throw new WithdrawException('setting not found, pk' . $this->request->pk , ResponseCode::RESOURCE_NOT_FOUND);
+            throw new WithdrawException('setting not found, pk' . $request->pk , ResponseCode::RESOURCE_NOT_FOUND);
         }
 
-        $this->withdrawRepository->create($this->request, $settings);
+        $this->withdrawRepository->create($request, $settings);
 
         return $this;
     }
 
 
-    public function dispatchOrderQueue()  {
 
-        $post = $this->request->post();
+    private function dispatchOrderQueue(Request $request)  {
+
+        $post = $request->post();
 
         $post['key_id'] = $this->settings->get('id');
         $post['gateway_id'] = $this->settings->get('gateway_id');
 
-        $order = $this->withdrawRepository->filterOrderId($this->request->order_id)->first();
+        $order = $this->withdrawRepository->filterOrderId($request->order_id)->first();
 
         Bus::chain([
             new Order($post),
@@ -118,12 +123,11 @@ class Payment implements PaymentInterface
     }
 
     public function callbackNotifyToQueue($order) {
-
-        Bus::chain([
-            new Notify($order),
-        ])->catch(function (Throwable $e) {
+        try {
+            Notify::dispatch($order);
+        } catch(Throwable $e) {
             throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
-        })->dispatch();
+        }
     }
 
     public function callback(Request $request , AbstractWithdrawGateway $gateway) {

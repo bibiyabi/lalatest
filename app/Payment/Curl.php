@@ -59,8 +59,8 @@ class Curl
 
     public function exec() {
 
-        $info = curl_getinfo($this->ch);
 
+        $info = curl_getinfo($this->ch);
         Log::debug('curl:' . ' data:'. json_encode($info, JSON_UNESCAPED_UNICODE) . ' header:' . json_encode($this->header));
 
         $curlResult = curl_exec($this->ch);
@@ -68,7 +68,7 @@ class Curl
         $errorNo = curl_errno($this->ch);
 
         if ($errorNo) {
-            $this->errorMsg = curl_error($this->ch);
+
             if ($errorNo === 28) {
                 return ['msg' => $this->errorMsg, 'code' => self::TIMEOUT];
             }

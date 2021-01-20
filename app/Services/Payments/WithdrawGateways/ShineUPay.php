@@ -94,22 +94,6 @@ class ShineUPay extends AbstractWithdrawGateway
 
 
     public function send() {
-        $url = 'https://testgateway.shineupay.com/withdraw/create';
-
-        /*
-      $url = $this->getServerUrl(1) . '/withdraw/create';
-       //
-
-        echo '@@@@@@@@@@@@@@'.$url;
-
-        $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
-            'Content-Type: application/json',
-            'Api-Sign: '. $this->headerApiSign,
-            "HOST: testgateway.shineupay.com",
-        ])->setPost([])->exec();
-        exit;*/
-
-
         $url = 'https://'.$this->domain. '/withdraw/create';
         $curlRes = $this->curl->ssl()->setUrl($url)->setHeader([
             'Content-Type: application/json',
@@ -181,11 +165,6 @@ class ShineUPay extends AbstractWithdrawGateway
         '');
     }
 
-    public function getRequireColumns() {
-        return [
-            ['no'=> 1, 'data' => []]
-        ];
-    }
 
     public function getRequireInfo($type): WithdrawRequireInfo
     {

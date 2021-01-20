@@ -1,17 +1,36 @@
 <?php
 namespace App\Contracts\Payments;
 
+use Exception;
+
 class LogLine extends \Exception
 {
     private $msg;
+    private $isInstantOfException = false;
+
     public function __construct($msg)
     {
-        $this->msg = $msg;
+        if ($msg instanceof Exception) {
+            $this->isInstantOfException = true;
+            $this->msg = $this->createExceptionMsg($msg);
+        } else {
+            $this->msg = $msg;
+        }
     }
 
     public function __toString()
     {
-        return "\r\n" . $this->msg .' on file '.$this->getFile().':'.$this->getLine();
+        if ($this->isInstantOfException) {
+            return '';
+        }
+        return "msg: " . $this->msg . " \r\n file:" .$this->getFile().' line: '.$this->getLine()  . " \r\n";
+    }
+
+    private function createExceptionMsg($e) {
+        return " message:" . $e->getMessage() .
+        "\r\n code:" .  $e->getCode() .
+        "\r\n file:" .  $e->getFile() .
+        "\r\n line:" .  $e->getLine() . "\r\n";
     }
 
 }

@@ -15,18 +15,17 @@ use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\LogLine;
 
 
+
 class WithdrawController extends Controller
 {
     public function create(Request $request, PaymentInterface $payment) {
 
         try {
             Log::channel('withdraw')->info(new LogLine('input'), $request->post());
-
-            $payment->checkInputData($request)->setOrderToDb()->dispatchOrderQueue();
-
+            $payment->checkInputSetDbSendOrderToQueue($request);
             return RB::success();
         } catch (Exception $e) {
-            Log::channel('withdraw')->info(new LogLine('exception'), $request->post());
+            Log::channel('withdraw')->info(new LogLine($e), $request->post());
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
 
@@ -54,8 +53,9 @@ class WithdrawController extends Controller
             $payment->callbackNotifyToQueue($order);
 
             echo $res->get('msg');
+
         } catch (Exception $e) {
-            Log::channel('withdraw')->info(new LogLine('exception'));
+            Log::channel('withdraw')->info(new LogLine($e));
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
     }
