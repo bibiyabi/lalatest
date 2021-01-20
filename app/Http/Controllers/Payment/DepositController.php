@@ -31,7 +31,7 @@ class DepositController extends Controller
 
     public function callback(Request $request, $gatewayName)
     {
-        \Log::info('Deposit-callback', compact('gatewayName', 'request'));
+        Log::info('Deposit-callback '. $gatewayName, $request->all());
 
         $service = App::make(DepositService::class);
         $rs = App::call([$service, 'callback'], compact('gatewayName', 'request'));

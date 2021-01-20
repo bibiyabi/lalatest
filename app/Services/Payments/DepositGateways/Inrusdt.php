@@ -2,7 +2,6 @@
 
 namespace App\Services\Payments\DepositGateways;
 
-use App\Constants\Payments\Type;
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\DepositRequireInfo;
@@ -79,7 +78,7 @@ class Inrusdt implements DepositGatewayInterface
     public function getPlaceholder($type):Placeholder
     {
         $transactionType = [];
-        if ($type == config('params')['typeName'][3]){
+        if ($type == Type::typeName[3]){
             $transactionType = [
                 0 => 'inrpay',
                 1 => 'upi'
@@ -94,11 +93,11 @@ class Inrusdt implements DepositGatewayInterface
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-        if ($type == config('params')['typeName'][2]){
+        if ($type == Type::typeName[2]){
             $column = array(C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT);
-        }elseif($type == config('params')['typeName'][3]){
+        }elseif($type == Type::typeName[3]){
             $column = array(C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT);
-        }elseif($type == config('params')['typeName'][4]){
+        }elseif($type == Type::typeName[4]){
             $column = array(C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK);
         }
 

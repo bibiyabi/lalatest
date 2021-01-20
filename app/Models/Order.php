@@ -20,6 +20,10 @@ class Order extends Model
         'order_param',
     ];
 
+    protected $casts = [
+        'status' => 'integer'
+    ];
+
     public function key()
     {
         return $this->belongsTo(Setting::class);
