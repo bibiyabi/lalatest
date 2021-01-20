@@ -15,6 +15,7 @@ use App\Services\AbstractWithdrawGateway;
 use App\Repositories\Orders\WithdrawRepository;
 use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
+use App\Models\WithdrawOrder;
 
 class Payment implements PaymentInterface
 {
@@ -34,8 +35,8 @@ class Payment implements PaymentInterface
 
     public function checkInputSetDbSendOrderToQueue(Request $request) {
         $this->checkInputData($request);
-        $this->setOrderToDb($request);
-        $this->dispatchOrderQueue($request);
+        $order = $this->setOrderToDb($request);
+        $this->dispatchOrderQueue($request, $order);
     }
 
     private function checkInputData(Request $request)  {
@@ -97,24 +98,17 @@ class Payment implements PaymentInterface
             throw new WithdrawException('setting not found, pk' . $request->pk , ResponseCode::RESOURCE_NOT_FOUND);
         }
 
-        $this->withdrawRepository->create($request, $settings);
+        $order = $this->withdrawRepository->create($request, $settings);
 
-        return $this;
+        return $order;
     }
 
 
 
-    private function dispatchOrderQueue(Request $request)  {
-
-        $post = $request->post();
-
-        $post['key_id'] = $this->settings->get('id');
-        $post['gateway_id'] = $this->settings->get('gateway_id');
-
-        $order = $this->withdrawRepository->filterOrderId($request->order_id)->first();
+    private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
 
         Bus::chain([
-            new Order($post),
+            new Order($request->post(), $order),
             new Notify($order),
         ])->catch(function (Throwable $e) {
             throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);

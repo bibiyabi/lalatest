@@ -59,9 +59,7 @@ class Curl
 
     public function exec() {
 
-
-        $info = curl_getinfo($this->ch);
-        Log::debug('curl:' . ' data:'. json_encode($info, JSON_UNESCAPED_UNICODE) . ' header:' . json_encode($this->header));
+        //$info = curl_getinfo($this->ch);
 
         $curlResult = curl_exec($this->ch);
 
@@ -77,8 +75,7 @@ class Curl
         curl_close($this->ch);
 
         $success = ['msg' => 'ok', 'code' => self::STATUS_SUCCESS, 'data' => $curlResult];
-        Log::debug('curl:' . ' return:'. json_encode($success, JSON_UNESCAPED_UNICODE));
-
+        //dd($success);
         return $success;
     }
 

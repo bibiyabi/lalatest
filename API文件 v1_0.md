@@ -29,6 +29,11 @@
 * 新增前台的出/入款應顯示欄位及下拉選單
 ---
 
+### V5
+
+* 更新API name withdraw/order => withdraw/create
+---
+
 ## 資料設置
 
 ### 新增/修改資料設置
@@ -380,7 +385,7 @@ Response example:
 ### 提現下單
 
 ```plaintext
-POST /api/withdraw/order
+POST /api/withdraw/create
 ```
 
 | 欄位             | 型態    | 必要參數 | 對應出入所需欄位Excel號碼 | 說明                                                      |

@@ -12,7 +12,6 @@ abstract class AbstractWithdrawGateway
 
     }
 
-    abstract public function setRequest($data = [], $setting = []);
 
     abstract public function send() ;
 
