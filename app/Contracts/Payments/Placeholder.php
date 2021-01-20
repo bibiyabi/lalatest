@@ -56,9 +56,8 @@ class Placeholder
     public function toArray()
     {
         $type = $this->type;
-        $typeArray = Type::typeName;
         $result = [];
-        if ($type == $typeArray[4]){  # 加密貨幣
+        if ($type == Type::CRYPTO_CURRENCY){  # 加密貨幣
             $result = [
                 'transactionType'       => $this->transactionType,
                 'coin'                  => $this->coin,
@@ -66,11 +65,11 @@ class Placeholder
                 'apiKey'                => $this->apiKey,
                 'cryptoAddress'         => $this->cryptoAddress,
             ];
-        }elseif($type == $typeArray[1]){  # 信用卡
+        }elseif($type == Type::CREDIT_CARD){  # 信用卡
             $result = [
                 'transactionType'       => $this->transactionType,
             ];
-        }elseif($type == $typeArray[3]){  # 電子錢包
+        }elseif($type == Type::WALLET){  # 電子錢包
             $result = [
                 'transactionType'       => $this->transactionType,
             ];
