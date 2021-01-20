@@ -171,8 +171,11 @@ class ShineUPay extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
+
         if ($type == Type::typeName[2]){
-            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT);
+            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
+            C::MOBILE, C::EMAIL, C::IFSC
+        );
         }elseif($type == Type::typeName[3]){
             $column = array(C::ADDRESS,C::AMOUNT,C::ADDRESS);
         }elseif($type == Type::typeName[4]){
