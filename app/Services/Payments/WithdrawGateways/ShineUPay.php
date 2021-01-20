@@ -15,12 +15,15 @@ use App\Repositories\Orders\WithdrawRepository;
 use App\Constants\Payments\ResponseCode;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
+use App\Models\WithdrawOrder;
+use App\Models\Setting;
 
 class ShineUPay extends AbstractWithdrawGateway
 {
     use ResultTrait;
     use Proxy;
 
+    // {"id":1,"user_id":1,"md5_key":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "673835da9a3458e88e8d483bdae9c9f1"}
     private $curlPostData = [];
     private $curlRes;
     private $curl;
@@ -36,27 +39,26 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->callbackUrl = config('app.url') . '/withdraw/callback/'. __CLASS__;
     }
 
-    public function setRequest($data = [], $setting = []) {
+    public function setRequest($post = [], WithdrawOrder $order) {
 
-        if (empty($setting)) {
+        if (empty($order)) {
             throw new WithdrawException('setting empty ', ResponseCode::ERROR_PARAMETERS);
         }
+        $this->validateInput($post);
 
-        $this->setting = $setting;
+        $settings = json_decode($order->key->settings, true);
+        $this->createSendData($post,  $settings);
 
+        $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $settings['md5_key']);
 
-        Log::channel('withdraw')->info(__LINE__ , [$data, $setting]);
+       return $this;
+    }
 
-        $validator = Validator::make($data, $this->getNeedValidateParams());
+    private function createSendData($data, $settings) {
 
-        if ($validator->fails()) {
-            throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
-        }
-
-        # set data
-        $this->curlPostData['merchantId']             = $setting->get('merchantId');
+        $this->curlPostData['merchantId']             = $settings['merchantId'];
         $this->curlPostData['timestamp']              = time() . '000';
-        $this->curlPostData['body']['advPasswordMd5'] = $setting->get('private_key');
+        $this->curlPostData['body']['advPasswordMd5'] = $settings['private_key'];
         $this->curlPostData['body']['orderId']        = $data['order_id'];
         $this->curlPostData['body']['flag']           = 0;
         $this->curlPostData['body']['bankCode']       = $data['withdraw_address'];
@@ -65,14 +67,20 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->curlPostData['body']['bankAddress']    = $data['bank_address'];
         $this->curlPostData['body']['bankUserEmail']  = $data['email'];
         $this->curlPostData['body']['bankUserIFSC']   = $data['ifsc'];
-        $this->curlPostData['body']['amount']         = $data['amount'];
-        $this->curlPostData['body']['realAmount']     = $data['amount'];
+        $this->curlPostData['body']['amount']         = (float) $data['amount'];
+        $this->curlPostData['body']['realAmount']     = (float) $data['amount'];
         $this->curlPostData['body']['notifyUrl']      = $this->callbackUrl;
 
-        $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $setting->get('md5_key'));
-
-       return $this;
     }
+
+    private function validateInput($data) {
+        $validator = Validator::make($data, $this->getNeedValidateParams());
+
+        if ($validator->fails()) {
+            throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
+        }
+    }
+
 
     private function getNeedValidateParams() {
         return [
@@ -174,8 +182,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
         if ($type == Type::typeName[2]){
             $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
-            C::MOBILE, C::EMAIL, C::IFSC
-        );
+            C::MOBILE, C::EMAIL, C::IFSC);
         }elseif($type == Type::typeName[3]){
             $column = array(C::ADDRESS,C::AMOUNT,C::ADDRESS);
         }elseif($type == Type::typeName[4]){

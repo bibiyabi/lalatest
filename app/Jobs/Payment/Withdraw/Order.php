@@ -23,38 +23,40 @@ class Order implements ShouldQueue
     public $timeout = 30;
     private $request;
     private $payment;
+    private $order;
+    private $setting;
+    private $post;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($request)
+    public function __construct($post, WithdrawOrder $order)
     {
-        $this->request = $request;
+        $this->post = $post;
+        $this->order = $order;
+
+        if (empty($order)) {
+            throw new WithdrawException('order not set' , ResponseCode::EXCEPTION);
+        }
     }
 
-    public function getRequest() {
-        return $this->request;
+    public function getInputOrder() {
+        return $this->order;
     }
-
 
     /**
      * Execute the job.
      *
      * @return void
      */
-    public function handle(AbstractWithdrawGateway $paymentGateway, SettingRepository $settingRepository)
+    public function handle(AbstractWithdrawGateway $paymentGateway)
     {
-        Log::channel('withdraw')->info(__FUNCTION__ . __LINE__, $this->request);
+        Log::channel('withdraw')->info(__FUNCTION__ . __LINE__, $this->post);
 
-        $setting = collect($settingRepository->filterId($this->request['key_id'])->first());
-
-        if (empty($setting)) {
-            throw new WithdrawException('res code not set' , ResponseCode::EXCEPTION);
-        }
         # gateway load payment
         try {
-            $paymentGateway->setRequest($this->request, $setting);
+            $paymentGateway->setRequest($this->post, $this->order);
             $res = $paymentGateway->send();
 
             if (!isset($res['code'])) {
@@ -62,13 +64,11 @@ class Order implements ShouldQueue
             }
 
         } catch (\Exception $e) {
-
             throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);
-            return;
         }
 
         # set db
-        WithdrawOrder::where('order_id', $this->request['order_id'])
+        WithdrawOrder::where('order_id', $this->post['order_id'])
         ->update(['status' => $res['code']]);
 
     }

@@ -36,7 +36,7 @@ class WithdrawRepository
     }
 
     public function create(Request $request, Setting $setting) {
-        WithdrawOrder::create([
+        return WithdrawOrder::create([
             'order_id'    => $request->order_id,
             'user_id'     => $request->user()->id,
             'key_id'      => $setting->id,

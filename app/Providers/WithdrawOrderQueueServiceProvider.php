@@ -26,30 +26,26 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(GatewayRepository $gatewayRepository, SettingRepository $settingRepository)
+    public function boot()
     {
-
         $this->app->bindMethod([Order::class, 'handle'], function ($job, $app)
-        use ($gatewayRepository, $settingRepository) {
+        {
+            $order = $job->getInputOrder();
+            $gateway = $order->key->gateway;
 
-            Log::channel('withdraw')->info(__FUNCTION__ . __LINE__, $job->getRequest());
-            $request = $job->getRequest();
-            $gateway = $gatewayRepository->filterGatewayId($request['gateway_id'])->first();
-
-            $gateway = collect($gateway);
-            if (! $gateway->has('name')) {
-                throw new Exception('gateway name not found', 22);
+            if (empty($gateway)) {
+                throw new Exception('gateway name not found in ' . __CLASS__);
             }
-            $gatewayName = $gateway->get('name');
+            $gatewayName = $gateway->name;
 
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
             $filePath = app_path(). '\Services\Payments\WithdrawGateways\\' . $gatewayName. '.php';
 
             if (! file_exists($filePath)) {
-                throw new Exception(__LINE__ . $gatewayName . 'gateway not found', 22);
+                throw new Exception(__LINE__ . $gatewayName . 'gateway file not found in ' . __CLASS__);
             }
 
-            return $job->handle($app->make($className), $settingRepository);
+            return $job->handle($app->make($className));
         });
     }
 }
