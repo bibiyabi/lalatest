@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 
 class DepositRepository
 {
+    private $order;
+
     public function create(Request $request, $gateway_id): Order
     {
         $user = $request->user();
@@ -25,5 +27,16 @@ class DepositRepository
             'status'   => Status::PENDING,
             'order_param' => json_encode($order_param),
         ]);
+    }
+
+    public function reset(): bool
+    {
+        return $this->order->update(['no_notify'=> true]);
+    }
+
+    public function orderId($orderId): DepositRepository
+    {
+        $this->order = Order::where('order_id', $orderId);
+        return $this;
     }
 }
