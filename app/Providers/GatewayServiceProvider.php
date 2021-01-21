@@ -38,7 +38,7 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
         if (empty($gatewayName)) {
             throw new WithdrawException(__LINE__ . 'gateway name not found s', 22);
         }
-        $filePath = app_path(). '\Services\Payments\WithdrawGateways\\' . $gatewayName. '.php';
+        $filePath = app_path('Services/Payments/WithdrawGateways/' . $gatewayName. '.php');
 
         if (! file_exists($filePath)) {
             throw new WithdrawException($gatewayName . 'gateway not found', 22);

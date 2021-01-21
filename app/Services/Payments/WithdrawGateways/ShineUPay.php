@@ -87,6 +87,11 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->createPostData = $this->getNeedGenSignArray($post,  $settings);
     }
 
+    // 設定回調網址
+    protected function setCallBackUrl() {
+        $this->callbackUrl = config('app.url') . '/api/withdraw/callback/'. class_basename(__CLASS__);;
+    }
+
     public function send() {
         $url = 'https://'.$this->domain. '/withdraw/create';
 
@@ -97,7 +102,7 @@ class ShineUPay extends AbstractWithdrawGateway
             //"HOST: ".'testgateway.shineupay.com',
         ])->setPost(json_encode($this->createPostData))->exec();
 
-        Log::channel('withdraw')->info(new LogLine('CURL 回應'), $curlRes);
+        Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->createPostData]);
 
         return $this->getSendReturn($curlRes);
 
@@ -172,7 +177,8 @@ class ShineUPay extends AbstractWithdrawGateway
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
         if ($type == Type::BANK_CARD){
-            $column = [C::AMOUNT, C::BANK_CARD, C::FUND_PASSWORD];
+            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
+    C::MOBILE, C::EMAIL, C::IFSC);
         }elseif($type == Type::WALLET){
             $column = [C::ADDRESS,C::AMOUNT,C::ADDRESS];
         }

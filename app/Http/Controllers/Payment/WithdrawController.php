@@ -17,7 +17,6 @@ use App\Contracts\Payments\LogLine;
 class WithdrawController extends Controller
 {
     public function create(Request $request, PaymentInterface $payment) {
-
         try {
             Log::channel('withdraw')->info(new LogLine('代付前端參數'), $request->post());
             $payment->checkInputSetDbSendOrderToQueue($request);

@@ -101,10 +101,7 @@ abstract class AbstractWithdrawGateway
     }
 
 
-    // 設定回調網址
-    private function setCallBackUrl() {
-        $this->callbackUrl = config('app.url') . '/withdraw/callback/'. __CLASS__;
-    }
+
 
     // set order object
     private function setOrder($order) {
