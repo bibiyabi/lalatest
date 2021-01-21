@@ -26,16 +26,11 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
      */
     public function boot()
     {
-
-        if ($this->app->request->segment(3) == 'withdraw' && $this->app->request->segment(4) == 'callback') {
+        if ($this->app->request->segment(2) == 'withdraw' && $this->app->request->segment(3) == 'callback') {
             $gatewayName = $this->app->request->segment(4);
 
             $this->createGateway($gatewayName);
         }
-
-
-
-
     }
 
     public function createGateway($gatewayName) {

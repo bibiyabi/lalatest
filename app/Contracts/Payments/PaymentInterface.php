@@ -9,6 +9,5 @@ interface PaymentInterface
 
     public function callbackNotifyToQueue($request);
 
-    public function callback(Request $request , AbstractWithdrawGateway $gateway);
 
 }
