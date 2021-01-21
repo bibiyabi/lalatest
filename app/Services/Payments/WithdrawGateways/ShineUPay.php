@@ -22,31 +22,30 @@ class ShineUPay extends AbstractWithdrawGateway
     use ResultTrait;
     use Proxy;
 
+    protected $createSign;
     // {"id":1,"user_id":1,"md5_key":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "673835da9a3458e88e8d483bdae9c9f1"}
     private $curlPostData = [];
-
-    private $headerApiSign = '';
     private $domain = 'testgateway.shineupay.com';
-    private $order;
+    private $callbackSuccessReturnString = 'success';
+    private $createPostData;
 
     public function __construct(Curl $curl) {
         parent::__construct($curl);
     }
 
     public function setRequest($post = [], WithdrawOrder $order) {
-
         Log::channel('withdraw')->info(new LogLine('第三方參數'), ['post'=>$post, 'order' => $order]);
+        $this->setBaseRequest($order, $post);
+    }
 
-        if (empty($order)) {
-            throw new WithdrawException('setting empty ', ResponseCode::ERROR_PARAMETERS);
-        }
-        $this->validateInput($post);
-        $settings = $this->decode($order->key->settings);
-        $this->setCallBackUrl();
-        $this->createSendData($post,  $settings);
-        $this->headerApiSign = $this->genSign(json_encode($this->curlPostData), $settings['md5_key']);
+    protected function createSign($post, $settings) {
+        $signParams = $this->getNeedGenSignArray($post,  $settings);
+        $this->createSign = $this->genSign(json_encode($signParams), $settings['md5_key']);
+    }
 
-       return $this;
+
+    protected function setCreatePostData($post, $settings) {
+        $this->createPostData = $this->getNeedGenSignArray($post,  $settings);
     }
 
     public function send() {
@@ -55,9 +54,9 @@ class ShineUPay extends AbstractWithdrawGateway
         $curlRes = $this->curl->ssl()
         ->setUrl($url)->setHeader([
             'Content-Type: application/json',
-            'Api-Sign: '. $this->headerApiSign,
+            'Api-Sign: '. $this->createSign,
             //"HOST: ".'testgateway.shineupay.com',
-        ])->setPost(json_encode($this->curlPostData))->exec();
+        ])->setPost(json_encode($this->createPostData))->exec();
 
         Log::channel('withdraw')->info(new LogLine('CURL 回應'), $curlRes);
 
@@ -67,7 +66,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
     public function callback(Request $request) {
 
-       // dd($request->json()->all());
+        dd($request->json()->all());
         $post = $request->post();
         //不用這個取價格小數點會有差
         $postJson  = file_get_contents("php://input");
@@ -112,12 +111,12 @@ class ShineUPay extends AbstractWithdrawGateway
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
 
-        if ($type == Type::typeName[2]){
+        if ($type == Type::BANK_CARD) {
             $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
             C::MOBILE, C::EMAIL, C::IFSC);
-        }elseif($type == Type::typeName[3]){
+        } elseif ($type == Type::WALLET) {
             $column = array(C::ADDRESS,C::AMOUNT,C::ADDRESS);
-        }elseif($type == Type::typeName[4]){
+        } elseif ($type == Type::CRYPTO_CURRENCY){
             $column = array(C::CRYPTO_ADDRESS,C::CRYPTO_AMOUNT);
         }
 
@@ -128,10 +127,10 @@ class ShineUPay extends AbstractWithdrawGateway
 
         switch ($callbackPost['body']['status']) {
             case 1:
-                return $this->resCallbackSuccess('success', ['order_id' => $callbackPost['body']['orderId']]);
+                return $this->resCallbackSuccess($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
 
             case 2:
-                return $this->resCallbackFailed('success', ['order_id' => $callbackPost['body']['orderId']]);
+                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
         }
 
     }
@@ -143,27 +142,30 @@ class ShineUPay extends AbstractWithdrawGateway
         ];
     }
 
-    private function createSendData($data, $settings) {
+    private function getNeedGenSignArray($input, $settings) {
 
-        $this->curlPostData['merchantId']             = $settings['merchantId'];
-        $this->curlPostData['timestamp']              = time() . '000';
-        $this->curlPostData['body']['advPasswordMd5'] = $settings['private_key'];
-        $this->curlPostData['body']['orderId']        = $data['order_id'];
-        $this->curlPostData['body']['flag']           = 0;
-        $this->curlPostData['body']['bankCode']       = $data['withdraw_address'];
-        $this->curlPostData['body']['bankUser']       = $data['first_name'] . $data['last_name'];
-        $this->curlPostData['body']['bankUserPhone']  = $data['mobile'];
-        $this->curlPostData['body']['bankAddress']    = $data['bank_address'];
-        $this->curlPostData['body']['bankUserEmail']  = $data['email'];
-        $this->curlPostData['body']['bankUserIFSC']   = $data['ifsc'];
-        $this->curlPostData['body']['amount']         = (float) $data['amount'];
-        $this->curlPostData['body']['realAmount']     = (float) $data['amount'];
-        $this->curlPostData['body']['notifyUrl']      = $this->callbackUrl;
+        $array = [];
+        $array['merchantId']             = $settings['merchantId'];
+        $array['timestamp']              = time() . '000';
+        $array['body']['advPasswordMd5'] = $settings['private_key'];
+        $array['body']['orderId']        = $input['order_id'];
+        $array['body']['flag']           = 0;
+        $array['body']['bankCode']       = $input['withdraw_address'];
+        $array['body']['bankUser']       = $input['first_name'] . $input['last_name'];
+        $array['body']['bankUserPhone']  = $input['mobile'];
+        $array['body']['bankAddress']    = $input['bank_address'];
+        $array['body']['bankUserEmail']  = $input['email'];
+        $array['body']['bankUserIFSC']   = $input['ifsc'];
+        $array['body']['amount']         = (float) $input['amount'];
+        $array['body']['realAmount']     = (float) $input['amount'];
+        $array['body']['notifyUrl']      = $this->callbackUrl;
+
+        return $array;
 
     }
 
 
-    protected function getNeedValidateParams() {
+    protected function validationCreateInput() {
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
@@ -182,8 +184,8 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
 
-    private function checkOrderIsSuccess($resData) {
-        return isset($resData['body']['platformOrderId']) && $resData['status'] == 0;
+    protected function checkOrderIsSuccess($res) {
+        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
     }
 
 

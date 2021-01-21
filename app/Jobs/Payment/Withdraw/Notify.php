@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
 class Notify implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $timeout = 30;
+    //public $timeout = 30;
 
     private $order;
 

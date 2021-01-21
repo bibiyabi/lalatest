@@ -20,7 +20,7 @@ use Throwable;
 class Order implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $timeout = 30;
+    //public $timeout = 30;
     private $request;
     private $payment;
     private $order;
