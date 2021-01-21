@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Constants\Payments\Type;
-use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Constants\Payments\ResponseCode as CODE;
-use App\Contracts\Payments\WithdrawGatewayFactory;
 use App\Services\Payments\GatewayService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
@@ -17,10 +13,12 @@ use App\Repositories\GatewayTypeRepository;
 class GatewayController extends Controller
 {
     protected $gateTypeRepo;
+    protected $service;
 
-    public function __construct(GatewayTypeRepository $gateTypeRepo)
+    public function __construct(GatewayTypeRepository $gateTypeRepo, GatewayService $service)
     {
         $this->gateTypeRepo = $gateTypeRepo;
+        $this->service = $service;
     }
 
     # 金流商/交易所下拉選單
@@ -35,14 +33,12 @@ class GatewayController extends Controller
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
+        $result = $this->service->getGatewayList($request);
 
-        $service = App::make(GatewayService::class);
-        $result = App::call([$service, 'getGatewayList'], ['request' => $request]);
-
-        return $result->getSuccess() ? RB::success($result->getResult(), $result->getErrorCode())
-                                     : RB::error($result->getErrorCode());
+        return $result->getSuccess()
+            ? RB::success($result->getResult(), $result->getErrorCode())
+            : RB::error($result->getErrorCode());
     }
-
 
     # 提示字
     public function getPlaceholder(Request $request)
@@ -58,23 +54,11 @@ class GatewayController extends Controller
             return RB::error(CODE::ERROR_PARAMETERS);
         }
 
-        $gatewayName = $request->input('gateway_name');
-        try {
-            if ($request->input('is_deposit') == 1){# for deposit
-                $gateway = DepositGatewayFactory::createGateway($gatewayName);
-            }else{# for withdraw
-                $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
-            }
-            $placeholder = $gateway->getPlaceholder($request->input('type'));
-            $result = $placeholder->toArray();
+        $result = $this->service->getPlaceholder($request, __FUNCTION__);
 
-        }catch(\Throwable $e){
-            Log::info($e->getMessage(), $request->post());
-            return RB::error(CODE::ERROR_DATA_IN_PAYMENT);
-        }
-
-        $resultEncode = urlencode(json_encode($result));
-        return RB::success($resultEncode,CODE::SUCCESS);
+        return $result->getSuccess()
+            ? RB::success($result->getResult(), $result->getErrorCode())
+            : RB::error($result->getErrorCode());
     }
 
     # 前台的出/入款應顯示欄位及下拉選單
@@ -90,23 +74,11 @@ class GatewayController extends Controller
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
-        $gatewayName = $request->input('gateway_name');
+        $result = $this->service->getRequireInfo($request, __FUNCTION__);
 
-        try{
-            if ($request->input('is_deposit') == 1){# for deposit
-                $gateway = DepositGatewayFactory::createGateway($gatewayName);
-            }else{# for withdraw
-                $gateway = WithdrawGatewayFactory::createGateway($gatewayName);
-            }
-        }catch(\Throwable $e){
-            Log::info($e->getMessage(),$request->post());
-            return RB::error(CODE::ERROR_DATA_IN_PAYMENT);
-        }
-        $info = $gateway->getRequireInfo($request->input('type'));
-        $result = $info->toArray();
-
-        $resultEncode = urlencode(json_encode($result));
-        return RB::success($resultEncode,CODE::SUCCESS);
-
+        return $result->getSuccess()
+            ? RB::success($result->getResult(), $result->getErrorCode())
+            : RB::error($result->getErrorCode());
     }
+
 }

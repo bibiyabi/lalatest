@@ -10,7 +10,7 @@ class ServiceResult
     private $errorCode;
     private $result;
 
-    public function __construct(bool $success, int $errorCode=0, $result) {
+    public function __construct(bool $success, int $errorCode = 0, $result = null) {
         $this->success = $success;
         $this->errorCode = $errorCode;
         $this->result = $result;

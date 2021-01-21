@@ -5,9 +5,12 @@ namespace App\Services\Payments;
 
 use App\Constants\Payments\ResponseCode as CODE;
 use App\Constants\Payments\Type;
+use App\Contracts\Payments\Deposit\DepositGatewayFactory;
+use App\Contracts\Payments\WithdrawGatewayFactory;
 use App\Repositories\GatewayTypeRepository;
-use Illuminate\Http\Request;
 use App\Contracts\Payments\ServiceResult;
+use Illuminate\Support\Facades\Log;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class GatewayService
 {
@@ -18,7 +21,11 @@ class GatewayService
         $this->gateTypeRepo = $gateTypeRepo;
     }
 
-    public function getGatewayList(Request $request)
+    /**
+     * @param $request
+     * @return ServiceResult
+     */
+    public function getGatewayList($request)
     {
         if (array_key_exists($request->input('type'), Type::type)) {
             $type = Type::type[$request->input('type')];
@@ -50,14 +57,50 @@ class GatewayService
         }
     }
 
-    public function getPlaceholder()
+    public function getPlaceholder($request)
     {
+        $this->checkType($request->input('type'));
 
+        try {
+            $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
+            $result = $gateway->getPlaceholder($request->input('type'))->toArray();
+        }catch(\Throwable $e){
+            Log::info($e->getMessage(), $request->post());
+            return new ServiceResult(false,CODE::ERROR_DATA_IN_PAYMENT);
+        }
+
+        return new ServiceResult(true, CODE::SUCCESS, urlencode(json_encode($result)));
     }
 
-    public function getRequireInfo()
+    public function getRequireInfo($request)
     {
+        $this->checkType($request->input('type'));
 
+        try {
+            $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
+            $result = $gateway->getRequireInfo($request->input('type'))->toArray();
+        }catch(\Throwable $e){
+            Log::info($e->getMessage(), $request->post());
+            return new ServiceResult(false,CODE::ERROR_DATA_IN_PAYMENT);
+        }
+
+        return new ServiceResult(true, CODE::SUCCESS, urlencode(json_encode($result)));
+    }
+
+    private function checkType($type)
+    {
+        if (!array_key_exists($type, Type::type)){
+            return new ServiceResult(false,CODE::ERROR_CONFIG_PARAMETERS);
+        }
+    }
+
+    private function getFactory($isDeposit, $gatewayName)
+    {
+        if ($isDeposit == 1){# for deposit
+            return DepositGatewayFactory::createGateway($gatewayName);
+        }else{# for withdraw
+            return WithdrawGatewayFactory::createGateway($gatewayName);
+        }
     }
 
 }
