@@ -89,7 +89,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
     // 設定回調網址
     protected function setCallBackUrl() {
-        $this->callbackUrl = config('app.url') . '/api/withdraw/callback/'. class_basename(__CLASS__);;
+        $this->callbackUrl = config('app.url') . '/callback/withdraw/'. class_basename(__CLASS__);;
     }
 
     public function send() {
