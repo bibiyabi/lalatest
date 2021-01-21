@@ -8,16 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
-use App\Repositories\GatewayTypeRepository;
 
 class GatewayController extends Controller
 {
-    protected $gateTypeRepo;
     protected $service;
 
-    public function __construct(GatewayTypeRepository $gateTypeRepo, GatewayService $service)
+    public function __construct(GatewayService $service)
     {
-        $this->gateTypeRepo = $gateTypeRepo;
         $this->service = $service;
     }
 
@@ -54,7 +51,7 @@ class GatewayController extends Controller
             return RB::error(CODE::ERROR_PARAMETERS);
         }
 
-        $result = $this->service->getPlaceholder($request, __FUNCTION__);
+        $result = $this->service->getPlaceholder($request);
 
         return $result->getSuccess()
             ? RB::success($result->getResult(), $result->getErrorCode())
@@ -74,7 +71,7 @@ class GatewayController extends Controller
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
-        $result = $this->service->getRequireInfo($request, __FUNCTION__);
+        $result = $this->service->getRequireInfo($request);
 
         return $result->getSuccess()
             ? RB::success($result->getResult(), $result->getErrorCode())

@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Payments\SettingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use App\Constants\Payments\ResponseCode as CODE;
-use App\Repositories\SettingRepository;
+
 
 class SettingController extends Controller
 {
-    protected $repo;
+    protected $service;
 
-    public function __construct(SettingRepository $repo)
+    public function __construct(SettingService $settingService)
     {
-        $this->repo = $repo;
+        $this->service = $settingService;
     }
 
     public function store(Request $request)
@@ -51,25 +52,14 @@ class SettingController extends Controller
         ];
         $validator = Validator::make($data, $rules);
         if ($validator->fails()){
-            Log::info(json_encode($validator->errors()->all()), $request->post());
+            Log::info(json_encode($validator->errors()->all()), $data);
             return RB::error(CODE::ERROR_PARAMETERS);
         }
-        $settingId = $this->repo->getIdByUserPk($data['id']);
+        $result = $this->service->createSetting($request->user()->id, $data);
 
-        try {
-            if (empty($settingId[0]->id)){
-                # create
-                $this->repo->insertSetting($request->user()->id,$data['gateway_id'],$data['id'],$dataJson);
-            }else{
-                # update
-                $this->repo->updateSetting($settingId[0]->id, $data['gateway_id'], $dataJson);
-            }
-        }catch (\Throwable $e){
-            Log::info($e->getMessage(), $request->post());
-            return RB::error(CODE::FAIL);
-        }
-
-        return RB::success(null,CODE::SUCCESS);
+        return $result->getSuccess()
+            ? RB::success($result->getResult(), $result->getErrorCode())
+            : RB::error($result->getErrorCode());
     }
 
     public function destroy(Request $request)
@@ -80,19 +70,10 @@ class SettingController extends Controller
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
+        $result = $this->service->deleteSetting($request);
 
-        try{
-            $settingId = $this->repo->getId($request->input('id'));
-            if (empty($settingId[0]->id)){
-                return RB::error(CODE::FAIL);
-            }
-
-            $this->repo->deleteSetting($settingId[0]->id);
-        }catch (\Throwable $e){
-            Log::info($e->getMessage(), $request->post());
-            return RB::error(CODE::FAIL);
-        }
-
-        return RB::success(null,CODE::SUCCESS);
+        return $result->getSuccess()
+            ? RB::success($result->getResult(), $result->getErrorCode())
+            : RB::error($result->getErrorCode());
     }
 }

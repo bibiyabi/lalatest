@@ -8,11 +8,8 @@ class SettingRepository
 {
     private $setting;
 
-//    protected $repo;
-
     public function __construct()
     {
-//        $this->set = $setting;
         $this->setting = Setting::query();
     }
 
@@ -49,13 +46,13 @@ class SettingRepository
         return $this;
     }
 
-    public function insertSetting($userId, $gatewayId, $id, $data)
+    public function insertSetting($userId, $data)
     {
         return $this->setting->insert([
             'user_id'       => $userId,
-            'gateway_id'    => $gatewayId,
-            'user_pk'       => $id,
-            'settings'      => $data,
+            'gateway_id'    => $data['gateway_id'],
+            'user_pk'       => $data['id'],
+            'settings'      => json_encode($data),
             'created_at'    => date('Y-m-d H:i:s', time()),
             'updated_at'    => date('Y-m-d H:i:s', time()),
         ]);
@@ -71,11 +68,11 @@ class SettingRepository
         return $this->setting->select('id')->where('id','=',$id)->get();
     }
 
-    public function updateSetting($id, $gatewayId, $data)
+    public function updateSetting($id, $data)
     {
         return $this->setting->where('id', '=', $id)->update([
-            'gateway_id'    => $gatewayId,
-            'settings'      => $data,
+            'gateway_id'    => $data['gateway_id'],
+            'settings'      => json_encode($data),
             'updated_at'    => date('Y-m-d H:i:s', time()),
         ]);
     }
