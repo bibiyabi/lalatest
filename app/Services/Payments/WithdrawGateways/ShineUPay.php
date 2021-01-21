@@ -38,9 +38,48 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->setBaseRequest($order, $post);
     }
 
+    protected function validationCreateInput() {
+        return [
+            'order_id'         => 'required',
+            'withdraw_address' => 'required',
+            'first_name'       => 'required',
+            'last_name'        => 'required',
+            'mobile'           => 'required',
+            'bank_address'     => 'required',
+            'ifsc'             => 'required',
+            'amount'           => 'required',
+            'email'            => 'required',
+        ];
+    }
+
+
     protected function createSign($post, $settings) {
         $signParams = $this->getNeedGenSignArray($post,  $settings);
         $this->createSign = $this->genSign(json_encode($signParams), $settings['md5_key']);
+    }
+
+    private function getNeedGenSignArray($input, $settings) {
+        $array = [];
+        $array['merchantId']             = $settings['merchantId'];
+        $array['timestamp']              = time() . '000';
+        $array['body']['advPasswordMd5'] = $settings['private_key'];
+        $array['body']['orderId']        = $input['order_id'];
+        $array['body']['flag']           = 0;
+        $array['body']['bankCode']       = $input['withdraw_address'];
+        $array['body']['bankUser']       = $input['first_name'] . $input['last_name'];
+        $array['body']['bankUserPhone']  = $input['mobile'];
+        $array['body']['bankAddress']    = $input['bank_address'];
+        $array['body']['bankUserEmail']  = $input['email'];
+        $array['body']['bankUserIFSC']   = $input['ifsc'];
+        $array['body']['amount']         = (float) $input['amount'];
+        $array['body']['realAmount']     = (float) $input['amount'];
+        $array['body']['notifyUrl']      = $this->callbackUrl;
+        return $array;
+
+    }
+
+    private function genSign($postData, $sign) {
+        return md5($postData . '|'. $sign);
     }
 
 
@@ -64,9 +103,12 @@ class ShineUPay extends AbstractWithdrawGateway
 
     }
 
+    protected function checkOrderIsSuccess($res) {
+        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
+    }
+
     public function callback(Request $request) {
 
-        dd($request->json()->all());
         $post = $request->post();
         //不用這個取價格小數點會有差
         $postJson  = file_get_contents("php://input");
@@ -99,6 +141,25 @@ class ShineUPay extends AbstractWithdrawGateway
 
 
 
+    protected function getCallbackValidateColumns() {
+        return [
+            'body.orderId' => 'required',
+            'body.status' => 'required',
+        ];
+    }
+
+    private function getCallbackResult($callbackPost) {
+
+        switch ($callbackPost['body']['status']) {
+            case 1:
+                return $this->resCallbackSuccess($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
+
+            case 2:
+                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
+        }
+
+    }
+
     public function getPlaceholder($type):Placeholder
     {
         return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
@@ -122,71 +183,4 @@ class ShineUPay extends AbstractWithdrawGateway
 
         return new WithdrawRequireInfo($type, $column, [], ['CC','DD']);
     }
-
-    private function getCallbackResult($callbackPost) {
-
-        switch ($callbackPost['body']['status']) {
-            case 1:
-                return $this->resCallbackSuccess($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
-
-            case 2:
-                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
-        }
-
-    }
-
-    protected function getCallbackValidateColumns() {
-        return [
-            'body.orderId' => 'required',
-            'body.status' => 'required',
-        ];
-    }
-
-    private function getNeedGenSignArray($input, $settings) {
-
-        $array = [];
-        $array['merchantId']             = $settings['merchantId'];
-        $array['timestamp']              = time() . '000';
-        $array['body']['advPasswordMd5'] = $settings['private_key'];
-        $array['body']['orderId']        = $input['order_id'];
-        $array['body']['flag']           = 0;
-        $array['body']['bankCode']       = $input['withdraw_address'];
-        $array['body']['bankUser']       = $input['first_name'] . $input['last_name'];
-        $array['body']['bankUserPhone']  = $input['mobile'];
-        $array['body']['bankAddress']    = $input['bank_address'];
-        $array['body']['bankUserEmail']  = $input['email'];
-        $array['body']['bankUserIFSC']   = $input['ifsc'];
-        $array['body']['amount']         = (float) $input['amount'];
-        $array['body']['realAmount']     = (float) $input['amount'];
-        $array['body']['notifyUrl']      = $this->callbackUrl;
-
-        return $array;
-
-    }
-
-
-    protected function validationCreateInput() {
-        return [
-            'order_id'         => 'required',
-            'withdraw_address' => 'required',
-            'first_name'       => 'required',
-            'last_name'        => 'required',
-            'mobile'           => 'required',
-            'bank_address'     => 'required',
-            'ifsc'             => 'required',
-            'amount'           => 'required',
-            'email'            => 'required',
-        ];
-    }
-
-    private function genSign($postData, $sign) {
-        return md5($postData . '|'. $sign);
-    }
-
-
-    protected function checkOrderIsSuccess($res) {
-        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
-    }
-
-
 }
