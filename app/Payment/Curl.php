@@ -60,9 +60,7 @@ class Curl
     public function exec() {
 
         //$info = curl_getinfo($this->ch);
-
         $curlResult = curl_exec($this->ch);
-
         $errorNo = curl_errno($this->ch);
 
         if ($errorNo) {
@@ -74,9 +72,8 @@ class Curl
         }
         curl_close($this->ch);
 
-        $success = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult];
-       // dd($success);
-        return $success;
+        $res = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult];
+        return $res;
     }
 
 }

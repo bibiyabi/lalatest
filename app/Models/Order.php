@@ -21,7 +21,8 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'status' => 'integer'
+        'status' => 'integer',
+        'no_notify' => 'boolean',
     ];
 
     public function key()

@@ -94,7 +94,9 @@ class DepositService
         }
 
         # push to queue
-        Notify::dispatch($order);
+        if ($order->no_notify === false) {
+            Notify::dispatch($order);
+        }
 
         return $result;
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\Orders\DepositRepository;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Services\Payments\Deposit\DepositService;
@@ -11,6 +12,12 @@ use Illuminate\Support\Facades\Log;
 
 class DepositController extends Controller
 {
+    private $depositRepo;
+
+    public function __construct(DepositRepository $depositRepo) {
+        $this->depositRepo = $depositRepo;
+    }
+
     public function create(Request $request)
     {
         Log::info('Deposit-create', $request->post());
@@ -37,5 +44,18 @@ class DepositController extends Controller
         $rs = App::call([$service, 'callback'], compact('gatewayName', 'request'));
 
         return $rs->getMsg();
+    }
+
+    public function reset(Request $request)
+    {
+        $validated = $request->validate([
+            'order_id' => 'required'
+        ]);
+
+        Log::info('Deposit-reset order_id:' . $request->post('order_id'));
+
+        $this->depositRepo->orderId($validated['order_id'])->reset();
+
+        return RB::success();
     }
 }

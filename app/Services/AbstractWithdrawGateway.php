@@ -9,45 +9,64 @@ use Illuminate\Support\Facades\Validator;
 
 abstract class AbstractWithdrawGateway
 {
+    // url object
     protected $curl;
+    // 回調網址
     protected $callbackUrl;
+    // order modal
+    protected $order;
+
 
     public function __construct($curl) {
-        $this->setCallBackUrl();
         $this->curl = $curl;
     }
 
-    abstract  public function setRequest($post = [], WithdrawOrder $order);
-
-
-
-    abstract public function send() ;
-
-    abstract public function getPlaceholder($type):Placeholder;
-
-    abstract public function getRequireInfo($type):WithdrawRequireInfo;
-
-
-    abstract protected function getNeedValidateParams();
-    abstract protected function getCallbackValidateColumns();
-    /*
-    public function do () {
-        $this->validationInput($this->post);
-        $params = $this->setRequest($this->post, $this->order);
-        $settings = $this->decodeSettings($this->order->setting);
-        $this->createSendData($params, $settings);
-
+    protected function setBaseRequest($order, $post) {
+        // set order model
+        $this->setOrder($order);
+        // check client input
+        $this->validateOrderInput($post);
+        // set callback url
+        $this->setCallBackUrl();
+        // get gateway config
+        $settings = $this->decode($order->key->settings);
+        // create post order sign key
+        $this->createSign($post, $settings);
+        // set create order post data
+        $this->setCreatePostData($post,  $settings);
     }
-    */
 
+    // 設定request
+    abstract  public function setRequest($post = [], WithdrawOrder $order);
+    // 設定送單array
+    abstract protected function setCreatePostData($post, $settings);
+    // 建單
+    abstract public function send();
+
+    // 確認訂單成功狀態
+    abstract protected  function checkOrderIsSuccess($res);
+    // 後端提示字
+    abstract public function getPlaceholder($type):Placeholder;
+    // 前端提示字
+    abstract public function getRequireInfo($type):WithdrawRequireInfo;
+    // callback 驗證變數
+    abstract protected function getCallbackValidateColumns();
+
+    // 確認訂單參數
+    protected function validateOrderInput($data) {
+        $validator = Validator::make($data, $this->validationCreateInput());
+        if ($validator->fails()) {
+            throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
+        }
+    }
+
+    // for decode
     protected function decode($data) {
         return json_decode($data, true);
     }
 
-    protected function setCallBackUrl() {
-        $this->callbackUrl = config('app.url') . '/withdraw/callback/'. __CLASS__;
-    }
 
+    // 取得建單狀態
     protected function getSendReturn($curlRes) {
 
         switch ($curlRes['code']) {
@@ -63,6 +82,7 @@ abstract class AbstractWithdrawGateway
         }
     }
 
+    // curl 取得建單狀態
     protected function getOrderRes($curlRes) {
         $resData = $this->decode($curlRes['data']);
         if ($this->checkOrderIsSuccess($resData)) {
@@ -72,18 +92,26 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    protected function validateInput($data) {
-        $validator = Validator::make($data, $this->getNeedValidateParams());
-        if ($validator->fails()) {
-            throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
-        }
-    }
-
+    // 檢查回調input
     protected function validateCallbackInput($post) {
         $validator = Validator::make($post, $this->getCallbackValidateColumns());
         if($validator->fails()){
             throw new WithdrawException('callback input check error'. json_encode($validator->errors()), ResponseCode::EXCEPTION);
         }
+    }
+
+
+    // 設定回調網址
+    private function setCallBackUrl() {
+        $this->callbackUrl = config('app.url') . '/withdraw/callback/'. __CLASS__;
+    }
+
+    // set order object
+    private function setOrder($order) {
+        if (empty($order)) {
+            throw new WithdrawException('setting empty ', ResponseCode::ERROR_PARAMETERS);
+        }
+        $this->order = $order;
     }
 
 
