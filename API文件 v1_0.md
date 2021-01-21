@@ -38,7 +38,7 @@
 
 2021/1/21
 * 新增API 錯誤碼
-* 新增代付重置訂單API api/withdraw/reset
+* 新增代付重置訂單 API api/withdraw/reset
 ---
 ### API 錯誤碼
 
@@ -450,7 +450,7 @@ Response example:
 
 
 
-### 代付重置下單
+### 代付重置訂單
 
 ```plaintext
 POST /api/withdraw/reset
