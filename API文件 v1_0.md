@@ -1,4 +1,4 @@
-# API文件 V3
+# API文件 V7
 
 ## API必帶參數
 
@@ -39,6 +39,11 @@
 2021/1/21
 * 新增API 錯誤碼
 * 新增代付重置訂單 API api/withdraw/reset
+
+### V7
+
+* 新增充值重置訂單 API api/deposit/reset
+
 ---
 ### API 錯誤碼
 
