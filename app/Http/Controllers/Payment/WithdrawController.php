@@ -34,6 +34,9 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('代付回調前端參數'), ['post' => $request->post(), 'header' => $request->headers]);
 
             $res = $payment->callback($request, $gateway);
+
+            Log::channel('withdraw')->info(new LogLine('callback 回應'), $res);
+
             $orderId = data_get($res, 'data.order_id');
 
             if (empty($orderId)) {
