@@ -9,7 +9,7 @@ class Curl
 
     private $ch;
     private $second;
-    private $errorMsg;
+    private $errorMsg = '';
     private $header;
 
     public function __construct() {
@@ -68,14 +68,14 @@ class Curl
         if ($errorNo) {
 
             if ($errorNo === 28) {
-                return ['msg' => $this->errorMsg, 'code' => self::TIMEOUT];
+                return ['code' => self::TIMEOUT ,'data' => ''];
             }
-            return ['msg' => $this->errorMsg, 'code' => self::FAILED];
+            return ['code' => self::FAILED ,'data' => ''];
         }
         curl_close($this->ch);
 
-        $success = ['msg' => 'ok', 'code' => self::STATUS_SUCCESS, 'data' => $curlResult];
-        //dd($success);
+        $success = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult];
+       // dd($success);
         return $success;
     }
 

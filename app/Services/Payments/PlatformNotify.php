@@ -4,6 +4,8 @@ namespace App\Services\Payments;
 
 use App\Payment\Curl;
 use App\Repositories\MerchantRepository;
+use App\Contracts\Payments\LogLine;
+use Illuminate\Support\Facades\Log;
 
 class PlatformNotify
 {
@@ -34,7 +36,7 @@ class PlatformNotify
 
     public function notifyWithdrawSuccess() {
 
-        $url = $this->javaUrl . 'withdraw/result';
+        $url = $this->javaUrl . '/withdraw/result';
 
         $postData = [];
         $postData['order_id'] = $this->order->order_id;
@@ -44,11 +46,13 @@ class PlatformNotify
         $this->curlRes = $this->curl->setUrl($url)
             ->setPost([])
             ->exec();
+
+        Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
     }
 
     public function notifyWithdrawFailed() {
 
-        $url = $this->javaUrl . 'withdraw/result';
+        $url = $this->javaUrl . '/withdraw/result';
 
         $postData = [];
         $postData['order_id'] = $this->order->order_id;
@@ -58,6 +62,8 @@ class PlatformNotify
         $this->curlRes = $this->curl->setUrl($url)
             ->setPost([])
             ->exec();
+
+        Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
     }
 
     private function removeEmptyData($data) {

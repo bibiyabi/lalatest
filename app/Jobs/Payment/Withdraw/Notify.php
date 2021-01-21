@@ -35,7 +35,6 @@ class Notify implements ShouldQueue
 
     public function handle(PlatformNotify $platformNotify)
     {
-        $platformNotify->setOrder($this->order)->notifyWithdrawFailed();
         if (in_array($this->order->status, [
             Status::CALLBACK_SUCCESS,
             Status::ORDER_FAILED
