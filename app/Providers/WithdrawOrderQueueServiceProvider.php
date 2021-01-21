@@ -39,7 +39,7 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
             $gatewayName = $gateway->name;
 
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
-            $filePath = app_path(). '\Services\Payments\WithdrawGateways\\' . $gatewayName. '.php';
+            $filePath =  app_path('Services/Payments/WithdrawGateways/' . $gatewayName. '.php');
 
             if (! file_exists($filePath)) {
                 throw new Exception(__LINE__ . $gatewayName . 'gateway file not found in ' . __CLASS__);

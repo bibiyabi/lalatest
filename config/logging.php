@@ -101,7 +101,7 @@ return [
         ],
 
         'withdraw' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/withdraw.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
