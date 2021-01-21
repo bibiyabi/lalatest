@@ -10,7 +10,6 @@ use App\Contracts\Payments\WithdrawGatewayFactory;
 use App\Repositories\GatewayTypeRepository;
 use App\Contracts\Payments\ServiceResult;
 use Illuminate\Support\Facades\Log;
-use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class GatewayService
 {
@@ -57,6 +56,10 @@ class GatewayService
         }
     }
 
+    /**
+     * @param $request
+     * @return ServiceResult
+     */
     public function getPlaceholder($request)
     {
         $this->checkType($request->input('type'));
@@ -72,6 +75,10 @@ class GatewayService
         return new ServiceResult(true, CODE::SUCCESS, urlencode(json_encode($result)));
     }
 
+    /**
+     * @param $request
+     * @return ServiceResult
+     */
     public function getRequireInfo($request)
     {
         $this->checkType($request->input('type'));
