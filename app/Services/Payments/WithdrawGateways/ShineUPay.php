@@ -176,16 +176,12 @@ class ShineUPay extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-
-        if ($type == Type::BANK_CARD) {
-            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
-            C::MOBILE, C::EMAIL, C::IFSC);
-        } elseif ($type == Type::WALLET) {
-            $column = array(C::ADDRESS,C::AMOUNT,C::ADDRESS);
-        } elseif ($type == Type::CRYPTO_CURRENCY){
-            $column = array(C::CRYPTO_ADDRESS,C::CRYPTO_AMOUNT);
+        if ($type == Type::BANK_CARD){
+            $column = [C::AMOUNT, C::BANK_CARD, C::FUND_PASSWORD];
+        }elseif($type == Type::WALLET){
+            $column = [C::ADDRESS,C::AMOUNT,C::ADDRESS];
         }
 
-        return new WithdrawRequireInfo($type, $column, [], ['CC','DD']);
+        return new WithdrawRequireInfo($type, $column, [], []);
     }
 }
