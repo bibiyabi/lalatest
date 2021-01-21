@@ -57,4 +57,16 @@ class WithdrawController extends Controller
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
     }
+
+
+    public function reset(Request $request, PaymentInterface $payment) {
+        try {
+            Log::channel('withdraw')->info(new LogLine('重置訂單'), $request->post());
+            $payment->resetOrderStatus($request);
+            return RB::success();
+        } catch (Exception $e) {
+            Log::channel('withdraw')->info(new LogLine($e), $request->post());
+            return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
+        }
+    }
 }

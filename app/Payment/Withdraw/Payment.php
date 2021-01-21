@@ -16,6 +16,7 @@ use App\Repositories\Orders\WithdrawRepository;
 use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
 use App\Models\WithdrawOrder;
+use App\Contracts\Payments\LogLine;
 
 class Payment implements PaymentInterface
 {
@@ -126,6 +127,23 @@ class Payment implements PaymentInterface
 
     public function callback(Request $request , AbstractWithdrawGateway $gateway) {
         return $gateway->callback($request);
+    }
+
+    public function resetOrderStatus(Request $request) {
+
+        $post = $request->post();
+
+        $post['order_id'] = 'colintest3016028';
+
+        $order = WithdrawOrder::where('order_id', $post['order_id'])->first();
+        if (empty($order)) {
+            throw new WithdrawException("Order not found.");
+        }
+
+        Log::channel('withdraw')->info(new LogLine('重置訂單前狀態'), [$order]);
+
+        WithdrawOrder::where('order_id', $post['order_id'])->update(['status' => 2]);
+
     }
 
 
