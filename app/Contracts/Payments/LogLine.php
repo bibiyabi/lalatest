@@ -8,7 +8,7 @@ class LogLine extends \Exception
     private $msg;
     private $isInstantOfException = false;
 
-    public function __construct($msg)
+    public function __construct($msg = '')
     {
         if ($msg instanceof Exception) {
             $this->isInstantOfException = true;
@@ -23,7 +23,7 @@ class LogLine extends \Exception
         if ($this->isInstantOfException) {
             return '';
         }
-        return "msg: " . $this->msg . " \r\n file:" .$this->getFile().' line: '.$this->getLine()  . " \r\n";
+        return $this->msg . " \r\n file:" .$this->getFile().' line: '.$this->getLine()  . " \r\n";
     }
 
     private function createExceptionMsg($e) {

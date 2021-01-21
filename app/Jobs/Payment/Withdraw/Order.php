@@ -52,8 +52,6 @@ class Order implements ShouldQueue
      */
     public function handle(AbstractWithdrawGateway $paymentGateway)
     {
-        Log::channel('withdraw')->info(__FUNCTION__ . __LINE__, $this->post);
-
         # gateway load payment
         try {
             $paymentGateway->setRequest($this->post, $this->order);

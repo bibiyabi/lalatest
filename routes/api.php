@@ -199,6 +199,7 @@ Route::prefix('withdraw')->group(function ()
 {
     Route::post('create', [WithdrawController::class, 'create']);
     Route::post('callback/{gatewayName}', [WithdrawController::class, 'callback']);
+    Route::post('reset', [WithdrawController::class, 'reset']);
 });
 
 
@@ -206,6 +207,7 @@ Route::prefix('deposit')->group(function ()
 {
     Route::post('create', [DepositController::class, 'create']);
     Route::match(['get', 'post'], 'callback/{gatewayName}', [DepositController::class, 'callback']);
+    Route::post('reset', [DepositController::class, 'reset']);
 });
 
 

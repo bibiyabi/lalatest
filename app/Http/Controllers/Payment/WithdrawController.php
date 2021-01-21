@@ -14,14 +14,12 @@ use Exception;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\LogLine;
 
-
-
 class WithdrawController extends Controller
 {
     public function create(Request $request, PaymentInterface $payment) {
 
         try {
-            Log::channel('withdraw')->info(new LogLine('input'), $request->post());
+            Log::channel('withdraw')->info(new LogLine('代付前端參數'), $request->post());
             $payment->checkInputSetDbSendOrderToQueue($request);
             return RB::success();
         } catch (Exception $e) {
@@ -34,7 +32,7 @@ class WithdrawController extends Controller
     public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway, WithdrawRepository $withdrawRepository) {
 
         try {
-            Log::channel('withdraw')->info(new LogLine('input'), ['post' => $request->post(), 'header' => $request->headers]);
+            Log::channel('withdraw')->info(new LogLine('代付回調前端參數'), ['post' => $request->post(), 'header' => $request->headers]);
 
             $res = $payment->callback($request, $gateway);
             $orderId = data_get($res, 'data.order_id');
