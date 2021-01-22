@@ -63,11 +63,6 @@ class SettingRepository
         return $this->setting->select('id')->where('user_pk','=',$id)->get();
     }
 
-    public function getId($id)
-    {
-        return $this->setting->select('id')->where('id','=',$id)->get();
-    }
-
     public function updateSetting($id, $data)
     {
         return $this->setting->where('id', '=', $id)->update([
