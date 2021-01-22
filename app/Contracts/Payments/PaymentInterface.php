@@ -7,7 +7,7 @@ interface PaymentInterface
 {
 
 
-    public function callbackNotifyToQueue($request);
+    public function callbackNotifyToQueue($order);
 
 
 }

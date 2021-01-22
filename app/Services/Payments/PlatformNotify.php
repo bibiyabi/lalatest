@@ -44,7 +44,7 @@ class PlatformNotify
         $postData['signature'] = $this->makeSign($postData, $this->javaKey);
 
         $this->curlRes = $this->curl->setUrl($url)
-            ->setPost([])
+            ->setPost($postData)
             ->exec();
 
         Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
@@ -60,7 +60,7 @@ class PlatformNotify
         $postData['signature'] = $this->makeSign($postData, $this->javaKey);
 
         $this->curlRes = $this->curl->setUrl($url)
-            ->setPost([])
+            ->setPost($postData)
             ->exec();
 
         Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
