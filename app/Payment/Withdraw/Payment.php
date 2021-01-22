@@ -20,13 +20,9 @@ use App\Contracts\Payments\LogLine;
 
 class Payment implements PaymentInterface
 {
-
-    private $postData;
     private $settingRepository;
     private $settings;
     private $withdrawRepository;
-    private $request;
-
 
     public function __construct(WithdrawRepository $withdrawRepository, SettingRepository $settingRepository)
     {

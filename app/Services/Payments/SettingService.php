@@ -41,7 +41,7 @@ class SettingService
     public function deleteSetting($request)
     {
         try{
-            $settingId = $this->repo->getId($request->input('id'));
+            $settingId = $this->repo->getIdByUserPk($request->input('id'));
             if (empty($settingId)){
                 return new ServiceResult(false, CODE::FAIL);
             }

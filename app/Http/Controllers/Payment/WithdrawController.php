@@ -31,11 +31,15 @@ class WithdrawController extends Controller
     public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway, WithdrawRepository $withdrawRepository) {
 
         try {
-            Log::channel('withdraw')->info(new LogLine('代付回調前端參數'), ['post' => $request->post(), 'header' => $request->headers]);
+            Log::channel('withdraw')->info(new LogLine('代付回調前端參數'),[
+                'post' => $request->post(),
+                'header' => \Request::header(),
+                'phpinput' => file_get_contents("php://input")
+            ]);
 
             $res = $payment->callback($request, $gateway);
 
-            Log::channel('withdraw')->info(new LogLine('callback 回應'), $res);
+            Log::channel('withdraw')->info(new LogLine('callback 回應'), [$res]);
 
             $orderId = data_get($res, 'data.order_id');
 

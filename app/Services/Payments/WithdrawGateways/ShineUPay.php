@@ -21,19 +21,18 @@ class ShineUPay extends AbstractWithdrawGateway
 {
     use ResultTrait;
     use Proxy;
-
+    # 建單sign
     protected $createSign;
-    // {"id":1,"user_id":1,"md5_key":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "673835da9a3458e88e8d483bdae9c9f1"}
-    private $curlPostData = [];
+    # 第三方domain
     private $domain = 'testgateway.shineupay.com';
     private $callbackSuccessReturnString = 'success';
-    private $createPostData;
+
 
     public function __construct(Curl $curl) {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) {
+    public function setRequest($post = [], WithdrawOrder $order) : void {
         Log::channel('withdraw')->info(new LogLine('第三方參數'), ['post'=>$post, 'order' => $order]);
         $this->setBaseRequest($order, $post);
     }
@@ -59,6 +58,7 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
     private function getNeedGenSignArray($input, $settings) {
+        $this->setCallBackUrl(__CLASS__);
         $array = [];
         $array['merchantId']             = $settings['merchantId'];
         $array['timestamp']              = time() . '000';
@@ -74,6 +74,8 @@ class ShineUPay extends AbstractWithdrawGateway
         $array['body']['amount']         = (float) $input['amount'];
         $array['body']['realAmount']     = (float) $input['amount'];
         $array['body']['notifyUrl']      = $this->callbackUrl;
+
+        dd($array);
         return $array;
 
     }
@@ -87,35 +89,33 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->createPostData = $this->getNeedGenSignArray($post,  $settings);
     }
 
-    // 設定回調網址
-    protected function setCallBackUrl() {
-        $this->callbackUrl = config('app.url') . '/callback/withdraw/'. class_basename(__CLASS__);;
-    }
+
 
     public function send() {
+
         $url = 'https://'.$this->domain. '/withdraw/create';
 
         $curlRes = $this->curl->ssl()
-        ->setUrl($url)->setHeader([
+        ->setUrl($url)
+        ->setHeader([
             'Content-Type: application/json',
             'Api-Sign: '. $this->createSign,
             //"HOST: ".'testgateway.shineupay.com',
-        ])->setPost(json_encode($this->createPostData))->exec();
+        ])
+        ->setPost(json_encode($this->getCreatePostData()))
+        ->exec();
 
         Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->createPostData]);
 
         return $this->getSendReturn($curlRes);
-
     }
 
-    protected function checkOrderIsSuccess($res) {
-        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
-    }
+
 
     public function callback(Request $request) {
 
         $post = $request->post();
-        //不用這個取價格小數點會有差
+        # 這個取價格小數點才不會有差 10.0000 依然是10.0000 request->post會消掉0
         $postJson  = file_get_contents("php://input");
         $postSign  = $request->header('api-sign');
 
@@ -140,17 +140,18 @@ class ShineUPay extends AbstractWithdrawGateway
         if ($checkSign == $postSign) {
             return $this->getCallbackResult($post);
         }
-        Log::channel('withdraw')->info(new LogLine('驗簽失敗'), ['post' => $post, 'header' => $request->headers, 'order' => $order, 'key' => $key]);
 
     }
-
-
 
     protected function getCallbackValidateColumns() {
         return [
             'body.orderId' => 'required',
             'body.status' => 'required',
         ];
+    }
+
+    protected function checkOrderIsSuccess($res) {
+        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
     }
 
     private function getCallbackResult($callbackPost) {
@@ -160,6 +161,10 @@ class ShineUPay extends AbstractWithdrawGateway
                 return $this->resCallbackSuccess($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
 
             case 2:
+                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
+
+            default:
+                Log::channel('withdraw')->info(new LogLine('驗簽失敗'), ['callbackPost' => $callbackPost]);
                 return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
         }
 
