@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Payments\Withdraw;
 
 use Tests\TestCase;
 use Mockery;
