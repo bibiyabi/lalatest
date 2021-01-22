@@ -44,6 +44,10 @@
 
 * 新增充值重置訂單 API api/deposit/reset
 
+### V8
+
+* 修改刪除資料設置id改為java id (user_pk)
+
 ---
 ### API 錯誤碼
 
@@ -138,7 +142,7 @@ DELETE /api/key
 
 | 欄位 | 型態    | 必要參數 | 說明                   |
 | ---- | ------- | -------- | :--------------------- |
-| id   | integer | V        | 設置資料 id (from php) |
+| id   | integer | V        | 設置資料 id  |
 
 Response example:
 
