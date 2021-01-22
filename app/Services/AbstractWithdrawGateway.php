@@ -36,6 +36,8 @@ abstract class AbstractWithdrawGateway
         $this->setCreatePostData($post,  $settings);
     }
 
+    abstract protected function setCallBackUrl();
+
     // 設定request
     abstract  public function setRequest($post = [], WithdrawOrder $order);
     // 設定送單array

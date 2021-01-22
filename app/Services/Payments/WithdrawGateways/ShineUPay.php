@@ -108,9 +108,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
     }
 
-    protected function checkOrderIsSuccess($res) {
-        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
-    }
+
 
     public function callback(Request $request) {
 
@@ -140,17 +138,18 @@ class ShineUPay extends AbstractWithdrawGateway
         if ($checkSign == $postSign) {
             return $this->getCallbackResult($post);
         }
-        Log::channel('withdraw')->info(new LogLine('驗簽失敗'), ['post' => $post, 'header' => $request->headers, 'order' => $order, 'key' => $key]);
 
     }
-
-
 
     protected function getCallbackValidateColumns() {
         return [
             'body.orderId' => 'required',
             'body.status' => 'required',
         ];
+    }
+
+    protected function checkOrderIsSuccess($res) {
+        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
     }
 
     private function getCallbackResult($callbackPost) {
@@ -160,6 +159,10 @@ class ShineUPay extends AbstractWithdrawGateway
                 return $this->resCallbackSuccess($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
 
             case 2:
+                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
+
+            default:
+                Log::channel('withdraw')->info(new LogLine('驗簽失敗'), ['callbackPost' => $callbackPost]);
                 return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
         }
 
