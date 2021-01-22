@@ -9,52 +9,59 @@ use Illuminate\Support\Facades\Validator;
 
 abstract class AbstractWithdrawGateway
 {
-    // url object
+    # url object
     protected $curl;
-    // 回調網址
+    # 回調網址
     protected $callbackUrl;
-    // order modal
+    # order modal
     protected $order;
+
+    protected $createPostData = [];
 
 
     public function __construct($curl) {
         $this->curl = $curl;
     }
 
-    protected function setBaseRequest($order, $post) {
-        // set order model
+    protected function getCreatePostData() {
+        return $this->createPostData;
+    }
+
+    protected function setBaseRequest($order, $post):void {
+        # 設定model
         $this->setOrder($order);
-        // check client input
+        # 驗證輸入
         $this->validateOrderInput($post);
-        // set callback url
-        $this->setCallBackUrl();
-        // get gateway config
+        # decode
         $settings = $this->decode($order->key->settings);
-        // create post order sign key
+        # 建立sign
         $this->createSign($post, $settings);
-        // set create order post data
+        # set create order post data
         $this->setCreatePostData($post,  $settings);
     }
 
-    abstract protected function setCallBackUrl();
+    # 設定回調網址
+    protected function setCallBackUrl($class) {
+        $this->callbackUrl = config('app.url') . '/callback/withdraw/'. class_basename($class);
+    }
 
-    // 設定request
+    # 設定request
     abstract  public function setRequest($post = [], WithdrawOrder $order);
-    // 設定送單array
+    # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
-    // 建單
+    # 建單
     abstract public function send();
 
-    // 確認訂單成功狀態
+    # 確認訂單成功狀態
     abstract protected  function checkOrderIsSuccess($res);
-    // 後端提示字
+    # 後端提示字
     abstract public function getPlaceholder($type):Placeholder;
-    // 前端提示字
+    # 前端提示字
     abstract public function getRequireInfo($type):WithdrawRequireInfo;
-    // callback 驗證變數
+    # callback 驗證變數
     abstract protected function getCallbackValidateColumns();
 
-    // 確認訂單參數
+    # 確認訂單參數
     protected function validateOrderInput($data) {
         $validator = Validator::make($data, $this->validationCreateInput());
         if ($validator->fails()) {
@@ -62,13 +69,12 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    // for decode
+    # for decode
     protected function decode($data) {
         return json_decode($data, true);
     }
 
-
-    // 取得建單狀態
+    # 取得建單狀態
     protected function getSendReturn($curlRes) {
 
         switch ($curlRes['code']) {
@@ -76,7 +82,6 @@ abstract class AbstractWithdrawGateway
                 return $this->getOrderRes($curlRes);
             case Curl::FAILED:
                 return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
-
             case Curl::TIMEOUT:
                 return $this->resCreateRetry('', ['order_id' => $this->order->order_id]);
             default:
@@ -84,7 +89,7 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    // curl 取得建單狀態
+    # curl 取得建單狀態
     protected function getOrderRes($curlRes) {
         $resData = $this->decode($curlRes['data']);
         if ($this->checkOrderIsSuccess($resData)) {
@@ -94,7 +99,7 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    // 檢查回調input
+    # 檢查回調input
     protected function validateCallbackInput($post) {
         $validator = Validator::make($post, $this->getCallbackValidateColumns());
         if($validator->fails()){
@@ -105,7 +110,7 @@ abstract class AbstractWithdrawGateway
 
 
 
-    // set order object
+    # set order object
     private function setOrder($order) {
         if (empty($order)) {
             throw new WithdrawException('setting empty ', ResponseCode::ERROR_PARAMETERS);

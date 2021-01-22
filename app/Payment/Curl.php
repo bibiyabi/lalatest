@@ -66,9 +66,9 @@ class Curl
         if ($errorNo) {
 
             if ($errorNo === 28) {
-                return ['code' => self::TIMEOUT ,'data' => ''];
+                return ['code' => self::TIMEOUT ,'data' => []];
             }
-            return ['code' => self::FAILED ,'data' => ''];
+            return ['code' => self::FAILED ,'data' => []];
         }
         curl_close($this->ch);
 

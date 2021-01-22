@@ -1,5 +1,6 @@
 <?php
 
+use App\Logging\NewStyleFormatter;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -102,8 +103,10 @@ return [
 
         'withdraw' => [
             'driver' => 'daily',
+            'tap' => [NewStyleFormatter::class],
             'path' => storage_path('logs/withdraw.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
         ],
     ],
 
