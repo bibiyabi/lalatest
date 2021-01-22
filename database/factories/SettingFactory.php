@@ -22,7 +22,12 @@ class SettingFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'user_id' => $this->faker->numberBetween(1, 100),
+            'gateway_id' => $this->faker->numberBetween(1, 100),
+            'user_pk' => $this->faker->numberBetween(1, 100),
+            'settings' => '{"public_key":"brianHalfBank","info_title":"brianHalfBank","return_url":"http://商戶後台/recharge/notify","private_key":"brianHalfBank","notify_url":"brianHalfBank","merchant_number":"brianHalfBank","md5_key":"請填上md5密鑰","account":"brianHalfBank"}',
+            'created_at' => $this->faker->dateTime,
+            'updated_at' => now(),
         ];
     }
 }
