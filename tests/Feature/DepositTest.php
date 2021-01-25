@@ -9,10 +9,11 @@ use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Constants\Payments\Status;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class DepositTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private $user;
 
