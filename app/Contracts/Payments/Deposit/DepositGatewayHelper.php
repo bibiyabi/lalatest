@@ -9,6 +9,8 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use App\Constants\Payments\Status;
+use App\Contracts\Payments\OrderParam;
+use App\Contracts\Payments\SettingParam;
 use App\Exceptions\StatusLockedException;
 
 trait DepositGatewayHelper
@@ -25,13 +27,16 @@ trait DepositGatewayHelper
 
     public function genDepositParam(Order $order): HttpParam
     {
-        $param = $this->createParam($order, $order->key);
+        $settingParam = SettingParam::createFromJson($order->key->settings);
+        $orderParam = OrderParam::createFromJson($order->order_param);
+
+        $param = $this->createParam($orderParam, $settingParam);
         $param[$this->getSignKey()] = $this->createSign($param, $order->key);
 
         return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
     }
 
-    abstract protected function createParam(Order $order, Setting $key): array;
+    abstract protected function createParam(OrderParam $orderParam, SettingParam $settingParam): array;
 
     abstract protected function createSign(array $param, Setting $key): string;
 
