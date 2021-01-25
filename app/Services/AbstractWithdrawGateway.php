@@ -6,25 +6,30 @@ use Illuminate\Http\Request;
 use App\Payment\Curl;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Validator;
-
-abstract class AbstractWithdrawGateway
+use Illuminate\Support\Facades\Log;
+use App\Contracts\Payments\LogLine;
+use App\Services\AbstractWithdrawCallback;
+use App\Services\Payments\ResultTrait;
+use App\Payment\Proxy;
+use App\Exceptions\WithdrawException;
+use App\Constants\Payments\ResponseCode;
+abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 {
+    use ResultTrait;
+    use Proxy;
     # url object
     protected $curl;
     # 回調網址
     protected $callbackUrl;
     # order modal
     protected $order;
-
+    # 建單sign
+    protected $createSign;
     protected $createPostData = [];
 
 
     public function __construct($curl) {
         $this->curl = $curl;
-    }
-
-    protected function getCreatePostData() {
-        return $this->createPostData;
     }
 
     protected function setBaseRequest($order, $post):void {
@@ -35,7 +40,7 @@ abstract class AbstractWithdrawGateway
         # decode
         $settings = $this->decode($order->key->settings);
         # 建立sign
-        $this->createSign($post, $settings);
+        $this->setCreateSign($post, $settings);
         # set create order post data
         $this->setCreatePostData($post,  $settings);
     }
@@ -44,22 +49,23 @@ abstract class AbstractWithdrawGateway
     protected function setCallBackUrl($class) {
         $this->callbackUrl = config('app.url') . '/callback/withdraw/'. class_basename($class);
     }
-
     # 設定request
     abstract  public function setRequest($post = [], WithdrawOrder $order);
+    # 設定發送sign
+    abstract protected function setCreateSign($post, $settings);
     # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
-    # 建單
-    abstract public function send();
 
+    abstract protected function getCurlHeader();
+    abstract protected function isCurlUseSSL();
+    abstract protected function getCreateUrl();
     # 確認訂單成功狀態
-    abstract protected  function checkOrderIsSuccess($res);
+    abstract protected function checkCreateOrderIsSuccess($res);
     # 後端提示字
     abstract public function getPlaceholder($type):Placeholder;
     # 前端提示字
     abstract public function getRequireInfo($type):WithdrawRequireInfo;
-    # callback 驗證變數
-    abstract protected function getCallbackValidateColumns();
+
 
     # 確認訂單參數
     protected function validateOrderInput($data) {
@@ -68,18 +74,18 @@ abstract class AbstractWithdrawGateway
             throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
         }
     }
-
-    # for decode
-    protected function decode($data) {
-        return json_decode($data, true);
+    protected function getCreateOrderRes($curlRes) {
+        return $this->decode($curlRes['data']);
     }
 
     # 取得建單狀態
     protected function getSendReturn($curlRes) {
+        #dd($curlRes);
 
         switch ($curlRes['code']) {
             case Curl::STATUS_SUCCESS:
-                return $this->getOrderRes($curlRes);
+                $createRes = $this->getCreateOrderRes($curlRes['data']);
+                return $this->returnCreateRes($createRes);
             case Curl::FAILED:
                 return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
             case Curl::TIMEOUT:
@@ -90,25 +96,13 @@ abstract class AbstractWithdrawGateway
     }
 
     # curl 取得建單狀態
-    protected function getOrderRes($curlRes) {
-        $resData = $this->decode($curlRes['data']);
-        if ($this->checkOrderIsSuccess($resData)) {
+    protected function returnCreateRes($createRes) {
+        if ($this->checkCreateOrderIsSuccess($createRes)) {
             return $this->resCreateSuccess('', ['order_id' => $this->order->order_id]);
         } else {
             return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
         }
     }
-
-    # 檢查回調input
-    protected function validateCallbackInput($post) {
-        $validator = Validator::make($post, $this->getCallbackValidateColumns());
-        if($validator->fails()){
-            throw new WithdrawException('callback input check error'. json_encode($validator->errors()), ResponseCode::EXCEPTION);
-        }
-    }
-
-
-
 
     # set order object
     private function setOrder($order) {
@@ -118,8 +112,51 @@ abstract class AbstractWithdrawGateway
         $this->order = $order;
     }
 
+    protected function getCreateSign() {
+        return $this->createSign;
+    }
 
 
+    public function send() {
 
+        if (empty($this->getCreatePostData())) {
+            throw new WithdrawException('createPostData empty ', ResponseCode::ERROR_PARAMETERS);
+        }
+
+        $url = $this->getCreateUrl();
+
+        if ($this->isCurlUseSSL()) {
+            $this->curl->ssl();
+        }
+
+        $curlRes = $this->curl
+        ->setUrl($url)
+        ->setHeader($this->getCurlHeader())
+        ->setPost($this->getCreatePostData())
+        ->exec();
+
+        Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->createPostData]);
+
+        return $this->getSendReturn($curlRes);
+    }
+
+    protected function getCreatePostData() {
+        return $this->createPostData;
+    }
+
+    protected function getSettings($order) {
+        $key = $order->key;
+
+        if (empty($key)) {
+            throw new WithdrawException("key not found." , ResponseCode::EXCEPTION);
+        }
+
+        return $this->decode($key->settings);
+    }
+
+    # for decode
+    protected function decode($data) {
+        return json_decode($data, true);
+    }
 
 }

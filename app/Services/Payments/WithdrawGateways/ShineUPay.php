@@ -6,27 +6,36 @@ use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\WithdrawRequireInfo;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 use App\Payment\Curl;
-use App\Payment\Proxy;
-use App\Services\Payments\ResultTrait;
-use App\Constants\Payments\ResponseCode;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
 use App\Contracts\Payments\LogLine;
 use App\Models\WithdrawOrder;
+use Illuminate\Support\Facades\Log;
+
+
 
 class ShineUPay extends AbstractWithdrawGateway
 {
-    use ResultTrait;
-    use Proxy;
-    # 建單sign
-    protected $createSign;
-    # 第三方domain
+    // ================ 下單參數 ==================
+    // 下單domain
     private $domain = 'testgateway.shineupay.com';
-    private $callbackSuccessReturnString = 'success';
+    // 下單網址
+    private $createSegments = '/withdraw/create';
+    // 設定下單sign
+    protected $createSign;
 
+    // ================ 回調參數 ==================
+    // 停止callback回應的訊息
+    protected $callbackSuccessReturnString = 'success';
+    // 回調的orderId位置
+    protected $callbackOrderIdPosition = 'body.orderId';
+    // 回調的狀態位置
+    protected $callbackOrderStatusPosition = 'body.status';
+    // 回調成功狀態
+    protected $callbackSuccessStatus = [1];
+    // 回調確認失敗狀態
+    protected $callbackFailedStatus = [2];
 
     public function __construct(Curl $curl) {
         parent::__construct($curl);
@@ -52,9 +61,9 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
 
-    protected function createSign($post, $settings) {
+    protected function setCreateSign($post, $settings) {
         $signParams = $this->getNeedGenSignArray($post,  $settings);
-        $this->createSign = $this->genSign(json_encode($signParams), $settings['md5_key']);
+        $this->createSign =  $this->genSign(json_encode($signParams), $settings);
     }
 
     private function getNeedGenSignArray($input, $settings) {
@@ -75,72 +84,46 @@ class ShineUPay extends AbstractWithdrawGateway
         $array['body']['realAmount']     = (float) $input['amount'];
         $array['body']['notifyUrl']      = $this->callbackUrl;
 
-        dd($array);
         return $array;
 
     }
 
-    private function genSign($postData, $sign) {
-        return md5($postData . '|'. $sign);
+    protected function genSign($postData, $settings) {
+        return md5($postData . '|'. $settings['md5_key']);
     }
-
 
     protected function setCreatePostData($post, $settings) {
-        $this->createPostData = $this->getNeedGenSignArray($post,  $settings);
+        $this->createPostData = json_encode($this->getNeedGenSignArray($post,  $settings));
     }
 
+    protected function getCreateUrl() {
+        return  'https://' . $this->domain. $this->createSegments;
+    }
 
+    protected function isCurlUseSSL() {
+        return true;
+    }
 
-    public function send() {
-
-        $url = 'https://'.$this->domain. '/withdraw/create';
-
-        $curlRes = $this->curl->ssl()
-        ->setUrl($url)
-        ->setHeader([
+    protected function getCurlHeader() {
+        return [
             'Content-Type: application/json',
-            'Api-Sign: '. $this->createSign,
+            'Api-Sign: '. $this->getCreateSign(),
             //"HOST: ".'testgateway.shineupay.com',
-        ])
-        ->setPost(json_encode($this->getCreatePostData()))
-        ->exec();
-
-        Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->createPostData]);
-
-        return $this->getSendReturn($curlRes);
+        ];
     }
 
+    protected function checkCreateOrderIsSuccess($res) {
+        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
+    }
 
+    // ===========================callback start===============================
 
-    public function callback(Request $request) {
+    protected function getCallbackSign(Request $request) {
+        return $request->header('api-sign');
+    }
 
-        $post = $request->post();
-        # 這個取價格小數點才不會有差 10.0000 依然是10.0000 request->post會消掉0
-        $postJson  = file_get_contents("php://input");
-        $postSign  = $request->header('api-sign');
-
-        $this->validateCallbackInput($post);
-
-        $order = WithdrawOrder::where('order_id', $post['body']['orderId'])->first();
-
-        if (empty($order)) {
-            throw new WithdrawException("Order not found." , ResponseCode::EXCEPTION);
-        }
-
-        $key = $order->key;
-
-        if (empty($key)) {
-            throw new WithdrawException("key not found." , ResponseCode::EXCEPTION);
-        }
-
-        $settings = $this->decode($key->settings);
-
-        $checkSign = $this->genSign($postJson, $settings['md5_key']);
-
-        if ($checkSign == $postSign) {
-            return $this->getCallbackResult($post);
-        }
-
+    protected function  getCallBackInput() {
+        return  file_get_contents("php://input");
     }
 
     protected function getCallbackValidateColumns() {
@@ -150,25 +133,11 @@ class ShineUPay extends AbstractWithdrawGateway
         ];
     }
 
-    protected function checkOrderIsSuccess($res) {
-        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
+    protected function getCallbackOrderStatus($post) {
+        return data_get($post, $this->callbackOrderStatusPosition);
     }
 
-    private function getCallbackResult($callbackPost) {
-
-        switch ($callbackPost['body']['status']) {
-            case 1:
-                return $this->resCallbackSuccess($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
-
-            case 2:
-                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
-
-            default:
-                Log::channel('withdraw')->info(new LogLine('驗簽失敗'), ['callbackPost' => $callbackPost]);
-                return $this->resCallbackFailed($this->callbackSuccessReturnString, ['order_id' => $callbackPost['body']['orderId']]);
-        }
-
-    }
+    // ======================= 下拉提示 ===========================
 
     public function getPlaceholder($type):Placeholder
     {
@@ -181,11 +150,20 @@ class ShineUPay extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-        if ($type == Type::BANK_CARD){
-            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
-    C::MOBILE, C::EMAIL, C::IFSC);
-        }elseif($type == Type::WALLET){
-            $column = [C::ADDRESS,C::AMOUNT,C::ADDRESS];
+        if ($type == Type::BANK_CARD) {
+            $column = [
+                C::BANK,
+                C::ACCOUNT,
+                C::ADDRESS,
+                C::AMOUNT,
+                C::FIRST_NAME,
+                C::LAST_NAME,
+                C::MOBILE,
+                C::EMAIL,
+                C::IFSC
+            ];
+        } elseif ($type == Type::WALLET) {
+            $column = [C::ADDRESS, C::AMOUNT, C::ADDRESS];
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);

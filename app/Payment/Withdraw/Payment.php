@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
 use App\Models\WithdrawOrder;
 use App\Contracts\Payments\LogLine;
+use App\Contracts\Payments\CallbackResult;
 
 class Payment implements PaymentInterface
 {
@@ -121,7 +122,7 @@ class Payment implements PaymentInterface
         }
     }
 
-    public function callback(Request $request , AbstractWithdrawGateway $gateway) {
+    public function callback(Request $request , AbstractWithdrawGateway $gateway): CallbackResult {
         return $gateway->callback($request);
     }
 

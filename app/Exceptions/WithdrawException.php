@@ -2,7 +2,6 @@
 namespace App\Exceptions;
 use Exception;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
-use App\Constants\Payments\ResponseCode;
 use Illuminate\Http\Request;
 class WithdrawException extends Exception
 {

@@ -13,6 +13,8 @@ use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Exception;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\LogLine;
+use App\Constants\Payments\Status;
+
 
 class WithdrawController extends Controller
 {
@@ -41,13 +43,14 @@ class WithdrawController extends Controller
 
             Log::channel('withdraw')->info(new LogLine('callback 回應'), [$res]);
 
-            $orderId = data_get($res, 'data.order_id');
+            $orderId = $res->getOrder()->order_id;
 
             if (empty($orderId)) {
                 throw new WithdrawException('order id not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
             }
 
-            $withdrawRepository->filterOrderId($orderId)->update(['status'=> $res->get('code')]);
+            $callbackStatus =  $res->getSuccess() ? Status::CALLBACK_SUCCESS : Status::CALLBACK_FAILED;
+            $withdrawRepository->filterOrderId($orderId)->update(['status'=> $callbackStatus]);
             $order = $withdrawRepository->filterOrderId($orderId)->first();
 
             if (empty($order)) {
@@ -56,7 +59,7 @@ class WithdrawController extends Controller
 
             $payment->callbackNotifyToQueue($order);
 
-            echo $res->get('msg');
+            echo $res->getMsg();
 
         } catch (Exception $e) {
             Log::channel('withdraw')->info(new LogLine($e));

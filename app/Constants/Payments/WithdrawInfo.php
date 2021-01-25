@@ -27,4 +27,6 @@ class WithdrawInfo
     public const BANK_PROVINCE  = 19;
     public const BANK_ADDRESS   = 20;
     public const BANK_CITY      = 21;
+    public const ZIP            = 22;
+    public const BANK_ACCOUNT   = 23;
 }
