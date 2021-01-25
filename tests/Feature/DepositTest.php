@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Constants\Payments\Status;
+
 class DepositTest extends TestCase
 {
     use RefreshDatabase;
@@ -89,6 +90,7 @@ class DepositTest extends TestCase
         $order = Order::factory([
             'user_id'=>$this->user->id,
             'key_id'=>$setting->id,
+            'status'=>Status::ORDER_SUCCESS,
             'gateway_id'=>$gateway->id,
             'no_notify'=>0,
         ])->create();
