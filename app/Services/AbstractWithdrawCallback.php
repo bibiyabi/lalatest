@@ -9,6 +9,20 @@ use App\Contracts\Payments\CallbackResult;
 
 abstract class  AbstractWithdrawCallback
 {
+
+    // 停止callback回應的訊息
+    protected $callbackSuccessReturnString = '';
+    // 回調的orderId位置
+    protected $callbackOrderIdPosition = '';
+    // 回調的狀態位置
+    protected $callbackOrderStatusPosition = '';
+    protected $callbackOrderAmountPosition = '';
+    // 回調成功狀態
+    protected $callbackSuccessStatus = [];
+    // 回調確認失敗狀態
+    protected $callbackFailedStatus = [];
+
+
     # callback 驗證變數
     abstract protected function getCallbackValidateColumns();
 
@@ -61,13 +75,21 @@ abstract class  AbstractWithdrawCallback
 
         # callback 訂單成功
         if (in_array($this->getCallbackOrderStatus($callbackPost), $this->callbackSuccessStatus)) {
-            return new CallbackResult(true, $this->callbackSuccessReturnString, $order);
+            return new CallbackResult(true, $this->callbackSuccessReturnString, $order, $this->getCallbackAmount($order, $callbackPost));
         }
+
         # callback 訂單失敗
         if (in_array($this->getCallbackOrderStatus($callbackPost), $this->callbackFailedStatus)) {
             return new CallbackResult(false, $this->callbackSuccessReturnString, $order);
         }
 
+    }
 
+    protected function getCallbackAmount($order, $callbackPost) {
+        if (empty($this->callbackOrderAmountPosition)) {
+            return $order->amount;
+        }
+
+        return data_get($callbackPost, $this->callbackOrderAmountPosition);
     }
 }

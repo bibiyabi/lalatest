@@ -40,6 +40,7 @@ class PlatformNotify
 
         $postData = [];
         $postData['order_id'] = $this->order->order_id;
+        $postData['amount'] = (string) $this->order->real_amount;
         $postData['status'] = self::SUCCESS;
         $postData['signature'] = $this->makeSign($postData, $this->javaKey);
 
@@ -56,6 +57,7 @@ class PlatformNotify
 
         $postData = [];
         $postData['order_id'] = $this->order->order_id;
+        $postData['amount'] = "";
         $postData['status'] = self::FAIL;
         $postData['signature'] = $this->makeSign($postData, $this->javaKey);
 

@@ -19,9 +19,9 @@ class ShineUPay extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
     // 下單domain
-    private $domain = 'testgateway.shineupay.com';
+    protected $domain = 'testgateway.shineupay.com';
     // 下單網址
-    private $createSegments = '/withdraw/create';
+    protected $createSegments = '/withdraw/create';
     // 設定下單sign
     protected $createSign;
 
@@ -32,6 +32,7 @@ class ShineUPay extends AbstractWithdrawGateway
     protected $callbackOrderIdPosition = 'body.orderId';
     // 回調的狀態位置
     protected $callbackOrderStatusPosition = 'body.status';
+    protected $callbackOrderAmountPosition = '';
     // 回調成功狀態
     protected $callbackSuccessStatus = [1];
     // 回調確認失敗狀態
@@ -94,10 +95,6 @@ class ShineUPay extends AbstractWithdrawGateway
 
     protected function setCreatePostData($post, $settings) {
         $this->createPostData = json_encode($this->getNeedGenSignArray($post,  $settings));
-    }
-
-    protected function getCreateUrl() {
-        return  'https://' . $this->domain. $this->createSegments;
     }
 
     protected function isCurlUseSSL() {
