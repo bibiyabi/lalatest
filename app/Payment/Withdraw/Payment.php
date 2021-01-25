@@ -93,7 +93,7 @@ class Payment implements PaymentInterface
         $this->settings = collect($settings);
 
         if (! $this->settings->has('id')) {
-            throw new WithdrawException('setting not found, pk' . $request->pk , ResponseCode::RESOURCE_NOT_FOUND);
+            throw new WithdrawException('setting not found, pk' . $request->pk . ' user:'. $request->user()->id , ResponseCode::RESOURCE_NOT_FOUND);
         }
 
         $order = $this->withdrawRepository->create($request, $settings);
