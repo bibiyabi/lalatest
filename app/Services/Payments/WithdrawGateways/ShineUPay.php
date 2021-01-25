@@ -149,16 +149,18 @@ class ShineUPay extends AbstractWithdrawGateway
         $column = [];
         if ($type == Type::BANK_CARD) {
             $column = [
-                C::BANK,
-                C::ACCOUNT,
-                C::ADDRESS,
-                C::AMOUNT,
+                C::FUND_PASSWORD,
+                C::CRYPTO_ADDRESS,
                 C::FIRST_NAME,
                 C::LAST_NAME,
                 C::MOBILE,
+                C::BANK_ADDRESS,
+                C::IFSC,
+                C::AMOUNT,
                 C::EMAIL,
-                C::IFSC
             ];
+
+
         } elseif ($type == Type::WALLET) {
             $column = [C::ADDRESS, C::AMOUNT, C::ADDRESS];
         }
