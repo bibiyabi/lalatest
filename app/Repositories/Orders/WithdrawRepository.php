@@ -5,6 +5,7 @@ namespace App\Repositories\Orders;
 use App\Models\WithdrawOrder;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use App\Constants\Payments\Status;
 class WithdrawRepository
 {
 
@@ -42,7 +43,7 @@ class WithdrawRepository
             'key_id'      => $setting->id,
             'amount'      => $request->amount,
             'gateway_id'  => $setting->gateway_id,
-            'status'      => 1,
+            'status'      => Status::PENDING,
             'order_param' => json_encode($request->post(), true),
         ]);
     }

@@ -15,6 +15,7 @@ use App\Repositories\SettingRepository;
 use App\Repositories\Orders\WithdrawRepository;
 use App\Services\Payments\WithdrawGateways\ShineUPay;
 use App\Payment\Curl;
+use App\Constants\Payments\Status;
 
 class PaymentTest extends TestCase
 {
@@ -37,15 +38,16 @@ class PaymentTest extends TestCase
         //return $mock;
     }
 
-    public function test_reqeust_create_order() {
+    public function test_create_order() {
         $header = [
             'name' => 'java'
         ];
 
+        $orderId = 'unittest'. uniqid();
         $res = $this->post('/api/withdraw/create', [
             'payment_type'     => '1',
-            'order_id'         => 'unittest'. uniqid(),
-            'pk'               => '876',
+            'order_id'         =>  $orderId,
+            'pk'               => '1',
             'amount'           => '1',
             'fund_passwd'      => '1',
             'email'            => '1',
@@ -66,6 +68,11 @@ class PaymentTest extends TestCase
         ], $header);
 
         $res->seeStatusCode(200);
+        $res->assertJsonFragment(['success'=>true]);
+        $this->assertDatabaseHas('withdraw_orders', [
+            'order_id' => $orderId,
+            'status' => Status::PENDING
+        ]);
     }
 
 
