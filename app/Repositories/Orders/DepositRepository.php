@@ -11,19 +11,18 @@ class DepositRepository
 {
     private $order;
 
-    public function create(Request $request, $gateway_id): Order
+    public function create($order_param, $userId, $keyId, $gatewayId): Order
     {
-        $user = $request->user();
-        $order_param = $request->post();
-        $key = Setting::where('user_id', $user->id)->where('user_pk', $request->post('pk'))->first();
+        $orderId = $order_param['order_id'];
+        $amount = $order_param['amount'];
         unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
 
         return Order::create([
-            'order_id' => $request->post('order_id'),
-            'user_id'  => $user->id,
-            'key_id'   => $key->id,
-            'amount'   => $request->post('amount'),
-            'gateway_id' => $gateway_id,
+            'order_id' => $orderId,
+            'user_id'  => $userId,
+            'key_id'   => $keyId,
+            'amount'   => $amount,
+            'gateway_id' => $gatewayId,
             'status'   => Status::PENDING,
             'order_param' => json_encode($order_param),
         ]);
