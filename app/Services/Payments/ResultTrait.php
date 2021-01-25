@@ -10,8 +10,8 @@ trait ResultTrait
     private $createFailed = Status::ORDER_FAILED;
     private $createRetry = Status::ORDER_ERROR;
 
-    private $callbackSuccess = Status::CALLBACK_SUCCESS;
-    private $callbackFail = Status::CALLBACK_FAILED;
+
+
 
     public function resCreateSuccess($msg ='', $data = []) {
         return collect(['code'=> $this->createSuccess, 'msg'=>$msg, 'data' => $data]);
@@ -29,13 +29,6 @@ trait ResultTrait
         return collect(['code'=> $this->createRetry, 'msg'=>$msg,'data' => $data]);
     }
 
-    public function resCallbackSuccess($msg ='', $data = []) {
-        return collect(['code'=> $this->callbackSuccess, 'msg'=>$msg, 'data' => $data]);
-    }
-
-    public function resCallbackFailed($msg ='',$data = []) {
-        return collect(['code'=> $this->callbackFail, 'msg'=>$msg, 'data' => $data]);
-    }
 
 
 }

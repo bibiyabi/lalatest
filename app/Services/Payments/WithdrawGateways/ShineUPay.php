@@ -6,32 +6,35 @@ use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\WithdrawRequireInfo;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
-use Illuminate\Support\Facades\Validator;
 use App\Payment\Curl;
-use App\Payment\Proxy;
-use App\Services\Payments\ResultTrait;
-use App\Constants\Payments\ResponseCode;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
 use App\Contracts\Payments\LogLine;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 
+
+
 class ShineUPay extends AbstractWithdrawGateway
 {
-    use ResultTrait;
-    use Proxy;
-
-    // create
+    // ================ 下單參數 ==================
+    // 下單domain
     private $domain = 'testgateway.shineupay.com';
+    // 下單網址
     private $createSegments = '/withdraw/create';
+    // 設定下單sign
     protected $createSign;
 
-    // callback
+    // ================ 回調參數 ==================
+    // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'success';
+    // 回調的orderId位置
     protected $callbackOrderIdPosition = 'body.orderId';
+    // 回調的狀態位置
     protected $callbackOrderStatusPosition = 'body.status';
+    // 回調成功狀態
     protected $callbackSuccessStatus = [1];
+    // 回調確認失敗狀態
     protected $callbackFailedStatus = [2];
 
     public function __construct(Curl $curl) {
@@ -147,11 +150,20 @@ class ShineUPay extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-        if ($type == Type::BANK_CARD){
-            $column = array(C::BANK,C::ACCOUNT,C::ADDRESS,C::AMOUNT, C::FIRST_NAME, C::LAST_NAME,
-    C::MOBILE, C::EMAIL, C::IFSC);
-        }elseif($type == Type::WALLET){
-            $column = [C::ADDRESS,C::AMOUNT,C::ADDRESS];
+        if ($type == Type::BANK_CARD) {
+            $column = [
+                C::BANK,
+                C::ACCOUNT,
+                C::ADDRESS,
+                C::AMOUNT,
+                C::FIRST_NAME,
+                C::LAST_NAME,
+                C::MOBILE,
+                C::EMAIL,
+                C::IFSC
+            ];
+        } elseif ($type == Type::WALLET) {
+            $column = [C::ADDRESS, C::AMOUNT, C::ADDRESS];
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);

@@ -9,8 +9,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\Payments\LogLine;
 use App\Services\AbstractWithdrawCallback;
+use App\Services\Payments\ResultTrait;
+use App\Payment\Proxy;
+use App\Exceptions\WithdrawException;
+use App\Constants\Payments\ResponseCode;
 abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 {
+    use ResultTrait;
+    use Proxy;
     # url object
     protected $curl;
     # 回調網址

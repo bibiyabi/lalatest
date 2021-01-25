@@ -2,8 +2,6 @@
 
 namespace App\Contracts\Payments;
 
-use App\Models\Order;
-
 class CallbackResult
 {
     private $success;
@@ -14,7 +12,13 @@ class CallbackResult
 
     private $msg;
 
-    public function __construct(bool $success, string $msg='', Order $order=null, float $amount=0) {
+    /**
+     * @param boolean $success
+     * @param string $msg
+     * @param Order|WithdrawOrder $order
+     * @param float $amount
+     */
+    public function __construct(bool $success, string $msg='', $order=null, float $amount=0) {
         $this->success = $success;
         $this->order = $order;
         $this->amount = $amount;

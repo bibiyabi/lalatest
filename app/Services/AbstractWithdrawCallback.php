@@ -3,6 +3,9 @@ namespace App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\WithdrawOrder;
+use App\Exceptions\WithdrawException;
+use App\Constants\Payments\ResponseCode;
+use App\Contracts\Payments\CallbackResult;
 
 abstract class  AbstractWithdrawCallback
 {
@@ -19,7 +22,7 @@ abstract class  AbstractWithdrawCallback
         $order = $this->getOrderFromCallback($post);
         $settings = $this->getSettings($order);
         $checkSign = $this->genSign($postJson, $settings);
-        return $this->returnCallbackResult($post, $checkSign, $postSign);
+        return $this->returnCallbackResult($post, $checkSign, $postSign, $order);
     }
 
     # 檢查回調input
@@ -50,33 +53,21 @@ abstract class  AbstractWithdrawCallback
         return $orderId;
     }
 
-    protected function returnCallbackResult($callbackPost, $checkSign, $callBackSign) {
+    protected function returnCallbackResult($callbackPost, $checkSign, $callBackSign, $order) {
 
         if ($checkSign !== $callBackSign) {
-            return $this->resCallbackFailed(
-                $this->callbackSuccessReturnString, [
-                    'order_id' => data_get($callbackPost, $this->callbackOrderIdPosition)
-                ]);
+            throw new WithdrawException("check sign error" , ResponseCode::EXCEPTION);
         }
+
         # callback 訂單成功
         if (in_array($this->getCallbackOrderStatus($callbackPost), $this->callbackSuccessStatus)) {
-            return $this->resCallbackSuccess(
-                $this->callbackSuccessReturnString, [
-                    'order_id' => data_get($callbackPost, $this->callbackOrderIdPosition)
-                ]);
+            return new CallbackResult(true, $this->callbackSuccessReturnString, $order);
         }
         # callback 訂單失敗
         if (in_array($this->getCallbackOrderStatus($callbackPost), $this->callbackFailedStatus)) {
-            return $this->resCreateFailed(
-                $this->callbackSuccessReturnString, [
-                    'order_id' => data_get($callbackPost, $this->callbackOrderIdPosition)
-                ]);
+            return new CallbackResult(false, $this->callbackSuccessReturnString, $order);
         }
-        # callback 其他錯誤
-        return $this->resCallbackFailed(
-                $this->callbackSuccessReturnString, [
-                    'order_id' => data_get($callbackPost, $this->callbackOrderIdPosition)
-                ]);
+
 
     }
 }
