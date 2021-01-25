@@ -31,7 +31,7 @@ class DepositInfo
     public const STATE              = 23;
     public const CITY               = 24;
     public const ADDRESS_WALLET     = 25;
-    public const Zip                = 26;
+    public const ZIP                = 26;
     public const LAST_NAME          = 27;
     public const FIRST_NAME         = 28;
     public const TELEGRAM           = 29;
