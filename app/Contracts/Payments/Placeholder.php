@@ -52,6 +52,26 @@ class Placeholder
         $this->note2 = $note2;
     }
 
+    public static function createFromJson(string $json)
+    {
+        $data = json_decode($json);
+
+        return new Placeholder(
+            $data['type'] ?? '',
+            $data['public_key'] ?? '',
+            $data['private_key'] ?? '',
+            $data['md5_key'] ?? '',
+            $data['notify_url'] ?? '',
+            $data['return_url'] ?? '',
+            $data['transaction_type'] ?? '',
+            $data['coin'] ?? '',
+            $data['blockchain_contract'] ?? '',
+            $data['crypto_address'] ?? '',
+            $data['api_key'] ?? '',
+            $data['note1'] ?? '',
+            $data['note2'] ?? '',
+        );
+    }
 
     public function toArray()
     {
@@ -88,4 +108,108 @@ class Placeholder
         return $result;
     }
 
+
+    /**
+     * 取得類型
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * 取得公鑰
+     */
+    public function getPublicKey()
+    {
+        return $this->publicKey;
+    }
+
+    /**
+     * 取得私鑰
+     */
+    public function getPrivateKey()
+    {
+        return $this->privateKey;
+    }
+
+    /**
+     * 取得 md5 金鑰
+     */
+    public function getMd5Key()
+    {
+        return $this->md5Key;
+    }
+
+    /**
+     * 取得同步通知地址
+     */
+    public function getNotifyUrl()
+    {
+        return $this->notifyUrl;
+    }
+
+    /**
+     * 取得異步通知地址
+     */
+    public function getReturnUrl()
+    {
+        return $this->returnUrl;
+    }
+
+    /**
+     * 取得第三方之通道
+     */
+    public function getTransactionType()
+    {
+        return $this->transactionType;
+    }
+
+    /**
+     * 幣種-加密貨幣
+     */
+    public function getCoin()
+    {
+        return $this->coin;
+    }
+
+    /**
+     * 取得區塊鍊網路
+     */
+    public function getBlockchainContract()
+    {
+        return $this->blockchainContract;
+    }
+
+    /**
+     * 充值地址
+     */
+    public function getCryptoAddress()
+    {
+        return $this->cryptoAddress;
+    }
+
+    /**
+     * Get the value of apiKey
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    /**
+     * 備注欄位1
+     */
+    public function getNote1()
+    {
+        return $this->note1;
+    }
+
+    /**
+     * 備注欄位2
+     */
+    public function getNote2()
+    {
+        return $this->note2;
+    }
 }
