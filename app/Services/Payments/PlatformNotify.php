@@ -39,7 +39,7 @@ class PlatformNotify
 
         $url = $this->javaUrl . '/withdraw/result';
         $postData = [];
-        $postData['order_id'] = $this->order->order_id;
+        $postData['orderId'] = $this->order->order_id;
         $postData['amount'] = (string) $this->order->real_amount;
         $postData['status'] = self::SUCCESS;
         $postData['signature'] =  Signature::makeSign($postData, $this->javaKey);
@@ -56,7 +56,7 @@ class PlatformNotify
         $url = $this->javaUrl . '/withdraw/result';
 
         $postData = [];
-        $postData['order_id'] = $this->order->order_id;
+        $postData['orderId'] = $this->order->order_id;
         $postData['amount'] = "";
         $postData['status'] = self::FAIL;
         $postData['signature'] = Signature::makeSign($postData, $this->javaKey);
