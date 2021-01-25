@@ -12,9 +12,8 @@ use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
 use App\Exceptions\StatusLockedException;
 use App\Jobs\Payment\Deposit\Notify;
-use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
-use Log;
+use Auth;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class DepositService
@@ -25,21 +24,15 @@ class DepositService
         $this->orderRepo = $orderRepo;
     }
 
-    public function create(Request $request): OrderResult
+    public function create(array $input): OrderResult
     {
         # create order param
-        $user = $request->user();
-        $keyId = $request->post('pk');
-        $key = Setting::where('user_id', $user->id)->where('user_pk', $keyId)->first();
+        $user = Auth::user();
+        $keyId = $input['pk'];
 
+        $key = Setting::where('user_id', $user->id)->where('user_pk', $keyId)->first(); //TODO:改用 SettingRepo
         if (empty($key)) {
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
-        }
-
-        try {
-            $order = $this->orderRepo->create($request, $key->gateway_id);
-        } catch (\PDOException $e) {
-            return new OrderResult(false, 'Duplicate OrderId.', ResponseCode::DUPLICATE_ORDERID);
         }
 
         # decide how to return value
@@ -48,12 +41,20 @@ class DepositService
             $type = $gateway->getReturnType();
         } catch (\App\Exceptions\GatewayNotFountException $e) {
             return new OrderResult(false, 'Gateway not found.', ResponseCode::GATEWAY_NOT_FOUND);
+        } catch (\ErrorException $e) {
+            return new OrderResult(false, 'Key setting error.', ResponseCode::GATEWAY_NOT_FOUND);
+        }
+
+        try {
+            $temp = $key->gateway_id;
+            $order = $this->orderRepo->create($input, $user->id, $key->id, $temp);
+        } catch (\PDOException $e) {
+            return new OrderResult(false, 'Duplicate OrderId.', ResponseCode::DUPLICATE_ORDERID);
         }
 
         # submit param
-        $factory = ResultFactory::createResultFactory($type);
         $param = $gateway->genDepositParam($order);
-        $result = $factory->getResult($param);
+        $result = ResultFactory::createResultFactory($type)->getResult($param);
 
         # return result
         $processedResult = $gateway->processOrderResult($result->getContent());
