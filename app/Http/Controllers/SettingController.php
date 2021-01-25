@@ -70,7 +70,7 @@ class SettingController extends Controller
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
-        $result = $this->service->deleteSetting($request);
+        $result = $this->service->deleteSetting($request->user()->id,$request);
 
         return $result->getSuccess()
             ? RB::success($result->getResult(), $result->getErrorCode())

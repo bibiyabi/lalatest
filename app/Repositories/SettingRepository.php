@@ -58,9 +58,9 @@ class SettingRepository
         ]);
     }
 
-    public function getIdByUserPk($id)
+    public function getIdByUserPk($id, $userId)
     {
-        return $this->setting->select('id')->where('user_pk','=',$id)->get();
+        return $this->setting->select('id')->where('user_pk','=',$id)->where('user_id','=',$userId)->get();
     }
 
     public function updateSetting($id, $data)
