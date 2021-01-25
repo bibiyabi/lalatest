@@ -39,11 +39,11 @@ class PaymentTest extends TestCase
     }
 
     public function test_create_order() {
-        $header = [
-            'name' => 'java'
-        ];
+
+        $this->withoutMiddleware();
 
         $orderId = 'unittest'. uniqid();
+
         $res = $this->post('/api/withdraw/create', [
             'payment_type'     => '1',
             'order_id'         =>  $orderId,
@@ -65,9 +65,11 @@ class PaymentTest extends TestCase
             'withdraw_address' => '1',
             'gateway_code'     => '1',
             'ifsc'             => '1'
-        ], $header);
+        ]);
 
-        $res->seeStatusCode(200);
+        dd($res);
+
+        $res->assertStatus(200);
         $res->assertJsonFragment(['success'=>true]);
         $this->assertDatabaseHas('withdraw_orders', [
             'order_id' => $orderId,
