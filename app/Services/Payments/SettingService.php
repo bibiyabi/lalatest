@@ -21,7 +21,7 @@ class SettingService
 
     public function createSetting($userId, $data)
     {
-        $settingId = $this->repo->getIdByUserPk($data['id'])->toArray();
+        $settingId = $this->repo->getIdByUserPk($data['id'],$userId)->toArray();
 
         try {
             if (empty($settingId)){
@@ -38,10 +38,10 @@ class SettingService
         return new ServiceResult(true, CODE::SUCCESS);
     }
 
-    public function deleteSetting($request)
+    public function deleteSetting($userId, $request)
     {
         try{
-            $settingId = $this->repo->getIdByUserPk($request->input('id'));
+            $settingId = $this->repo->getIdByUserPk($request->input('id'),$userId);
             if (empty($settingId)){
                 return new ServiceResult(false, CODE::FAIL);
             }
