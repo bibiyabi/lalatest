@@ -50,7 +50,10 @@ class WithdrawController extends Controller
             }
 
             $callbackStatus =  $res->getSuccess() ? Status::CALLBACK_SUCCESS : Status::CALLBACK_FAILED;
-            $withdrawRepository->filterOrderId($orderId)->update(['status'=> $callbackStatus]);
+            $withdrawRepository->filterOrderId($orderId)->update(
+                ['status'=> $callbackStatus, 'real_amount' => $res->getAmount()]
+            );
+
             $order = $withdrawRepository->filterOrderId($orderId)->first();
 
             if (empty($order)) {

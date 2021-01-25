@@ -83,7 +83,6 @@ POST /api/key
 | data       | string  | V        | 將以下欄位全部urlencode再json_encode |
 
 | info_title          | string  |          | 信息名稱                        |
-| transaction_type    | string  |          | 交易方式-出入款:信用卡/電子錢包 |
 | account             | string  |          | 金流帳戶號                      |
 | merchant_number     | string  |          | 金流商戶號                      |
 | md5_key             | string  |          | md5                             |
@@ -264,7 +263,7 @@ GET /api/placeholder
 
 回傳欄位說明:回傳值依據出入款及渠道不同而不固定輸出
 
-| 欄位                 | 型態   |
+| 欄位                  | 型態    |
 | -------------------- | ------ |
 | `publicKey`          | string |
 | `privateKey`         | string |

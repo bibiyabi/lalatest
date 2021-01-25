@@ -41,7 +41,6 @@ class WithdrawRepository
             'user_id'     => $request->user()->id,
             'key_id'      => $setting->id,
             'amount'      => $request->amount,
-            'real_amount' => $request->amount,
             'gateway_id'  => $setting->gateway_id,
             'status'      => 1,
             'order_param' => json_encode($request->post(), true),

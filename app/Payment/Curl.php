@@ -59,7 +59,7 @@ class Curl
 
     public function exec() {
 
-        $info = curl_getinfo($this->ch);
+        //$info = curl_getinfo($this->ch);
 
         $curlResult = curl_exec($this->ch);
         $errorNo = curl_errno($this->ch);

@@ -25,7 +25,11 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     protected $order;
     # 建單sign
     protected $createSign;
+    # 送單post data
     protected $createPostData = [];
+
+    protected $domain = '';
+    protected $createSegments = '';
 
 
     public function __construct($curl) {
@@ -51,14 +55,17 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     }
     # 設定request
     abstract  public function setRequest($post = [], WithdrawOrder $order);
+    # 檢查input
+    abstract protected function validationCreateInput();
     # 設定發送sign
     abstract protected function setCreateSign($post, $settings);
     # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
-
+    # 設定header
     abstract protected function getCurlHeader();
+    # 是否用https 有ture 沒有false
     abstract protected function isCurlUseSSL();
-    abstract protected function getCreateUrl();
+
     # 確認訂單成功狀態
     abstract protected function checkCreateOrderIsSuccess($res);
     # 後端提示字
@@ -75,16 +82,15 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         }
     }
     protected function getCreateOrderRes($curlRes) {
-        return $this->decode($curlRes['data']);
+        return $this->decode($curlRes['data'], true);
     }
 
     # 取得建單狀態
     protected function getSendReturn($curlRes) {
-        #dd($curlRes);
 
         switch ($curlRes['code']) {
             case Curl::STATUS_SUCCESS:
-                $createRes = $this->getCreateOrderRes($curlRes['data']);
+                $createRes = $this->getCreateOrderRes($curlRes);
                 return $this->returnCreateRes($createRes);
             case Curl::FAILED:
                 return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
@@ -114,6 +120,11 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 
     protected function getCreateSign() {
         return $this->createSign;
+    }
+
+    protected function getCreateUrl() {
+        $http = ($this->isCurlUseSSL()) ? 'https://' : 'http://';
+        return  $http . $this->domain. $this->createSegments;
     }
 
 
