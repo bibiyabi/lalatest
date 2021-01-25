@@ -15,7 +15,7 @@ class DepositRepository
     {
         $orderId = $order_param['order_id'];
         $amount = $order_param['amount'];
-        unset($order_param['order_id'], $order_param['key_id'], $order_param['amount']);
+        unset($order_param['key_id']);
 
         return Order::create([
             'order_id' => $orderId,

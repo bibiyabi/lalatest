@@ -6,10 +6,11 @@ use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
-use App\Models\Order;
-use App\Models\Setting;
 use App\Constants\Payments\DepositInfo as C;
 use App\Constants\Payments\Type;
+use App\Contracts\Payments\OrderParam;
+use App\Contracts\Payments\SettingParam;
+use Str;
 
 class Inrusdt implements DepositGatewayInterface
 {
@@ -35,16 +36,16 @@ class Inrusdt implements DepositGatewayInterface
 
     private $successReturn = 'success';
 
-    protected function createParam(Order $order, Setting $key): array
+    protected function createParam(OrderParam $param, SettingParam $settings): array
     {
         return [
-            'merchantId' => $key->cashflowUserId,
-            'userId' => $key->cashflowUserId,
-            'payMethod' => $key->cashflowUserId,
-            'money' => $key->cashflowUserId,
-            'bizNum' => $key->cashflowUserId,
-            'notifyAddress' => $key->cashflowUserId,
-            'type' => $key->cashflowUserId,
+            'merchantId' => $settings->getMerchant(),
+            'userId' => Str::random(8),
+            'payMethod' => $settings->getTransactionType(),
+            'money' => $param->getAmount(),
+            'bizNum' => $param->getOrderId(),
+            'notifyAddress' => config('app.url') . '/callback/deposit/Inrusdt',
+            'type' => 'recharge',
         ];
     }
 
@@ -52,7 +53,7 @@ class Inrusdt implements DepositGatewayInterface
     {
         ksort($param);
         $str = http_build_query($param);
-        return md5($str . '&key=' . $key);
+        return md5($str . '&key=' . $key->md5);
     }
 
     public function processOrderResult($unprocessed): string
