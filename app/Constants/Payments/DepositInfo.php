@@ -27,4 +27,21 @@ class DepositInfo
     public const MOBILE_NUMBER      = 19;
     public const ACCOUNT_ID         = 20;
     public const EMAIL              = 21;
+    public const COUNTRY            = 22;
+    public const STATE              = 23;
+    public const CITY               = 24;
+    public const ADDRESS_WALLET     = 25;
+    public const Zip                = 26;
+    public const LAST_NAME          = 27;
+    public const FIRST_NAME         = 28;
+    public const TELEGRAM           = 29;
+    public const EXPIRED_DATE       = 30;
+    public const BANK               = 31;
+    public const IFSC_INDIA         = 32;
+    public const BANK_PROVINCE      = 33;
+    public const BANK_ADDRESS       = 34;
+    public const BANK_CITY          = 35;
+    public const BANK_ACCOUNT       = 36;
+
+
 }
