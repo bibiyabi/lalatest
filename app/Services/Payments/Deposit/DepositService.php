@@ -33,7 +33,7 @@ class DepositService
         $user = Auth::user();
         $userPk = $input['pk'];
 
-        $key = $this->settingRepo->filterByUserId($user->id)->filterByUserPk($userPk)->first();
+        $key = $this->settingRepo->filterCombinePk($user->id, $userPk)->first();
         if (empty($key)) {
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
         }
