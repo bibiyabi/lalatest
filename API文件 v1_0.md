@@ -54,6 +54,7 @@
 ### V10
 
 * /api/deposit/create 調整，欄位 8 獨立開一個欄位。
+* /api/withdraw/create 23 代碼合併到16, 4
 
 ---
 
