@@ -74,7 +74,7 @@ class ShineUPay extends AbstractWithdrawGateway
         $array['timestamp']              = time() . '000';
         $array['body']['advPasswordMd5'] = $settings['private_key'];
         $array['body']['orderId']        = $input['order_id'];
-        $array['body']['flag']           = 0;
+        $array['body']['flag']           = 0; // PM說先寫死0
         $array['body']['bankCode']       = $input['withdraw_address'];
         $array['body']['bankUser']       = $input['first_name'] . $input['last_name'];
         $array['body']['bankUserPhone']  = $input['mobile'];
@@ -120,6 +120,7 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
     protected function  getCallBackInput() {
+        # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  file_get_contents("php://input");
     }
 
