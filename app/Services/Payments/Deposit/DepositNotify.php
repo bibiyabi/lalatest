@@ -35,10 +35,11 @@ class DepositNotify
         $data['signature'] = Signature::makeSign($data, $key);
 
         Log::info('Deposit-Notify Url:' . $url . '. Data:', $data);
-        $response = Http::asForm()->post($url, $data)->json();
+        $response = Http::asForm()->post($url, $data);
+        $responseData = $response->json();
 
-        if (!isset($response['status']) || $response['status'] !== '200') {
-            Log::info('Deposit-Notify failed', $response ?? []);
+        if (!isset($responseData['status']) || $responseData['status'] !== '200') {
+            Log::info('Deposit-Notify failed ' . $response->body());
             throw new NotifyException();
         }
 
