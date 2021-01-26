@@ -51,6 +51,10 @@
 * /api/deposit/create 新增 36 代碼
 * /api/deposit/create 8、18 合併為 deposit_address
 
+### V10
+
+* /api/deposit/create 調整，欄位 8 獨立開一個欄位。
+
 ---
 
 ### API 錯誤碼
@@ -353,10 +357,11 @@ POST /api/deposit/create
 | type             | string  | V        | java               | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | amount           | integer |          | 6 11 16            | 訂單金額                                                  |
 | bank_name        | string  |          | 7 17               | 打款銀行名稱                                              |
-| deposit_address  | string  |          | 8 18 36            | 打款帳戶名                                                |
+| account_name     | string  |          | 8                  | 打款帳戶名                                                |
 | txn_time         | time    |          | 9                  | 打款成功時間 ex: 23-59-59                                 |
 | screenshot       | image   |          | 10                 | 支付成功截圖                                              |
 | tx_id            | string  |          | 15                 | 區塊鍊交易ID                                              |
+| deposit_address  | string  |          | 18 36              | 卡號、銀行帳號                                            |
 | mobile           | string  |          | 19                 | 手機號                                                    |
 | account_id       | string  |          | 20                 | 電子錢包帳號                                              |
 | email            | string  |          | 21                 | 電子信箱                                                  |
