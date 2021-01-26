@@ -456,11 +456,10 @@ POST /api/withdraw/create
 | first_name       | string  |          | 11                        | 名字                                                      |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
-| withdraw_address | string  |          | 16                        | 銀行卡號  、電子錢包帳號 、   數字貨幣地址                |
+| withdraw_address | string  |          | 16 、4 、23               | 收款地址 、電子錢包帳號 、 银行账号                       |
 | transaction_type | string  |          | 17                        | 金流商（銀行） 通道代碼                                   |
 | ifsc             | string  |          | 18                        | ifsc                                                      |
 | zip              | string  |          | 22                        | 郵遞區號                                                  |
-| bank_account     | string  |          | 23                        | 銀行帳號                                                  |
 
 Response example:
 
