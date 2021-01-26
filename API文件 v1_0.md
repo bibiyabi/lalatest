@@ -49,6 +49,12 @@
 * 修改刪除資料設置id改為java id (user_pk)
 
 ---
+
+### V8
+
+* /api/withdraw/create 新增 22,23代碼
+
+---
 ### API 錯誤碼
 
 | code | 說明              |
@@ -462,6 +468,8 @@ POST /api/withdraw/create
 | withdraw_address | string  |          | 16                        | 銀行卡號  、電子錢包帳號 、   數字貨幣地址                |
 | transaction_type | string  |          | 17                        | 金流商（銀行） 通道代碼                                   |
 | ifsc             | string  |          | 18                        | ifsc                                                      |
+| zip              | string  |          | 22                        | 郵遞區號                                                     |
+| bank_account     | string  |          | 23                        | 銀行帳號                                                      |
 
 
 Response example:
