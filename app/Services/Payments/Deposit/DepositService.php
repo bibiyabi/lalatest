@@ -5,7 +5,6 @@ namespace App\Services\Payments\Deposit;
 use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderResult;
 use Illuminate\Http\Request;
-use App\Models\Setting;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
@@ -13,6 +12,7 @@ use App\Constants\Payments\Status;
 use App\Exceptions\StatusLockedException;
 use App\Jobs\Payment\Deposit\Notify;
 use App\Repositories\Orders\DepositRepository;
+use App\Repositories\SettingRepository;
 use Auth;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -20,17 +20,20 @@ class DepositService
 {
     private $orderRepo;
 
-    public function __construct(DepositRepository $orderRepo) {
+    private $settingRepo;
+
+    public function __construct(DepositRepository $orderRepo, SettingRepository $settingRepo) {
         $this->orderRepo = $orderRepo;
+        $this->settingRepo = $settingRepo;
     }
 
     public function create(array $input): OrderResult
     {
         # create order param
         $user = Auth::user();
-        $keyId = $input['pk'];
+        $userPk = $input['pk'];
 
-        $key = Setting::where('user_id', $user->id)->where('user_pk', $keyId)->first(); //TODO:改用 SettingRepo
+        $key = $this->settingRepo->filterByUserId($user->id)->filterByUserPk($userPk)->first();
         if (empty($key)) {
             return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
         }
