@@ -3,21 +3,23 @@
 
 namespace App\Contracts\Payments;
 
-
 use App\Exceptions\GatewayNotFountException;
+use App\Payment\Curl;
 use App\Services\AbstractWithdrawGateway;
-use App\Services\Payments\WithdrawGateways\ApplePay;
-use App\Services\Payments\WithdrawGateways\ShineUPay;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 
 class WithdrawGatewayFactory
 {
+    private static $namespace = '\App\Services\Payments\WithdrawGateways\\';
+
     public static function createGateway(string $gatewayName): AbstractWithdrawGateway
     {
-        if ($gatewayName == 'ShineUPay') {
-            $gateway = App::make(ShineUPay::class);
-        } else {
-            throw new GatewayNotFountException("Gateway not found.", 1);
+        $class = self::$namespace.$gatewayName;
+        try {
+            $gateway = new $class(new Curl());
+        }catch(\Exception $e){
+            Log::info($e->getMessage());
+            throw new GatewayNotFountException();
         }
 
         return $gateway;
