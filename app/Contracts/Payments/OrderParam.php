@@ -11,7 +11,7 @@ class OrderParam
     private $txnTime;
     private $screenshot;
     private $txId;
-    private $cardNumber;
+    private $depositAddress;
     private $mobile;
     private $accountId;
     private $email;
@@ -38,7 +38,7 @@ class OrderParam
         $txnTime = null,
         $screenshot = null,
         $txId = null,
-        $cardNumber = null,
+        $depositAddress = null,
         $mobile = null,
         $accountId = null,
         $email = null,
@@ -57,31 +57,31 @@ class OrderParam
         $bankAddress = null,
         $bankCity = null
     ) {
-        $this->order_id = $orderId;
+        $this->orderId = $orderId;
         $this->amount = $amount;
-        $this->bank_name = $bankName;
-        $this->account_name = $accountName;
-        $this->txn_time = $txnTime;
+        $this->bankName = $bankName;
+        $this->accountName = $accountName;
+        $this->txnTime = $txnTime;
         $this->screenshot = $screenshot;
-        $this->tx_id = $txId;
-        $this->card_number = $cardNumber;
+        $this->txId = $txId;
+        $this->depositAddress = $depositAddress;
         $this->mobile = $mobile;
-        $this->account_id = $accountId;
+        $this->accountId = $accountId;
         $this->email = $email;
         $this->country = $country;
         $this->state = $state;
         $this->city = $city;
         $this->address = $address;
         $this->zip = $zip;
-        $this->last_name = $lastName;
-        $this->first_name = $firstName;
+        $this->lastName = $lastName;
+        $this->firstName = $firstName;
         $this->telegram = $telegram;
-        $this->expired_date = $expiredDate;
-        $this->transaction_type = $transactionType;
+        $this->expiredDate = $expiredDate;
+        $this->transactionType = $transactionType;
         $this->ifsc = $ifsc;
-        $this->bank_province = $bankProvince;
-        $this->bank_address = $bankAddress;
-        $this->bank_city = $bankCity;
+        $this->bankProvince = $bankProvince;
+        $this->bankAddress = $bankAddress;
+        $this->bankCity = $bankCity;
     }
 
     public static function createFromJson(string $json)
@@ -89,14 +89,14 @@ class OrderParam
         $data = json_decode($json, true);
 
         return new OrderParam(
-            $data['order_id']           ?? null,
+            $data['order_id']         ?? null,
             $data['amount']           ?? null,
             $data['bank_name']        ?? null,
             $data['account_name']     ?? null,
             $data['txn_time']         ?? null,
             $data['screenshot']       ?? null,
             $data['tx_id']            ?? null,
-            $data['card_number']      ?? null,
+            $data['deposit_address']  ?? null,
             $data['mobile']           ?? null,
             $data['account_id']       ?? null,
             $data['email']            ?? null,
@@ -174,11 +174,11 @@ class OrderParam
     }
 
     /**
-     * Get the value of cardNumber
+     * Get the value of depositAddress
      */
-    public function getCardNumber()
+    public function getDepositAddress()
     {
-        return $this->cardNumber;
+        return $this->depositAddress;
     }
 
     /**
