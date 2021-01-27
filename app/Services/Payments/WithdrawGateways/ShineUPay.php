@@ -72,7 +72,7 @@ class ShineUPay extends AbstractWithdrawGateway
         $array = [];
         $array['merchantId']             = $settings['merchantId'];
         $array['timestamp']              = time() . '000';
-        $array['body']['advPasswordMd5'] = $settings['private_key'];
+        $array['body']['advPasswordMd5'] = md5($settings['private_key']);
         $array['body']['orderId']        = $input['order_id'];
         $array['body']['flag']           = 0; // PM說先寫死0
         $array['body']['bankCode']       = $input['withdraw_address'];
@@ -139,7 +139,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
+        return new Placeholder($type, '', '提现密码','商户秘钥','http://商戶後台/recharge/notify',
         '請填上同步通知地址',);
     }
 
