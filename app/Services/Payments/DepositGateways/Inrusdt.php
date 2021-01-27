@@ -10,6 +10,7 @@ use App\Constants\Payments\DepositInfo as C;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
+use App\Exceptions\UnsupportedTypeException;
 use Str;
 
 class Inrusdt implements DepositGatewayInterface
@@ -96,12 +97,22 @@ class Inrusdt implements DepositGatewayInterface
     public function getRequireInfo($type): DepositRequireInfo
     {
         $column = [];
-        if ($type == Type::BANK_CARD){
-            $column = [C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT];
-        }elseif($type == Type::WALLET){
-            $column = [C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT];
-        }elseif($type == Type::CRYPTO_CURRENCY){
-            $column = [C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK];
+        switch ($type) {
+            case Type::BANK_CARD:
+                $column = [C::ACCT_FN, C::ACCT_LN, C::ACCT_NO, C::AMOUNT];
+                break;
+
+            case Type::WALLET:
+                $column = [C::ACCT_NAME, C::ACCOUNT_ID, C::AMOUNT];
+                break;
+
+            case Type::CRYPTO_CURRENCY:
+                $column = [C::CRYPTO_AMOUNT, C::ADDRESS, C::NETWORK];
+                break;
+
+            default:
+                throw new UnsupportedTypeException();
+                break;
         }
 
         return new DepositRequireInfo($type, $column);
