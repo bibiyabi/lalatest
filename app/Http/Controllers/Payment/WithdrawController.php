@@ -23,7 +23,7 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('代付前端參數'), $request->post());
             $payment->checkInputSetDbSendOrderToQueue($request);
             return RB::success();
-        } catch (Exception $e) {
+        } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e), $request->post());
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
@@ -68,7 +68,7 @@ class WithdrawController extends Controller
 
             echo $res->getMsg();
 
-        } catch (Exception $e) {
+        } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e));
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
@@ -80,7 +80,7 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('重置訂單'), $request->post());
             $payment->resetOrderStatus($request);
             return RB::success();
-        } catch (Exception $e) {
+        } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e), $request->post());
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
