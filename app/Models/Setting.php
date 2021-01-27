@@ -11,7 +11,7 @@ class Setting extends Model
 
     protected $table = 'settings';
 
-    protected $fillable = ['user_id', 'gateway_type_id', 'settings'];
+    protected $fillable = ['user_id', 'settings', 'gateway_id', 'user_pk'];
 
     public function gateway()
     {
