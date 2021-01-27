@@ -21,6 +21,7 @@ use App\Http\Controllers\Payment\WithdrawController;
 use App\Payment\Withdraw\Payment;
 use App\Providers\GatewayServiceProvider;
 use App\Services\AbstractWithdrawGateway;
+use Database\Factories\WithdrawOrderFactory;
 
 class PaymentTest extends TestCase
 {
@@ -121,10 +122,23 @@ class PaymentTest extends TestCase
      */
     public function test_shineUpay_callback() {
 
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "673835da9a3458e88e8d483bdae9c9f1"}'
+        ]);
+
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = '123456600131627297f';
+        $orderArray['key_id'] = $key->id;
+        WithdrawOrder::create($orderArray);
+
         $payload = '{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchantId":"A5LB093F045C2322","timestamp":"1610691875552"}';
 
         $request = Request::create('/callback/withdraw/ShineUPay', 'POST', json_decode($payload, true), [], [],  [
-            'HTTP_Api-Sign' => 'ee123ae7291e3e406eac6ccd12afb69e',
+            'HTTP_Api-Sign' => '5142aade809d9a4038392426c74f859a',
             'HTTP_CONTENT_LENGTH' => strlen($payload),
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
