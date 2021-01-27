@@ -26,7 +26,7 @@ class PaymentTest extends TestCase
 {
    // protected $mock;
 
-   // use DatabaseTransactions;
+    use DatabaseTransactions;
     public function setUp():void
     {
         parent::setUp();
