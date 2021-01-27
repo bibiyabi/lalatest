@@ -125,7 +125,6 @@ class PaymentTest extends TestCase
         ], $payload);
 
         $shineUpay = Mockery::mock(ShineUPay::class)->makePartial();
-        #$shineUpay = $this->initMockPartial('');
         $shineUpay->shouldReceive('getCallBackInput')
         ->andReturn($payload);
 
