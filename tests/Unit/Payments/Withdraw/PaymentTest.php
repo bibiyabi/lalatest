@@ -15,12 +15,18 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Merchant;
 use App\Models\Gateway;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Validator;
+use App\Models\WithdrawOrder;
+use App\Contracts\Payments\CallbackResult;
+use App\Http\Controllers\Payment\WithdrawController;
+use App\Payment\Withdraw\Payment;
+use App\Providers\GatewayServiceProvider;
+use App\Services\AbstractWithdrawGateway;
+
 class PaymentTest extends TestCase
 {
    // protected $mock;
 
-    use DatabaseTransactions;
+   // use DatabaseTransactions;
     public function setUp():void
     {
         parent::setUp();
@@ -113,7 +119,7 @@ class PaymentTest extends TestCase
      *
      * @return void
      */
-    public function test_callback() {
+    public function test_shineUpay_callback() {
 
         $payload = '{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchantId":"A5LB093F045C2322","timestamp":"1610691875552"}';
 
@@ -131,6 +137,45 @@ class PaymentTest extends TestCase
         $res = $shineUpay->callback($request);
 
         $this->assertEquals('success', $res->getMsg());
+    }
+
+
+    public function test_contoller_callback_payment_always_success() {
+
+        $orderId = 'unittest'. uniqid();
+
+        $order = WithdrawOrder::factory([
+            'order_id'    => $orderId,
+        ])->create();
+
+        $container = Container::getInstance();
+        $provider = new GatewayServiceProvider($container);
+        $provider->createGateway('ShineUPay');
+        $container->instance(GatewayServiceProvider::class, $provider);
+
+        $callbackResult = Mockery::mock(CallbackResult::class);
+        $callbackResult->shouldReceive('getSuccess')->andReturn(true);
+        $callbackResult->shouldReceive('getOrder')->andReturn($order);
+        $callbackResult->shouldReceive('getAmount')->andReturn(10);
+        $callbackResult->shouldReceive('getMsg')->andReturn('success');
+
+        $payment = Mockery::mock(Payment::class);
+        $payment->shouldReceive('callbackNotifyToQueue')
+        ->andReturn('');
+        $payment->shouldReceive('callback')
+        ->andReturn($callbackResult);
+
+        $container->instance(Payment::class, $payment);
+
+        $res = $this->post('/callback/withdraw/ShineUPay', []);
+
+        $res->assertStatus(200);
+        $this->assertDatabaseHas('withdraw_orders', [
+            'order_id'    => $orderId,
+            'status'      => Status::CALLBACK_SUCCESS,
+            'real_amount' => 10
+        ]);
+
     }
 
 
