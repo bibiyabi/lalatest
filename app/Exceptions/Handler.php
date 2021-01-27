@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         if ($e instanceof GatewayNotFountException) {
-            return RB::asError(ResponseCode::THIRD_PARTY_NOT_FOUND)->withMessage($e->getMessage())->build();
+            return RB::asError(ResponseCode::GATEWAY_NOT_FOUND)->withMessage($e->getMessage())->build();
         } elseif ($e instanceof \PDOException) {
             return RB::asError(ResponseCode::DATABASE_FAILED)->withMessage($e->getMessage())->build();
         } elseif ($e instanceof ValidationException) {
