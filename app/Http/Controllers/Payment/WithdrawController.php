@@ -14,6 +14,7 @@ use Exception;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\LogLine;
 use App\Constants\Payments\Status;
+use App\Models\WithdrawOrder;
 
 
 class WithdrawController extends Controller
@@ -23,14 +24,14 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('代付前端參數'), $request->post());
             $payment->checkInputSetDbSendOrderToQueue($request);
             return RB::success();
-        } catch (Exception $e) {
+        } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e), $request->post());
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
 
     }
 
-    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway, WithdrawRepository $withdrawRepository) {
+    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway) {
 
         try {
             Log::channel('withdraw')->info(new LogLine('代付回調前端參數'),[
@@ -50,7 +51,8 @@ class WithdrawController extends Controller
             }
 
             $callbackStatus =  $res->getSuccess() ? Status::CALLBACK_SUCCESS : Status::CALLBACK_FAILED;
-            $withdrawRepository->filterOrderId($orderId)->update(
+
+            WithdrawOrder::where('order_id', '=', $orderId)->update(
                 [
                     'status'=> $callbackStatus,
                     'real_amount' => $res->getAmount(),
@@ -58,7 +60,7 @@ class WithdrawController extends Controller
                 ]
             );
 
-            $order = $withdrawRepository->filterOrderId($orderId)->first();
+            $order = WithdrawOrder::where('order_id', '=', $orderId)->first();
 
             if (empty($order)) {
                 throw new WithdrawException('order not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
@@ -68,7 +70,7 @@ class WithdrawController extends Controller
 
             echo $res->getMsg();
 
-        } catch (Exception $e) {
+        } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e));
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }
@@ -80,7 +82,7 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('重置訂單'), $request->post());
             $payment->resetOrderStatus($request);
             return RB::success();
-        } catch (Exception $e) {
+        } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e), $request->post());
             return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
         }

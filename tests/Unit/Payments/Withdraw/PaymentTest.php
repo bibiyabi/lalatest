@@ -5,49 +5,85 @@ namespace Tests\Unit\Payments\Withdraw;
 use Tests\TestCase;
 use Mockery;
 use Illuminate\Container\container;
-use Illuminate\Support\Facades\Queue;
-use App\Payment\Withdraw\Payment;
 use App\Models\Setting;
-use App\Models\WithdrawOrder;
-use Illuminate\Support\Facades\Log;
-use TiMacDonald\Log\LogFake;
-use App\Repositories\SettingRepository;
-use App\Repositories\Orders\WithdrawRepository;
+use Illuminate\Http\Request;
 use App\Services\Payments\WithdrawGateways\ShineUPay;
 use App\Payment\Curl;
 use App\Constants\Payments\Status;
+use App\Jobs\Payment\Deposit\Notify;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Models\Merchant;
+use App\Models\Gateway;
+use Illuminate\Support\Facades\Bus;
+use App\Models\WithdrawOrder;
+use App\Contracts\Payments\CallbackResult;
+use App\Http\Controllers\Payment\WithdrawController;
+use App\Payment\Withdraw\Payment;
+use App\Providers\GatewayServiceProvider;
+use App\Services\AbstractWithdrawGateway;
 
 class PaymentTest extends TestCase
 {
    // protected $mock;
 
-
+    use DatabaseTransactions;
     public function setUp():void
     {
         parent::setUp();
 
-       // $this->mock = $this->initMock(Payments::class);
+
+
+       $user = Merchant::factory([
+           'name' => 'java',
+       ])->create();
+
+       $this->user = $user;
+
+       $this->actingAs($user);
+
+
     }
-
-
     private function initMock($class)
     {
-       // $mock = Mockery::mock($class);
-       // $this->app->instance($class, $mock);
+        $mock = Mockery::mock($class);
+        $container = Container::getInstance();
+        $container->instance($class, $mock);
 
-        //return $mock;
+        return $mock;
     }
 
-    public function test_create_order() {
+    private function initMockPartial($class)
+    {
+        $mock = Mockery::mock($class)->makePartial();
+        $container = Container::getInstance();
+        $container->instance($class, $mock);
 
+        return $mock;
+    }
+
+
+    public function test_create_order() {
         $this->withoutMiddleware();
+        Bus::fake();
+
+        $gateway = Gateway::factory([
+            'name' => 'ShineUPay',
+            'real_name' => 'ShineUPay',
+        ])->create();
+
+        $setting = Setting::factory([
+            'user_id' => $this->user->id,
+            'gateway_id' => $gateway->id,
+            'user_pk' => 123,
+            'settings' =>  '{"id":1,"user_id":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "673835da9a3458e88e8d483bdae9c9f1"}'
+        ])->create();
 
         $orderId = 'unittest'. uniqid();
 
         $res = $this->post('/api/withdraw/create', [
-            'payment_type'     => '1',
+            'payment_type'     => 'bank_card',
             'order_id'         =>  $orderId,
-            'pk'               => '1',
+            'pk'               =>  $setting->user_pk,
             'amount'           => '1',
             'fund_passwd'      => '1',
             'email'            => '1',
@@ -67,139 +103,82 @@ class PaymentTest extends TestCase
             'ifsc'             => '1'
         ]);
 
-        dd($res);
-
         $res->assertStatus(200);
         $res->assertJsonFragment(['success'=>true]);
         $this->assertDatabaseHas('withdraw_orders', [
             'order_id' => $orderId,
             'status' => Status::PENDING
         ]);
+        Bus::assertNotDispatched(Order::class);
+        Bus::assertNotDispatched(Notify::class);
     }
 
-
-
     /**
-     * A basic unit test example.
+     * 這隻有幾個重點 ,gateway service provider $this->app->request->segment(2) 要先有值, Request::create可以
+     * php::input模擬 ,只能先把getCallBackInput 設public用makePartial複寫
      *
      * @return void
      */
-    public function testCheckInputData()
-    {
-        return;
-        $orderId ='aaaaa' . uniqid();
+    public function test_shineUpay_callback() {
 
-        $settingMock = Mockery::mock(SettingRepository::class);
+        $payload = '{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchantId":"A5LB093F045C2322","timestamp":"1610691875552"}';
 
-        $payment = new Payment(new WithdrawRepository, $settingMock);
+        $request = Request::create('/callback/withdraw/ShineUPay', 'POST', json_decode($payload, true), [], [],  [
+            'HTTP_Api-Sign' => 'ee123ae7291e3e406eac6ccd12afb69e',
+            'HTTP_CONTENT_LENGTH' => strlen($payload),
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_ACCEPT' => 'application/json',
+        ], $payload);
 
-        $request = Mockery::mock('Illuminate\Http\Request');
+        $shineUpay = Mockery::mock(ShineUPay::class)->makePartial();
+        $shineUpay->shouldReceive('getCallBackInput')
+        ->andReturn($payload);
 
+        $res = $shineUpay->callback($request);
 
-        $request->shouldReceive('post')
-        ->andReturn([
-            'payment_type' => 1,
-            'order_id'     => $orderId,
-            'pk'      => 1,
-            'amount' => 10
-        ]);
-
-        $request->shouldReceive('all')
-        ->andReturn([
-            'payment_type' => 1,
-            'order_id'     => $orderId,
-            'pk'      => 1,
-            'amount' => 10
-        ]);
-
-        $o= new \stdClass();
-        $o->id = 1;
-        $o->user_id = 1;
-
-        $request->shouldReceive('user')
-        ->andReturn($o);
-
-
-        $assertObject = $payment->checkInputData($request);
-        $this->assertInstanceOf(Payment::class, $assertObject);
-
-        return ['payment' => $payment, 'orderId' => $orderId, 'settingMock' => $settingMock];
+        $this->assertEquals('success', $res->getMsg());
     }
 
-     /**
-     * @depends testCheckInputData
-     */
-    public function test_set_order_to_db($data) {
-        return;
-        $orderId = $data['orderId'];
 
-        $payment = $data['payment'];
+    public function test_contoller_callback_payment_always_success() {
 
-        $setting = Setting::factory()->create([
-            'user_id' => 1,
-            'gateway_id' => 3,
-            'user_pk' => rand(10000,20000),
-            'settings' => '{}',
+        $orderId = 'unittest'. uniqid();
+
+        $order = WithdrawOrder::factory([
+            'order_id'    => $orderId,
+        ])->create();
+
+        $container = Container::getInstance();
+        $provider = new GatewayServiceProvider($container);
+        $provider->createGateway('ShineUPay');
+        $container->instance(GatewayServiceProvider::class, $provider);
+
+        $callbackResult = Mockery::mock(CallbackResult::class);
+        $callbackResult->shouldReceive('getSuccess')->andReturn(true);
+        $callbackResult->shouldReceive('getOrder')->andReturn($order);
+        $callbackResult->shouldReceive('getAmount')->andReturn(10);
+        $callbackResult->shouldReceive('getMsg')->andReturn('success');
+
+        $payment = Mockery::mock(Payment::class);
+        $payment->shouldReceive('callbackNotifyToQueue')
+        ->andReturn('');
+        $payment->shouldReceive('callback')
+        ->andReturn($callbackResult);
+
+        $container->instance(Payment::class, $payment);
+
+        $res = $this->post('/callback/withdraw/ShineUPay', []);
+
+        $res->assertStatus(200);
+        $this->assertDatabaseHas('withdraw_orders', [
+            'order_id'    => $orderId,
+            'status'      => Status::CALLBACK_SUCCESS,
+            'real_amount' => 10
         ]);
-
-        $settingMock = $data['settingMock'];
-        $settingMock->shouldReceive('filterCombinePk')
-        ->once()
-        ->andReturn($settingMock);
-
-        $settingMock->shouldReceive('first')
-        ->once()
-        ->andReturn($setting);
-
-        $payment->setOrderToDb();
-
-        $setting->delete();
-
-        $this->assertDatabaseHas('WITHDRAW_ORDERS', [
-            'order_id' => $orderId
-        ]);
-
-        return ['payment' => $payment];
 
     }
 
-    public function test_callback() {
-        return;
-        $request = Mockery::mock('Illuminate\Http\Request');
-        $request->shouldReceive('post')
-        ->andReturn('{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchantId":"A5LB093F045C2322","timestamp":"1610691875552"}');
 
-        $request->shouldReceive('header')->with('HTTP_API_SIGN')
-        ->andReturn('5142aade809d9a4038392426c74f859a');
-
-        $key = new \stdClass();
-        $key->md5_key = 'fed8b982f9044290af5aba64d156e0d9';
-        $o= new \stdClass();
-        $o->key = $key;
-
-        $withdrawMock = Mockery::mock(WithdrawRepository::class);
-
-        $withdrawMock->shouldReceive('filterOrderId')
-        ->andReturn($withdrawMock);
-
-        $withdrawMock->shouldReceive('first')
-        ->andReturn($o);
-
-        $shineUPay = new ShineUPay(new Curl, $withdrawMock);
-        $res = $shineUPay->callback($request);
-        $this->assertEquals('success', $res->get('msg'));
-
-    }
-
-     /**
-     * @depends test_set_order_to_db
-     */
-    public function test_dispatch_order_queue($data) {
-
-        return;
-        $payment=$data['payment'];
-        $payment->dispatchOrderQueue();
-    }
 
 
 

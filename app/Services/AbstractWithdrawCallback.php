@@ -24,7 +24,9 @@ abstract class  AbstractWithdrawCallback
 
 
     # callback 驗證變數
-    abstract protected function getCallbackValidateColumns();
+    protected function getCallbackValidateColumns() {
+        return [];
+    }
 
     public function callback(Request $request) {
         # 這個取價格小數點才不會有差 10.0000 依然是10.0000 request->post會消掉0
@@ -35,7 +37,7 @@ abstract class  AbstractWithdrawCallback
         $this->getCallbackOrderId($post);
         $order = $this->getOrderFromCallback($post);
         $settings = $this->getSettings($order);
-        $checkSign = $this->genSign($postJson, $settings);
+        $checkSign = $this->genCallbackSign($postJson, $settings);
         return $this->returnCallbackResult($post, $checkSign, $postSign, $order);
     }
 
@@ -68,8 +70,7 @@ abstract class  AbstractWithdrawCallback
     }
 
     protected function returnCallbackResult($callbackPost, $checkSign, $callBackSign, $order) {
-
-        if ($checkSign !== $callBackSign) {
+        if (config('app.is_check_sign') && $checkSign !== $callBackSign) {
             throw new WithdrawException("check sign error" , ResponseCode::EXCEPTION);
         }
 
@@ -83,6 +84,10 @@ abstract class  AbstractWithdrawCallback
             return new CallbackResult(false, $this->callbackSuccessReturnString, $order);
         }
 
+    }
+
+    protected function genCallbackSign($postJson, $settings) {
+        return $this->genSign($postJson, $settings);
     }
 
     protected function getCallbackAmount($order, $callbackPost) {

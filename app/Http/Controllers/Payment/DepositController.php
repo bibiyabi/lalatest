@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Payment;
 
+use App\Constants\Payments\ResponseCode;
 use App\Http\Controllers\Controller;
 use App\Repositories\Orders\DepositRepository;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Services\Payments\Deposit\DepositService;
-use DB;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Illuminate\Support\Facades\Log;
 
@@ -49,14 +49,18 @@ class DepositController extends Controller
 
     public function reset(Request $request)
     {
-        $validated = $request->validate([
-            'order_id' => 'required'
-        ]);
+        $validated = $request->validate(['order_id' => 'required']);
+        $user = $request->user();
 
-        Log::info('Deposit-reset order_id:' . $request->post('order_id'));
+        Log::info('Deposit-reset order_id:' . $validated['order_id'] . ' user:' . $user->id);
+        $order = $this->depositRepo->user($user->id)->orderId($validated['order_id'])->first();
 
-        $this->depositRepo->orderId($validated['order_id'])->reset();
+        if (empty($order)) {
+            return RB::error(ResponseCode::RESOURCE_NOT_FOUND);
+        }
 
-        return RB::success();
+        return $order->delete()
+            ? RB::success()
+            : RB::error(ResponseCode::EXCEPTION);
     }
 }

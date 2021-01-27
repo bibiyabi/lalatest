@@ -1,4 +1,4 @@
-# API文件 V7
+# API文件 V10
 
 ## API必帶參數
 
@@ -23,16 +23,13 @@
 * 提現新增 bank_province、bank_address、bank_city 三個參數。
 * 提現 transaction_type、ifsc 補上對應欄位序號。
 
-
 ### V4
 
 * 新增前台的出/入款應顯示欄位及下拉選單
----
 
 ### V5
 
 * 更新API name withdraw/order => withdraw/create
----
 
 ### V6
 
@@ -48,7 +45,20 @@
 
 * 修改刪除資料設置id改為java id (user_pk)
 
+### V9
+
+* /api/withdraw/create 新增 22,23 代碼
+* /api/deposit/create 新增 36 代碼
+* /api/deposit/create 8、18 合併為 deposit_address
+
+### V10
+
+* /api/deposit/create 調整，欄位 8 獨立開一個欄位。
+* /api/withdraw/create 23 代碼合併到16, 4
+* /api/withdraw/create 14, 2, 15 代碼 , 補齊所有號碼變數
+
 ---
+
 ### API 錯誤碼
 
 | code | 說明              |
@@ -75,7 +85,6 @@
 POST /api/key
 ```
 
-
 | 欄位       | 型態    | 必要參數 | 說明                                 |
 | ---------- | ------- | -------- | :----------------------------------- |
 | id         | integer | V        | 出/入款id /java unique  id           |
@@ -96,7 +105,6 @@ POST /api/key
 | api_key             | string  |          | API Key-加密貨幣                |
 | note1               | string  |          | 備注欄位1                       |
 | note2               | string  |          | 備注欄位2                       |
-
 
 Response example:
 
@@ -138,10 +146,9 @@ Response example:
 DELETE /api/key
 ```
 
-
-| 欄位 | 型態    | 必要參數 | 說明                   |
-| ---- | ------- | -------- | :--------------------- |
-| id   | integer | V        | 設置資料 id  |
+| 欄位 | 型態    | 必要參數 | 說明        |
+| ---- | ------- | -------- | ----------- |
+| id   | integer | V        | 設置資料 id |
 
 Response example:
 
@@ -166,9 +173,7 @@ Response example:
 }
 ```
 
-
 ### 金流商/交易所下拉選單
-
 
 ```plaintext
 GET /api/vendor/list
@@ -202,7 +207,9 @@ Response example:
         }
 }
 ```
+
 無金流商/交易所
+
 ```json
 {
     "success": true,
@@ -263,7 +270,7 @@ GET /api/placeholder
 
 回傳欄位說明:回傳值依據出入款及渠道不同而不固定輸出
 
-| 欄位                  | 型態    |
+| 欄位                 | 型態   |
 | -------------------- | ------ |
 | `publicKey`          | string |
 | `privateKey`         | string |
@@ -290,7 +297,6 @@ GET /api/placeholder
         "debug": []
 }
 ```
-
 
 ### 前台的出/入款應顯示欄位及下拉選單
 
@@ -325,7 +331,6 @@ GET /api/requirement
 | `column` | array |
 | `select` | array |
 
-
 沒有提示字/ 找不到該第三方檔案
 
 ```json
@@ -340,8 +345,6 @@ GET /api/requirement
 ```
 
 ## 充值（入款）
-
-
 
 ### 充值下單
 
@@ -360,7 +363,7 @@ POST /api/deposit/create
 | txn_time         | time    |          | 9                  | 打款成功時間 ex: 23-59-59                                 |
 | screenshot       | image   |          | 10                 | 支付成功截圖                                              |
 | tx_id            | string  |          | 15                 | 區塊鍊交易ID                                              |
-| card_number      | string  |          | 18                 | 卡號                                                      |
+| deposit_address  | string  |          | 18 36              | 卡號、銀行帳號                                            |
 | mobile           | string  |          | 19                 | 手機號                                                    |
 | account_id       | string  |          | 20                 | 電子錢包帳號                                              |
 | email            | string  |          | 21                 | 電子信箱                                                  |
@@ -419,7 +422,7 @@ POST /api/deposit/reset
 ```
 
 | 欄位     | 型態   | 必要參數 | 說明   |
-| -------- | ------ | -------- | ----- |
+| -------- | ------ | -------- | ------ |
 | order_id | string | V        | 訂單編 |
 Response example:
 
@@ -434,6 +437,7 @@ Response example:
 ```
 
 ## 提現（出款）
+
 ### 提現下單
 
 ```plaintext
@@ -445,7 +449,8 @@ POST /api/withdraw/create
 | order_id         | string  | V        | java                      | 訂單編號                                                  |
 | pk               | integer | V        | java                      | 設定檔流水號（同步商戶資料的那份）                        |
 | type             | string  | V        | java                      | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
-| amount           | integer |          | 1                         | 訂單金額 (數字貨幣傳貨幣數量)                             |
+| amount           | integer |          | 1、14                    | 訂單金額 (數字貨幣傳貨幣數量)                             |
+| bank_card_option | integer |          | 2                         | 銀行卡                           |
 | fund_passwd      | string  |          | 3                         | 資金密碼                                                  |
 | email            | string  |          | 5                         | 電子信箱                                                  |
 | user_country     | string  |          | 6                         | 使用者國家                                                |
@@ -459,10 +464,11 @@ POST /api/withdraw/create
 | first_name       | string  |          | 11                        | 名字                                                      |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
-| withdraw_address | string  |          | 16                        | 銀行卡號  、電子錢包帳號 、   數字貨幣地址                |
+| network          | string  |          | 15                        | 區塊鏈網路(目前僅顯示)                                                  |
+| withdraw_address | string  |          | 16 、4 、23               | 收款地址 、電子錢包帳號 、 银行账号                       |
 | transaction_type | string  |          | 17                        | 金流商（銀行） 通道代碼                                   |
 | ifsc             | string  |          | 18                        | ifsc                                                      |
-
+| zip              | string  |          | 22                        | 郵遞區號                                                  |
 
 Response example:
 
@@ -475,8 +481,6 @@ Response example:
     "data": {}
 }
 ```
-
-
 
 ### 代付重置訂單
 

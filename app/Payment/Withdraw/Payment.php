@@ -104,7 +104,6 @@ class Payment implements PaymentInterface
 
 
     private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
-
         Bus::chain([
             new Order($request->post(), $order),
             new Notify($order),
