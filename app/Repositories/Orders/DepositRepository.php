@@ -33,6 +33,11 @@ class DepositRepository
         ]);
     }
 
+    public function first()
+    {
+        return $this->order->first();
+    }
+
     public function reset(): bool
     {
         return $this->order->update(['no_notify'=> true]);
@@ -52,6 +57,12 @@ class DepositRepository
     public function before(DateTime $time): DepositRepository
     {
         $this->order = $this->order->where('created_at', '<', $time);
+        return $this;
+    }
+
+    public function user(int $userId)
+    {
+        $this->order = $this->order->where('user_id', $userId);
         return $this;
     }
 }
