@@ -14,6 +14,7 @@ use Exception;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\LogLine;
 use App\Constants\Payments\Status;
+use App\Models\WithdrawOrder;
 
 
 class WithdrawController extends Controller
@@ -30,7 +31,7 @@ class WithdrawController extends Controller
 
     }
 
-    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway, WithdrawRepository $withdrawRepository) {
+    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway) {
 
         try {
             Log::channel('withdraw')->info(new LogLine('代付回調前端參數'),[
@@ -50,7 +51,8 @@ class WithdrawController extends Controller
             }
 
             $callbackStatus =  $res->getSuccess() ? Status::CALLBACK_SUCCESS : Status::CALLBACK_FAILED;
-            $withdrawRepository->filterOrderId($orderId)->update(
+
+            WithdrawOrder::where('order_id', '=', $orderId)->update(
                 [
                     'status'=> $callbackStatus,
                     'real_amount' => $res->getAmount(),
@@ -58,7 +60,7 @@ class WithdrawController extends Controller
                 ]
             );
 
-            $order = $withdrawRepository->filterOrderId($orderId)->first();
+            $order = WithdrawOrder::where('order_id', '=', $orderId)->first();
 
             if (empty($order)) {
                 throw new WithdrawException('order not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
