@@ -40,7 +40,6 @@ return [
         CODE::GATEWAY_NOT_FOUND             => '无此通道资讯',
         CODE::ERROR_SIGN                    => '签章错误',
         CODE::AUTHENTICATE_FAILED           => '登入异常',
-        CODE::THIRD_PARTY_NOT_FOUND         => '找不到第三方串接檔案',
         CODE::UNSUPPORTED_TYPE              => '不支援的支付方式',
 
 	],
