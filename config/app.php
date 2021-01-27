@@ -243,7 +243,8 @@ return [
     |
     */
 
-    'java_domain' => env('JAVA_DOMAIN'),
-    'sign_key' => env('SIGN_KEY'),
+    'java_domain' => env('JAVA_DOMAIN'),    // java 的域名
+    'sign_key' => env('SIGN_KEY'),          // 驗簽用的金鑰
+    'is_check_sign' => env('APP_VALIDATE_SIGN', true), // 是否驗簽
 
 ];

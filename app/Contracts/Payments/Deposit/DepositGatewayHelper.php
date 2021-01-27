@@ -85,7 +85,7 @@ trait DepositGatewayHelper
         }
 
         if (
-            config('app.env') !== 'local'
+            config('app.is_check_sign') !== false
             && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $key))
         ) {
             throw new NotFoundResourceException("Sign error.");
