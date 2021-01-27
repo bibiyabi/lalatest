@@ -91,16 +91,16 @@ class Inrusdt implements DepositGatewayInterface
             '',$transactionType);
     }
 
+    # 該支付有支援的渠道  指定前台欄位
     public function getRequireInfo($type): DepositRequireInfo
     {
-        # 該支付有支援的渠道  指定前台欄位
         $column = [];
         if ($type == Type::typeName[2]){
-            $column = array(C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT);
+            $column = [C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT];
         }elseif($type == Type::typeName[3]){
-            $column = array(C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT);
+            $column = [C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT];
         }elseif($type == Type::typeName[4]){
-            $column = array(C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK);
+            $column = [C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK];
         }
 
         return new DepositRequireInfo($type, $column);
