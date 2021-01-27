@@ -126,7 +126,7 @@ class PaymentTest extends TestCase
             'user_id' => 1,
             'gateway_id' => 1,
             'user_pk' => 777,
-            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "673835da9a3458e88e8d483bdae9c9f1"}'
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchantId":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
         ]);
 
         $factory = new WithdrawOrderFactory();
