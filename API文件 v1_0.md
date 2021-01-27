@@ -247,6 +247,8 @@ GET /api/placeholder
         "locale": "en",
         "message": "传送成功",
         "data": {
+            "account": "請填上帳戶號",
+            "merchantNumber": "請填上商戶號",
             "publicKey": "hello world",
             "privateKey": "666",
             "md5Key": "666",
