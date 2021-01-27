@@ -119,7 +119,7 @@ class ShineUPay extends AbstractWithdrawGateway
         return $request->header('api-sign');
     }
 
-    protected function  getCallBackInput() {
+    public function  getCallBackInput() {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  file_get_contents("php://input");
     }
