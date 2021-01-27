@@ -249,11 +249,11 @@ GET /api/placeholder
         "data": {
             "account": "請填上帳戶號",
             "merchantNumber": "請填上商戶號",
-            "publicKey": "hello world",
-            "privateKey": "666",
-            "md5Key": "666",
-            "notifyUrl": "http://google.com",
-            "returnUrl": "http://google.com",
+            "publicKey": "請填上商戶公鑰",
+            "privateKey": "提现密码",
+            "md5Key": "商户秘钥",
+            "notifyUrl": "http://商戶後台/recharge/notify",
+            "returnUrl": "請填上同步通知地址",
             "transactionType": [
                 "UPI",
                 "PAYATM"
