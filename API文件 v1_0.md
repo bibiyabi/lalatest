@@ -57,6 +57,10 @@
 * /api/withdraw/create 23 代碼合併到16, 4
 * /api/withdraw/create 14, 2, 15 代碼 , 補齊所有號碼變數
 
+
+### V11
+
+* /api/placeholder  response 新增商戶號(account),帳戶號欄位(merchantNumber)
 ---
 
 ### API 錯誤碼
@@ -272,6 +276,8 @@ GET /api/placeholder
 
 | 欄位                 | 型態   |
 | -------------------- | ------ |
+| `account`            | string |
+| `merchantNumber`     | string |
 | `publicKey`          | string |
 | `privateKey`         | string |
 | `md5Key`             | string |

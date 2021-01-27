@@ -87,7 +87,7 @@ class Inrusdt implements DepositGatewayInterface
             ];
         }
 
-        return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
+        return new Placeholder($type, '請填上帳戶號','請填上商戶號', '','請填上md5密鑰','http://商戶後台/recharge/notify',
             '',$transactionType);
     }
 
