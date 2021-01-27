@@ -79,27 +79,28 @@ class Inrusdt implements DepositGatewayInterface
 
     public function getPlaceholder($type):Placeholder
     {
-        $transactionType = [];
-        if ($type == Type::typeName[3]){
-            $transactionType = [
-                0 => 'inrpay',
-                1 => 'upi'
-            ];
-        }
+//        $transactionType = [];
+//        if ($type == Type::WALLET){
+//            $transactionType = [
+//                0 => 'inrpay',
+//                1 => 'upi'
+//            ];
+//        }
 
-        return new Placeholder($type, '請填上帳戶號','請填上商戶號', '','請填上md5密鑰','http://商戶後台/recharge/notify',
-            '',$transactionType);
+        return new Placeholder($type, '請填上帳戶號','請填上商戶號', '','',
+            '請填上md5密鑰','http://商戶後台/recharge/notify',
+            '不填打你');
     }
 
     # 該支付有支援的渠道  指定前台欄位
     public function getRequireInfo($type): DepositRequireInfo
     {
         $column = [];
-        if ($type == Type::typeName[2]){
+        if ($type == Type::BANK_CARD){
             $column = [C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT];
-        }elseif($type == Type::typeName[3]){
+        }elseif($type == Type::WALLET){
             $column = [C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT];
-        }elseif($type == Type::typeName[4]){
+        }elseif($type == Type::CRYPTO_CURRENCY){
             $column = [C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK];
         }
 
