@@ -55,6 +55,7 @@
 
 * /api/deposit/create 調整，欄位 8 獨立開一個欄位。
 * /api/withdraw/create 23 代碼合併到16, 4
+* /api/withdraw/create 14, 2, 15 代碼 , 補齊所有號碼變數
 
 ---
 
@@ -448,7 +449,8 @@ POST /api/withdraw/create
 | order_id         | string  | V        | java                      | 訂單編號                                                  |
 | pk               | integer | V        | java                      | 設定檔流水號（同步商戶資料的那份）                        |
 | type             | string  | V        | java                      | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
-| amount           | integer |          | 1                         | 訂單金額 (數字貨幣傳貨幣數量)                             |
+| amount           | integer |          | 1、14                    | 訂單金額 (數字貨幣傳貨幣數量)                             |
+| bank_card_option | integer |          | 2                         | 銀行卡                           |
 | fund_passwd      | string  |          | 3                         | 資金密碼                                                  |
 | email            | string  |          | 5                         | 電子信箱                                                  |
 | user_country     | string  |          | 6                         | 使用者國家                                                |
@@ -462,6 +464,7 @@ POST /api/withdraw/create
 | first_name       | string  |          | 11                        | 名字                                                      |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
+| network          | string  |          | 15                        | 區塊鏈網路(目前僅顯示)                                                  |
 | withdraw_address | string  |          | 16 、4 、23               | 收款地址 、電子錢包帳號 、 银行账号                       |
 | transaction_type | string  |          | 17                        | 金流商（銀行） 通道代碼                                   |
 | ifsc             | string  |          | 18                        | ifsc                                                      |
