@@ -1,6 +1,7 @@
 <?php
 namespace App\Contracts\Payments;
 
+use App\Exceptions\WithdrawException;
 use Exception;
 
 class LogLine extends \Exception
@@ -10,7 +11,7 @@ class LogLine extends \Exception
 
     public function __construct($msg = '')
     {
-        if ($msg instanceof Exception) {
+        if ($msg instanceof WithdrawException) {
             $this->isInstantOfException = true;
             $this->msg = $this->createExceptionMsg($msg);
         } else {

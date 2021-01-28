@@ -49,7 +49,7 @@ class PlatformNotify
 
         $postData = [];
         $postData['orderId'] = $this->order->order_id;
-        $postData['amount'] = "";
+        $postData['amount'] = empty($this->order->real_amount) ? "0" : (string)$this->order->real_amount;
         $postData['status'] = $status;
         $postData['signature'] = Signature::makeSign($postData, $this->javaKey);
 
