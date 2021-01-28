@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
+use App\Repositories\Orders\WithdrawRepository;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -38,10 +39,11 @@ class DeleteOutdatedOrders extends Command
      *
      * @return int
      */
-    public function handle(DepositRepository $depositRepo)
+    public function handle(DepositRepository $depositRepo, WithdrawRepository $withdrawRepo)
     {
         $days = $this->argument('days');
         $date = Carbon::now()->subDays($days);
         $depositRepo->before($date)->delete();
+        $withdrawRepo->before($date)->delete();
     }
 }
