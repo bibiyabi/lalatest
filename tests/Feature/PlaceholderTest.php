@@ -43,7 +43,7 @@ class PlaceholderTest extends TestCase
             'types_id'              => Type::type['e_wallet'],
             'is_support_deposit'    => 1,
             'is_support_withdraw'   => 0
-        ]);
+        ])->create();
 
         $response = $this->call('get','api/vendor/list',[
             'is_deposit' => 1,
