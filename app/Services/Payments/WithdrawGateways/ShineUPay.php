@@ -3,13 +3,13 @@ namespace App\Services\Payments\WithdrawGateways;
 
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
-use App\Contracts\Payments\WithdrawRequireInfo;
+use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use App\Payment\Curl;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
-use App\Contracts\Payments\LogLine;
+use App\Contracts\LogLine;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 

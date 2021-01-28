@@ -4,7 +4,7 @@ namespace App\Services\Payments;
 
 use App\Payment\Curl;
 use App\Repositories\MerchantRepository;
-use App\Contracts\Payments\LogLine;
+use App\Contracts\LogLine;
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
 use App\Services\Signature;
@@ -57,7 +57,7 @@ class PlatformNotify
             ->setPost($postData)
             ->exec();
 
-        Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
+        Log::channel('withdraw')->info(new \App\Contracts\LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
 
         $this->checkSuccess($this->curlRes['data']);
     }

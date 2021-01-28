@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Payments\Deposit;
 
-use App\Contracts\Payments\DepositRequireInfo;
+use App\Contracts\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;

@@ -64,7 +64,7 @@ class SettingParam
         return new SettingParam(
             $data['infoTitle'] ?? '',
             $data['account'] ?? '',
-            $data['merchant'] ?? '',
+            $data['merchant_number'] ?? '',
             $data['type'] ?? '',
             $data['public_key'] ?? '',
             $data['private_key'] ?? '',

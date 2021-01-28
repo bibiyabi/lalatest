@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Contracts\Payments;
+namespace App\Contracts\Payments\Withdraw;
 
 use App\Constants\Payments\Type;
 use App\Constants\Payments\WithdrawInfo as C;

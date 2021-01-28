@@ -12,7 +12,7 @@ use App\Services\AbstractWithdrawGateway;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Exception;
 use App\Constants\Payments\ResponseCode;
-use App\Contracts\Payments\LogLine;
+use App\Contracts\LogLine;
 use App\Constants\Payments\Status;
 use App\Models\WithdrawOrder;
 

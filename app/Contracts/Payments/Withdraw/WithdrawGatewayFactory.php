@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Contracts\Payments;
+namespace App\Contracts\Payments\Withdraw;
 
 use App\Exceptions\GatewayNotFountException;
 use App\Payment\Curl;

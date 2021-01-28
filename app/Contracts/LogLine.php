@@ -1,5 +1,5 @@
 <?php
-namespace App\Contracts\Payments;
+namespace App\Contracts;
 
 use App\Exceptions\WithdrawException;
 use Exception;

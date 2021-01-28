@@ -16,7 +16,7 @@ use App\Repositories\Orders\WithdrawRepository;
 use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
 use App\Models\WithdrawOrder;
-use App\Contracts\Payments\LogLine;
+use App\Contracts\LogLine;
 use App\Contracts\Payments\CallbackResult;
 
 class Payment implements PaymentInterface
