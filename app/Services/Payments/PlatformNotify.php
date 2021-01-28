@@ -16,7 +16,6 @@ class PlatformNotify
     private $javaKey;
     private $javaUrl;
 
-
     const SUCCESS = '000';
     const FAIL = '001';
 
@@ -37,29 +36,21 @@ class PlatformNotify
     }
 
     public function notifyWithdrawSuccess() {
-
-        $url = $this->javaUrl . '/withdraw/result';
-        $postData = [];
-        $postData['orderId'] = $this->order->order_id;
-        $postData['amount'] = (string) $this->order->real_amount;
-        $postData['status'] = self::SUCCESS;
-        $postData['signature'] =  Signature::makeSign($postData, $this->javaKey);
-
-        $this->curlRes = $this->curl->setUrl($url)
-            ->setPost($postData)
-            ->exec();
-
-        Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
+        $this->notify(self::SUCCESS);
     }
 
     public function notifyWithdrawFailed() {
+        $this->notify(self::FAIL);
+    }
+
+    public function notify ($status) {
 
         $url = $this->javaUrl . '/withdraw/result';
 
         $postData = [];
         $postData['orderId'] = $this->order->order_id;
         $postData['amount'] = "";
-        $postData['status'] = self::FAIL;
+        $postData['status'] = $status;
         $postData['signature'] = Signature::makeSign($postData, $this->javaKey);
 
         $this->curlRes = $this->curl->setUrl($url)
@@ -68,6 +59,7 @@ class PlatformNotify
 
         Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
 
+        $this->checkSuccess($this->curlRes);
     }
 
     public function checkSuccess($res) {
