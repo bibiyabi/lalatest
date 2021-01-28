@@ -17,7 +17,7 @@ class Inrusdt implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
-    private $method = 'post';
+    private $method = 'get';
 
     private $url = 'https://www.inrusdt.com';
 
@@ -43,18 +43,25 @@ class Inrusdt implements DepositGatewayInterface
             'merchantId' => $settings->getMerchant(),
             'userId' => Str::random(8),
             'payMethod' => $settings->getTransactionType(),
-            'money' => $param->getAmount(),
+            'money' => $param->getAmount() * 100,
             'bizNum' => $param->getOrderId(),
             'notifyAddress' => config('app.url') . '/callback/deposit/Inrusdt',
             'type' => 'recharge',
         ];
     }
 
-    protected function createSign($param, $key): string
+    protected function createSign(array $param, SettingParam $key): string
     {
         ksort($param);
-        $str = http_build_query($param);
-        return md5($str . '&key=' . $key->md5);
+        $md5str = '';
+        foreach ($param as $k => $value) {
+            if ($k == 'sign') continue;
+            $md5str .= $k . '=' . $value . '&';
+        }
+        $md5str .= 'key=' . $key->getMd5Key();
+
+        $sign = md5($md5str);
+        return strtoupper($sign);
     }
 
     public function processOrderResult($unprocessed): string
