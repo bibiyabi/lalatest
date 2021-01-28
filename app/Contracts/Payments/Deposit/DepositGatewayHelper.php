@@ -5,7 +5,6 @@ namespace App\Contracts\Payments\Deposit;
 use App\Contracts\Payments\CallbackResult;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
-use App\Models\Setting;
 use Illuminate\Http\Request;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use App\Constants\Payments\Status;
@@ -31,14 +30,14 @@ trait DepositGatewayHelper
         $orderParam = OrderParam::createFromJson($order->order_param);
 
         $param = $this->createParam($orderParam, $settingParam);
-        $param[$this->getSignKey()] = $this->createSign($param, $order->key);
+        $param[$this->getSignKey()] = $this->createSign($param, $settingParam);
 
         return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
     }
 
     abstract protected function createParam(OrderParam $orderParam, SettingParam $settingParam): array;
 
-    abstract protected function createSign(array $param, Setting $key): string;
+    abstract protected function createSign(array $param, SettingParam $key): string;
 
     protected function getUrl(): string
     {
