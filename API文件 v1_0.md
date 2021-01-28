@@ -60,7 +60,7 @@
 
 ### V11
 
-* /api/placeholder  response 新增商戶號(account),帳戶號欄位(merchantNumber)
+* /api/placeholder  response 新增帳戶號(account),商戶號(merchantNumber)
 ---
 
 ### API 錯誤碼
@@ -95,6 +95,8 @@ POST /api/key
 | gateway_id | integer | V        | 金流商/交易所 id                     |
 | data       | string  | V        | 將以下欄位全部urlencode再json_encode |
 
+| data 欄位 內容      | 型態     | 必要參數 | 說明                                 |
+| ----------        | ------- | -------- | :----------------------------------- |
 | info_title          | string  |          | 信息名稱                        |
 | account             | string  |          | 金流帳戶號                      |
 | merchant_number     | string  |          | 金流商戶號                      |
@@ -150,9 +152,9 @@ Response example:
 DELETE /api/key
 ```
 
-| 欄位 | 型態    | 必要參數 | 說明        |
-| ---- | ------- | -------- | ----------- |
-| id   | integer | V        | 設置資料 id |
+| 欄位  | 型態     | 必要參數  | 說明        |
+| ---- | ------- | -------- | -----------|
+| id   | integer | V        | 設置資料 id  |
 
 Response example:
 
@@ -183,7 +185,7 @@ Response example:
 GET /api/vendor/list
 ```
 
-| 欄位       | 型態    | 必要參數 | 說明                                                      |
+| 欄位        | 型態     | 必要參數  | 說明                                                      |
 | ---------- | ------- | -------- | :-------------------------------------------------------- |
 | is_deposit | integer | V        | 入款=1 / 出款=0                                           |
 | type       | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
@@ -232,7 +234,7 @@ Response example:
 GET /api/placeholder
 ```
 
-| 欄位         | 型態    | 必要參數 | 說明                                                      |
+| 欄位          | 型態     | 必要參數  | 說明                                                      |
 | ------------ | ------- | -------- | :-------------------------------------------------------- |
 | is_deposit   | integer | V        | 入款=1 / 出款=0                                           |
 | type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
@@ -276,22 +278,22 @@ GET /api/placeholder
 
 回傳欄位說明:回傳值依據出入款及渠道不同而不固定輸出
 
-| 欄位                 | 型態   |
-| -------------------- | ------ |
-| `account`            | string |
-| `merchantNumber`     | string |
-| `publicKey`          | string |
-| `privateKey`         | string |
-| `md5Key`             | string |
-| `notifyUrl`          | string |
-| `returnUrl`          | string |
-| `transactionType`    | array  |
-| `coin`               | array  |
-| `blockchainContract` | array  |
-| `cryptoAddress`      | string |
-| `apiKey`             | string |
-| `note1`              | string |
-| `note2`              | string |
+| 欄位                  | 型態   |  說明  |
+| -------------------- | ------ |------ |
+| `account`            | string | 帳戶號 |
+| `merchantNumber`     | string | 商戶號 |
+| `publicKey`          | string | 公鑰 |
+| `privateKey`         | string | 私鑰 |
+| `md5Key`             | string | MD5密钥 |
+| `notifyUrl`          | string | 异步通知地址 |
+| `returnUrl`          | string | 同步通知地址 |
+| `transactionType`    | array  | 交易所/交易方式 |
+| `coin`               | array  | 交易币种 |
+| `blockchainContract` | array  | 区块链网络 |
+| `cryptoAddress`      | string | 充值地址 |
+| `apiKey`             | string | API Key |
+| `note1`              | string | 备注栏位1 |
+| `note2`              | string | 备注栏位2 |
 
 沒有提示字/ 找不到該第三方檔案
 
