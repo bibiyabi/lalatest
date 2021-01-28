@@ -69,8 +69,11 @@ class ShineUPay extends AbstractWithdrawGateway
 
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
+        if (empty($settings['merchant_number']) || empty($settings['private_key'])) {
+            throw new WithdrawException('merchantId or private key not found');
+        }
         $array = [];
-        $array['merchantId']             = $settings['merchantId'];
+        $array['merchantId']             = $settings['merchant_number'];
         $array['timestamp']              = time() . '000';
         $array['body']['advPasswordMd5'] = md5($settings['private_key']);
         $array['body']['orderId']        = $input['order_id'];
@@ -151,7 +154,7 @@ class ShineUPay extends AbstractWithdrawGateway
         if ($type == Type::BANK_CARD) {
             $column = [
                 C::FUND_PASSWORD,
-                C::CRYPTO_ADDRESS,
+                C::BANK_ACCOUNT,
                 C::FIRST_NAME,
                 C::LAST_NAME,
                 C::MOBILE,
