@@ -13,6 +13,7 @@ use App\Services\Payments\ResultTrait;
 use App\Payment\Proxy;
 use App\Exceptions\WithdrawException;
 use App\Constants\Payments\ResponseCode;
+use App\Exceptions\InputException;
 abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 {
     use ResultTrait;
@@ -78,7 +79,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     protected function validateOrderInput($data) {
         $validator = Validator::make($data, $this->validationCreateInput());
         if ($validator->fails()) {
-            throw new WithdrawException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
+            throw new InputException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
         }
     }
     protected function getCreateOrderRes($curlRes) {
