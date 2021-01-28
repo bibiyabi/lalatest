@@ -34,7 +34,7 @@ class SettingController extends Controller
         $rules = [
             "id"                  => "required|integer",
             "info_title"          => "nullable|string",
-            "gateway_id"          => "required|integer",
+            "gateway_id"          => "required|integer|exists:gateways,id",
             "transaction_type"    => "nullable|string",
             "account"             => "nullable|string",
             "merchant_number"     => "nullable|string",
