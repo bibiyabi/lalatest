@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Gateway;
+use App\Models\Gateway_type;
 use App\Models\Merchant;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -30,6 +32,18 @@ class PlaceholderTest extends TestCase
     public function testGatewayList()
     {
         $this->withoutMiddleware();
+
+        $gateway = Gateway::factory([
+            'name' => 'pay',
+            'real_name' => 'pay',
+        ])->create();
+
+        $gatewayType = Gateway_type::factory([
+            'gateways_id'           => $gateway->id,
+            'types_id'              => Type::type['e_wallet'],
+            'is_support_deposit'    => 1,
+            'is_support_withdraw'   => 0
+        ]);
 
         $response = $this->call('get','api/vendor/list',[
             'is_deposit' => 1,
