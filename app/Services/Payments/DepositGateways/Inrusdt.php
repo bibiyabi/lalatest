@@ -10,6 +10,7 @@ use App\Constants\Payments\DepositInfo as C;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
+use App\Exceptions\UnsupportedTypeException;
 use Str;
 
 class Inrusdt implements DepositGatewayInterface
@@ -79,28 +80,39 @@ class Inrusdt implements DepositGatewayInterface
 
     public function getPlaceholder($type):Placeholder
     {
-        $transactionType = [];
-        if ($type == Type::typeName[3]){
-            $transactionType = [
-                0 => 'inrpay',
-                1 => 'upi'
-            ];
-        }
+//        $transactionType = [];
+//        if ($type == Type::WALLET){
+//            $transactionType = [
+//                0 => 'inrpay',
+//                1 => 'upi'
+//            ];
+//        }
 
-        return new Placeholder($type, '', '','請填上md5密鑰','http://商戶後台/recharge/notify',
-            '',$transactionType);
+        return new Placeholder($type, '請填上帳戶號','請填上商戶號', '','',
+            '請填上md5密鑰','http://商戶後台/recharge/notify',
+            '不填打你');
     }
 
     # 該支付有支援的渠道  指定前台欄位
     public function getRequireInfo($type): DepositRequireInfo
     {
         $column = [];
-        if ($type == Type::typeName[2]){
-            $column = [C::ACCT_FN,C::ACCT_LN,C::ACCT_NO,C::AMOUNT];
-        }elseif($type == Type::typeName[3]){
-            $column = [C::ACCT_NAME,C::ACCOUNT_ID,C::AMOUNT];
-        }elseif($type == Type::typeName[4]){
-            $column = [C::CRYPTO_AMOUNT,C::ADDRESS,C::NETWORK];
+        switch ($type) {
+            case Type::BANK_CARD:
+                $column = [C::ACCT_FN, C::ACCT_LN, C::ACCT_NO, C::AMOUNT];
+                break;
+
+            case Type::WALLET:
+                $column = [C::ACCT_NAME, C::ACCOUNT_ID, C::AMOUNT];
+                break;
+
+            case Type::CRYPTO_CURRENCY:
+                $column = [C::CRYPTO_AMOUNT, C::ADDRESS, C::NETWORK];
+                break;
+
+            default:
+                throw new UnsupportedTypeException();
+                break;
         }
 
         return new DepositRequireInfo($type, $column);

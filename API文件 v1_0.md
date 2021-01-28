@@ -57,6 +57,10 @@
 * /api/withdraw/create 23 代碼合併到16, 4
 * /api/withdraw/create 14, 2, 15 代碼 , 補齊所有號碼變數
 
+
+### V11
+
+* /api/placeholder  response 新增商戶號(account),帳戶號欄位(merchantNumber)
 ---
 
 ### API 錯誤碼
@@ -243,11 +247,13 @@ GET /api/placeholder
         "locale": "en",
         "message": "传送成功",
         "data": {
-            "publicKey": "hello world",
-            "privateKey": "666",
-            "md5Key": "666",
-            "notifyUrl": "http://google.com",
-            "returnUrl": "http://google.com",
+            "account": "請填上帳戶號",
+            "merchantNumber": "請填上商戶號",
+            "publicKey": "請填上商戶公鑰",
+            "privateKey": "提现密码",
+            "md5Key": "商户秘钥",
+            "notifyUrl": "http://商戶後台/recharge/notify",
+            "returnUrl": "請填上同步通知地址",
             "transactionType": [
                 "UPI",
                 "PAYATM"
@@ -272,6 +278,8 @@ GET /api/placeholder
 
 | 欄位                 | 型態   |
 | -------------------- | ------ |
+| `account`            | string |
+| `merchantNumber`     | string |
 | `publicKey`          | string |
 | `privateKey`         | string |
 | `md5Key`             | string |

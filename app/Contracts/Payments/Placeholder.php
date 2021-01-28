@@ -8,6 +8,8 @@ use App\Constants\Payments\Type;
 class Placeholder
 {
     protected $type;
+    protected $account;
+    protected $merchantNumber;
     protected $publicKey;
     protected $privateKey;
     protected $md5Key;
@@ -23,6 +25,8 @@ class Placeholder
 
     public function __construct(
         string $type = null,
+        string $account = null,
+        string $merchantNumber = null,
         string $publicKey = null,
         string $privateKey = null,
         string $md5Key = null,
@@ -38,6 +42,8 @@ class Placeholder
     )
     {
         $this->type = $type;
+        $this->account = $account;
+        $this->merchantNumber = $merchantNumber;
         $this->publicKey = $publicKey;
         $this->privateKey = $privateKey;
         $this->md5Key = $md5Key;
@@ -57,7 +63,7 @@ class Placeholder
     {
         $type = $this->type;
         $result = [];
-        if ($type == Type::CRYPTO_CURRENCY){  # 加密貨幣
+        if ($type == Type::CRYPTO_CURRENCY){
             $result = [
                 'transactionType'       => $this->transactionType,
                 'coin'                  => $this->coin,
@@ -65,24 +71,33 @@ class Placeholder
                 'apiKey'                => $this->apiKey,
                 'cryptoAddress'         => $this->cryptoAddress,
             ];
-        }elseif($type == Type::CREDIT_CARD){  # 信用卡
+        }elseif($type == Type::CREDIT_CARD){
             $result = [
+                'account'               => $this->account,
+                'merchantNumber'        => $this->merchantNumber,
                 'transactionType'       => $this->transactionType,
             ];
-        }elseif($type == Type::WALLET){  # 電子錢包
+        }elseif($type == Type::WALLET){
             $result = [
+                'account'               => $this->account,
+                'merchantNumber'        => $this->merchantNumber,
                 'transactionType'       => $this->transactionType,
+            ];
+        }elseif ($type == Type::BANK_CARD){
+            $result = [
+                'account'               => $this->account,
+                'merchantNumber'        => $this->merchantNumber,
             ];
         }
 
         $result += [
             'publicKey'                 => $this->publicKey,
             'privateKey'                => $this->privateKey,
-            'md5Key'                    =>$this->md5Key,
-            'notifyUrl'                 =>$this->notifyUrl,
-            'returnUrl'                 =>$this->returnUrl,
-            'note1'                     =>$this->note1,
-            'note2'                     =>$this->note2,
+            'md5Key'                    => $this->md5Key,
+            'notifyUrl'                 => $this->notifyUrl,
+            'returnUrl'                 => $this->returnUrl,
+            'note1'                     => $this->note1,
+            'note2'                     => $this->note2,
         ];
 
         return $result;
