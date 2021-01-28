@@ -81,11 +81,11 @@ class Inrusdt implements DepositGatewayInterface
     public function getPlaceholder($type): Placeholder
     {
         switch ($type) {
-            case Type::WALLET:
+            case Type::CREDIT_CARD:
                 $transactionType = ['inrpay', 'upi'];
                 break;
 
-            case Type::CRYPTO_CURRENCY:
+            case Type::WALLET:
                 $transactionType = ['inrpay', 'upi'];
                 break;
 
@@ -96,13 +96,13 @@ class Inrusdt implements DepositGatewayInterface
 
         return new Placeholder(
             $type,
-            '請填上帳戶號',
-            '請填上商戶號',
+            '',
+            'Please input 商户Id',
             '',
             '',
-            '請填上md5密鑰',
-            'http://商戶後台/recharge/notify',
-            '不填打你',
+            'Please input APPKEY',
+            '',
+            '',
             $transactionType
         );
     }
