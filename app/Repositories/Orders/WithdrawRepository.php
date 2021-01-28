@@ -6,6 +6,7 @@ use App\Models\WithdrawOrder;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use App\Constants\Payments\Status;
+use DateTime;
 class WithdrawRepository
 {
 
@@ -46,6 +47,17 @@ class WithdrawRepository
             'status'      => Status::PENDING,
             'order_param' => json_encode($request->post(), true),
         ]);
+    }
+
+    public function before(DateTime $time): WithdrawRepository
+    {
+        $this->order = $this->order->where('created_at', '<', $time);
+        return $this;
+    }
+
+    public function delete(): bool
+    {
+        return $this->order->delete();
     }
 
 }
