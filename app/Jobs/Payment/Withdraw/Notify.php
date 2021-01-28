@@ -15,6 +15,7 @@ use App\Repositories\Orders\WithdrawRepository;
 use App\Services\Payments\PlatformNotify;
 use App\Constants\Payments\Status;
 use Illuminate\Support\Facades\Log;
+use App\Contracts\Payments\LogLine;
 
 class Notify implements ShouldQueue
 {
@@ -35,17 +36,21 @@ class Notify implements ShouldQueue
 
     public function handle(PlatformNotify $platformNotify)
     {
-        if (in_array($this->order->status, [
-            Status::CALLBACK_FAILED,
-            Status::ORDER_FAILED
-        ]) && $this->order->no_notify == 0) {
-            $platformNotify->setOrder($this->order)->notifyWithdrawFailed();
-        }
+        try {
+            if (in_array($this->order->status, [
+                Status::CALLBACK_FAILED,
+                Status::ORDER_FAILED
+            ]) && $this->order->no_notify == 0) {
+                $platformNotify->setOrder($this->order)->notifyWithdrawFailed();
+            }
 
-        if (in_array($this->order->status, [
-            Status::CALLBACK_SUCCESS,
-        ]) && $this->order->no_notify == 0) {
-            $platformNotify->setOrder($this->order)->notifyWithdrawSuccess();
+            if (in_array($this->order->status, [
+                Status::CALLBACK_SUCCESS,
+            ]) && $this->order->no_notify == 0) {
+                $platformNotify->setOrder($this->order)->notifyWithdrawSuccess();
+            }
+        } catch (WithdrawException $e) {
+            Log::channel('withdraw')->info(new LogLine($e));
         }
 
     }

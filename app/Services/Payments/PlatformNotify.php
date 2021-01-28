@@ -59,7 +59,7 @@ class PlatformNotify
 
         Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
 
-        $this->checkSuccess($this->curlRes);
+        $this->checkSuccess($this->curlRes['data']);
     }
 
     public function checkSuccess($res) {
