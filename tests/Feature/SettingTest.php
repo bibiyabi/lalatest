@@ -31,6 +31,11 @@ class SettingTest extends TestCase
     {
         $this->withoutMiddleware();
 
+        $gateway = Gateway::factory([
+            'name' => 'pay',
+            'real_name' => 'pay',
+        ])->create();
+
         $data = json_encode([
             'info_title'=> 'i am title',
             'account'=> '666',
@@ -41,7 +46,7 @@ class SettingTest extends TestCase
         ]);
         $response = $this->post('api/key',[
             'data' => urlencode($data),
-            'gateway_id'=> 66,
+            'gateway_id'=> $gateway->id,
             'id'=> 555,
         ]);
 
@@ -49,7 +54,7 @@ class SettingTest extends TestCase
 
         $this->assertDatabaseHas('settings',[
             'user_pk' => 555,
-            'gateway_id' => 66,
+            'gateway_id' => $gateway->id,
         ]);
     }
 
