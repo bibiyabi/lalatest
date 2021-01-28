@@ -15,7 +15,7 @@ class AlterIndexToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropUnique('orders_order_id_unique');
-            $table->unique(['user_id', 'order_id']);
+            $table->unique(['user_id', 'order_id'], 'orders_user_id_order_id_unique');
         });
     }
 
@@ -28,7 +28,7 @@ class AlterIndexToOrdersTable extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $table->dropUnique('orders_user_id_order_id_unique');
-            $table->unique('order_id');
+            $table->unique('order_id', 'orders_order_id_unique');
         });
     }
 }
