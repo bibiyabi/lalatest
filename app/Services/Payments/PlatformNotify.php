@@ -5,6 +5,7 @@ namespace App\Services\Payments;
 use App\Payment\Curl;
 use App\Repositories\MerchantRepository;
 use App\Contracts\Payments\LogLine;
+use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
 use App\Services\Signature;
 
@@ -66,20 +67,14 @@ class PlatformNotify
             ->exec();
 
         Log::channel('withdraw')->info(new LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
+
     }
 
-    private function removeEmptyData($data) {
-        foreach ($data as $k=>$v) {
-            if ($v == '') {
-                unset($data[$k]);
-            }
+    public function checkSuccess($res) {
+        $javaRes = json_decode($res, true);
+        if (!isset($javaRes['status']) || $javaRes['status'] !== '200') {
+            throw new WithdrawException('java res failed');
         }
-        return $data;
     }
-
-
-
-
-
 
 }
