@@ -43,7 +43,7 @@ class Inrusdt implements DepositGatewayInterface
             'merchantId' => $settings->getMerchant(),
             'userId' => Str::random(8),
             'payMethod' => $settings->getTransactionType(),
-            'money' => $param->getAmount(),
+            'money' => $param->getAmount() * 100,
             'bizNum' => $param->getOrderId(),
             'notifyAddress' => config('app.url') . '/callback/deposit/Inrusdt',
             'type' => 'recharge',
