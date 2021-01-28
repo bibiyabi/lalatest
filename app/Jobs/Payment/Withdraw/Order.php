@@ -10,12 +10,15 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Constants\Payments\ResponseCode;
+use App\Exceptions\InputException;
 use App\Services\AbstractWithdrawGateway;
 
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
 use Illuminate\Http\Request;
+use App\Constants\Payments\Status;
+
 use Throwable;
 class Order implements ShouldQueue
 {
@@ -62,6 +65,11 @@ class Order implements ShouldQueue
             }
 
         } catch (\Exception $e) {
+            if ($e instanceof InputException) {
+                // 參數檢查錯誤 直接失敗
+                WithdrawOrder::where('order_id', $this->post['order_id'])
+                ->update(['status' => Status::ORDER_FAILED]);
+            }
             throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);
         }
 
