@@ -42,7 +42,10 @@ class WithdrawController extends Controller
 
             $res = $payment->callback($request, $gateway);
 
-            Log::channel('withdraw')->info(new LogLine('callback 回應'), [$res]);
+            Log::channel('withdraw')->info(new LogLine('callback 回應'), [
+                'isSuccess' => $res->getSuccess(),
+                'msg' => $res->getMsg(),
+            ]);
 
             $orderId = $res->getOrder()->order_id;
 

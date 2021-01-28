@@ -84,6 +84,7 @@ abstract class  AbstractWithdrawCallback
             return new CallbackResult(false, $this->callbackSuccessReturnString, $order);
         }
 
+        throw new WithdrawException("callback result error" . json_encode($callbackPost) , ResponseCode::EXCEPTION);
     }
 
     protected function genCallbackSign($postJson, $settings) {
