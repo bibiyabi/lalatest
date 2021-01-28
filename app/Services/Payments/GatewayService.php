@@ -6,7 +6,7 @@ namespace App\Services\Payments;
 use App\Constants\Payments\ResponseCode as CODE;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
-use App\Contracts\Payments\WithdrawGatewayFactory;
+use App\Contracts\Payments\Withdraw\WithdrawGatewayFactory;
 use App\Repositories\GatewayTypeRepository;
 use App\Contracts\Payments\ServiceResult;
 use Illuminate\Support\Facades\Log;

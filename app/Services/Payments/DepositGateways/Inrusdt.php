@@ -4,7 +4,7 @@ namespace App\Services\Payments\DepositGateways;
 
 use App\Contracts\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
-use App\Contracts\Payments\DepositRequireInfo;
+use App\Contracts\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Constants\Payments\DepositInfo as C;
 use App\Constants\Payments\Type;

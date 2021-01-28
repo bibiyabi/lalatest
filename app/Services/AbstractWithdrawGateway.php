@@ -1,13 +1,13 @@
 <?php
 namespace App\Services;
 use App\Contracts\Payments\Placeholder;
-use App\Contracts\Payments\WithdrawRequireInfo;
+use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
 use Illuminate\Http\Request;
 use App\Payment\Curl;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
-use App\Contracts\Payments\LogLine;
+use App\Contracts\LogLine;
 use App\Services\AbstractWithdrawCallback;
 use App\Services\Payments\ResultTrait;
 use App\Payment\Proxy;

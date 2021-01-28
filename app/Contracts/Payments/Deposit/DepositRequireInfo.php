@@ -1,9 +1,6 @@
 <?php
 
-
-namespace App\Contracts\Payments;
-
-
+namespace App\Contracts\Payments\Deposit;
 
 class DepositRequireInfo
 {
