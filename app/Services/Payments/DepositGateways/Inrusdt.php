@@ -81,11 +81,11 @@ class Inrusdt implements DepositGatewayInterface
     public function getPlaceholder($type): Placeholder
     {
         switch ($type) {
-            case Type::WALLET:
+            case Type::CREDIT_CARD:
                 $transactionType = ['inrpay', 'upi'];
                 break;
 
-            case Type::CRYPTO_CURRENCY:
+            case Type::WALLET:
                 $transactionType = ['inrpay', 'upi'];
                 break;
 
