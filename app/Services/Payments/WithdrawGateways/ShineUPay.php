@@ -13,8 +13,6 @@ use App\Contracts\LogLine;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 
-
-
 class ShineUPay extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
