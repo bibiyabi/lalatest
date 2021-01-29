@@ -1,0 +1,18 @@
+stages:
+  - build
+  - deploy
+  - test
+
+dev-build:
+  stage: build
+  only:
+    - feature/add_deposit_withdraw
+
+  script:
+    - ls -al
+    - chmod 777 -R ./
+    - cp /var/www/html/agent/t2_payment/.env ./
+    - /usr/local/bin/composer install
+    - php artisan test
+
+
