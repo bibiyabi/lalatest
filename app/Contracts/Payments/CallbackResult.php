@@ -12,17 +12,20 @@ class CallbackResult
 
     private $msg;
 
+    private $notifyMessage;
+
     /**
      * @param boolean $success
      * @param string $msg
      * @param Order|WithdrawOrder $order
      * @param float $amount
      */
-    public function __construct(bool $success, string $msg='', $order=null, float $amount=0) {
+    public function __construct(bool $success, string $msg='', $order=null, float $amount=0, $notifyMessage = '') {
         $this->success = $success;
         $this->order = $order;
         $this->amount = $amount;
         $this->msg = $msg;
+        $this->notifyMessage = $notifyMessage;
     }
 
     /**
@@ -55,5 +58,10 @@ class CallbackResult
     public function getMsg()
     {
         return $this->msg;
+    }
+
+
+    public function getNotifyMessage() {
+        return $this->notifyMessage;
     }
 }

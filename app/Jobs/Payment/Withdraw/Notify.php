@@ -23,36 +23,51 @@ class Notify implements ShouldQueue
     //public $timeout = 30;
 
     private $order;
+    private $message;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($order)
+    public function __construct($order, $message = '')
     {
         $this->order = $order;
+        $this->message = $message;
     }
 
     public function handle(PlatformNotify $platformNotify)
     {
+        $this->order = WithdrawOrder::where('order_id', $this->order->order_id)->first();
         try {
             if (in_array($this->order->status, [
                 Status::CALLBACK_FAILED,
                 Status::ORDER_FAILED
-            ]) && $this->order->no_notify == 0) {
-                $platformNotify->setOrder($this->order)->notifyWithdrawFailed();
+            ]) && !$this->isResetedOrder() ) {
+                $platformNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawFailed();
             }
 
             if (in_array($this->order->status, [
                 Status::CALLBACK_SUCCESS,
-            ]) && $this->order->no_notify == 0) {
-                $platformNotify->setOrder($this->order)->notifyWithdrawSuccess();
+            ]) &&  !$this->isResetedOrder()) {
+                $platformNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawSuccess();
             }
         } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e));
         }
 
+    }
+
+    /**
+     * 重置訂單 flag = 1
+     *
+     * @return void
+     */
+    private function isResetedOrder() {
+        if ($this->order->no_notify == 1) {
+            return true;
+        }
+        return false;
     }
 
     /**

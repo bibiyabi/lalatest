@@ -15,6 +15,7 @@ class PlatformNotify
     private $order;
     private $javaKey;
     private $javaUrl;
+    private $message = '';
 
     const SUCCESS = '000';
     const FAIL = '001';
@@ -23,6 +24,11 @@ class PlatformNotify
         $this->curl = $curl;
         $this->repo = $repo;
 
+    }
+
+    public function setMessage($message) {
+        $this->message = $message;
+        return $this;
     }
 
     public function setOrder($order){
@@ -51,7 +57,11 @@ class PlatformNotify
         $postData['orderId'] = $this->order->order_id;
         $postData['amount'] = empty($this->order->real_amount) ? "0" : (string)$this->order->real_amount;
         $postData['status'] = $status;
-        $postData['signature'] = Signature::makeSign($postData, $this->javaKey);
+        $postData['message'] = $this->message;
+
+        $signArray = $postData;
+        unset($signArray['message']);
+        $postData['signature'] = Signature::makeSign($signArray, $this->javaKey);
 
         $this->curlRes = $this->curl->setUrl($url)
             ->setPost($postData)

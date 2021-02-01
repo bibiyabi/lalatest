@@ -10,14 +10,12 @@ use Illuminate\Support\Facades\Log;
 use App\Contracts\LogLine;
 use App\Services\AbstractWithdrawCallback;
 use App\Services\Payments\ResultTrait;
-use App\Payment\Proxy;
 use App\Exceptions\WithdrawException;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 {
     use ResultTrait;
-    use Proxy;
     # url object
     protected $curl;
     # 回調網址
@@ -44,6 +42,8 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         $this->validateOrderInput($post);
         # decode
         $settings = $this->decode($order->key->settings);
+
+        Log::channel('withdraw')->info(new LogLine('settings'), $settings);
         # 建立sign
         $this->setCreateSign($post, $settings);
         # set create order post data
@@ -147,7 +147,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         ->setPost($this->getCreatePostData())
         ->exec();
 
-        Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->createPostData]);
+        Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->getCreatePostData()]);
 
         return $this->getSendReturn($curlRes);
     }

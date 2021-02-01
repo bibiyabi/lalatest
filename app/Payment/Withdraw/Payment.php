@@ -18,6 +18,7 @@ use App\Constants\Payments\ResponseCode;
 use App\Models\WithdrawOrder;
 use App\Contracts\LogLine;
 use App\Contracts\Payments\CallbackResult;
+use Exception;
 
 class Payment implements PaymentInterface
 {
@@ -104,18 +105,12 @@ class Payment implements PaymentInterface
 
 
     private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
-        Bus::chain([
-            new Order($request->post(), $order),
-            new Notify($order),
-        ])->catch(function (Throwable $e) {
-            throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);
-        })->dispatch();
-
+        Order::dispatch($request->post(), $order);
     }
 
-    public function callbackNotifyToQueue($order) {
+    public function callbackNotifyToQueue($order, $message) {
         try {
-            Notify::dispatch($order);
+            Notify::dispatch($order, $message);
         } catch(Throwable $e) {
             throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
         }
