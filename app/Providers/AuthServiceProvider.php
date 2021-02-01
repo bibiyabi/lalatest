@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\Auth\CacheUserProvider;
 use Auth;
 use App\Contracts\Auth\UsernameGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -26,6 +27,10 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        Auth::provider(('cache'), function ($app, array $config) {
+            return resolve(CacheUserProvider::class, ['model'=>$config['model']]);
+        });
 
         Auth::extend('name', function ($app, $name, array $config) {
             return new UsernameGuard(Auth::createUserProvider($config['provider']), $app->request, $config['inputKey'], $config['storageKey']);
