@@ -69,7 +69,7 @@ class WithdrawController extends Controller
                 throw new WithdrawException('order not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
             }
 
-            $payment->callbackNotifyToQueue($order);
+            $payment->callbackNotifyToQueue($order, $res->getNotifyMessage());
 
             return $res->getMsg();
 

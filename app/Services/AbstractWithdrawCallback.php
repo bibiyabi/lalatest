@@ -17,6 +17,7 @@ abstract class  AbstractWithdrawCallback
     // 回調的狀態位置
     protected $callbackOrderStatusPosition = '';
     protected $callbackOrderAmountPosition = '';
+    protected $callbackOrderMessagePosition = '';
     // 回調成功狀態
     protected $callbackSuccessStatus = [];
     // 回調確認失敗狀態
@@ -76,12 +77,24 @@ abstract class  AbstractWithdrawCallback
 
         # callback 訂單成功
         if (in_array($this->getCallbackOrderStatus($callbackPost), $this->callbackSuccessStatus)) {
-            return new CallbackResult(true, $this->callbackSuccessReturnString, $order, $this->getCallbackAmount($order, $callbackPost));
+            return new CallbackResult(
+                true,
+                $this->callbackSuccessReturnString,
+                $order,
+                $this->getCallbackAmount($order, $callbackPost),
+                $this->getCallbackMessage($callbackPost)
+            );
         }
 
         # callback 訂單失敗
         if (in_array($this->getCallbackOrderStatus($callbackPost), $this->callbackFailedStatus)) {
-            return new CallbackResult(false, $this->callbackSuccessReturnString, $order);
+            return new CallbackResult(
+                false,
+                $this->callbackSuccessReturnString,
+                $order,
+                0,
+                $this->getCallbackMessage($callbackPost)
+            );
         }
 
         throw new WithdrawException("callback result error" . json_encode($callbackPost) , ResponseCode::EXCEPTION);
@@ -97,5 +110,9 @@ abstract class  AbstractWithdrawCallback
         }
 
         return data_get($callbackPost, $this->callbackOrderAmountPosition);
+    }
+
+    protected function getCallbackMessage($callbackPost) {
+        return data_get($callbackPost, $this->callbackOrderMessagePosition);
     }
 }

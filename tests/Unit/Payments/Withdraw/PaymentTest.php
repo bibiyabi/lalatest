@@ -171,6 +171,7 @@ class PaymentTest extends TestCase
         $callbackResult->shouldReceive('getSuccess')->andReturn(true);
         $callbackResult->shouldReceive('getOrder')->andReturn($order);
         $callbackResult->shouldReceive('getAmount')->andReturn(10);
+        $callbackResult->shouldReceive('getNotifyMessage')->andReturn('unit test msg');
         $callbackResult->shouldReceive('getMsg')->andReturn('success');
 
         $payment = Mockery::mock(Payment::class);

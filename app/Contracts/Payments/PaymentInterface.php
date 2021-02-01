@@ -5,9 +5,6 @@ use App\Services\AbstractWithdrawGateway;
 use Illuminate\Http\Request;
 interface PaymentInterface
 {
-
-
-    public function callbackNotifyToQueue($order);
-
+    public function callbackNotifyToQueue($order, $message);
 
 }

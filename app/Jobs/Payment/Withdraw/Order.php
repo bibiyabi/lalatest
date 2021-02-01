@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 use App\Services\AbstractWithdrawGateway;
-
+use App\Jobs\Payment\Withdraw\Notify;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
@@ -48,14 +48,13 @@ class Order implements ShouldQueue
         return $this->order;
     }
 
-    /**
+    /**p
      * Execute the job.
      *
      * @return void
      */
     public function handle(AbstractWithdrawGateway $paymentGateway)
     {
-        # gateway load payment
         try {
             $paymentGateway->setRequest($this->post, $this->order);
             $res = $paymentGateway->send();
@@ -64,32 +63,21 @@ class Order implements ShouldQueue
                 throw new WithdrawException('res code not set' , ResponseCode::EXCEPTION);
             }
 
-        } catch (\Exception $e) {
+            WithdrawOrder::where('order_id', $this->post['order_id'])
+            ->update(['status' => $res['code']]);
+
+        } catch (Throwable $e) {
             if ($e instanceof InputException) {
                 // 參數檢查錯誤 直接失敗
                 WithdrawOrder::where('order_id', $this->post['order_id'])
                 ->update(['status' => Status::ORDER_FAILED]);
+
+                Notify::dispatch($this->order, $e->getMessage());
+                return;
             }
-            throw new WithdrawException($e->getFile(). $e->getLine() . $e->getMessage() , ResponseCode::EXCEPTION);
+            throw new WithdrawException($e->getMessage() , ResponseCode::EXCEPTION);
         }
 
-        # set db
-        WithdrawOrder::where('order_id', $this->post['order_id'])
-        ->update(['status' => $res['code']]);
-
     }
-
-    /**
-     * Handle a job failure.
-     *
-     * @param  \Throwable  $exception
-     * @return void
-     */
-    public function failed(Throwable $exception)
-    {
-        // Send user notification of failure, etc...
-        echo $exception->getMessage();
-    }
-
 
 }

@@ -12,6 +12,8 @@ use App\Constants\Payments\WithdrawInfo as C;
 use App\Contracts\LogLine;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
+use App\Constants\Payments\ResponseCode;
+use App\Exceptions\InputException;
 
 class ShineUPay extends AbstractWithdrawGateway
 {
@@ -30,7 +32,8 @@ class ShineUPay extends AbstractWithdrawGateway
     protected $callbackOrderIdPosition = 'body.orderId';
     // 回調的狀態位置
     protected $callbackOrderStatusPosition = 'body.status';
-    protected $callbackOrderAmountPosition = '';
+    protected $callbackOrderAmountPosition = 'body.amount';
+    protected $callbackOrderMessagePosition = 'body.message';
     // 回調成功狀態
     protected $callbackSuccessStatus = [1];
     // 回調確認失敗狀態
@@ -68,7 +71,7 @@ class ShineUPay extends AbstractWithdrawGateway
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number']) || empty($settings['private_key'])) {
-            throw new WithdrawException('merchantId or private key not found');
+            throw new InputException('merchant_username or private key not found', ResponseCode::ERROR_PARAMETERS);
         }
         $array = [];
         $array['merchantId']             = $settings['merchant_number'];
