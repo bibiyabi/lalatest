@@ -17,18 +17,6 @@ class PlaceholderTest extends TestCase
 
     private $user;
 
-//    public function setUp(): void
-//    {
-//        parent::setUp();
-//
-//        $user = Merchant::factory([
-//            'name' => 'java',
-//        ])->create();
-//
-//        $this->user = $user;
-//        $this->actingAs($user);
-//    }
-
     public function testGatewayList()
     {
         $this->withoutMiddleware();
