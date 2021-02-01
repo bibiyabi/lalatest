@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\Gateway_type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class Gateway_TypeFactory extends Factory
+class Gateway_typeFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
