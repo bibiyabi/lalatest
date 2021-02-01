@@ -24,7 +24,7 @@ class LogLine extends \Exception
         if ($this->isInstantOfException) {
             return '';
         }
-        return $this->msg . " \r\n file:" .$this->getFile().' line: '.$this->getLine()  . " \r\n";
+        return $this->msg . " \r\n file=> " .$this->getFile()."\r\n line=> ".$this->getLine();
     }
 
     private function createExceptionMsg($e) {
