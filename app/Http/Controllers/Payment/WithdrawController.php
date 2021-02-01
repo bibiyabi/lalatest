@@ -71,7 +71,7 @@ class WithdrawController extends Controller
 
             $payment->callbackNotifyToQueue($order);
 
-            echo $res->getMsg();
+            return $res->getMsg();
 
         } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e));

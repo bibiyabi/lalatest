@@ -16,6 +16,7 @@ class ResponseCode
     public const ERROR_CONFIG_PARAMETERS        = 157;  // 設定檔無此參數
     public const ERROR_DATA_IN_PAYMENT          = 158;  // 第三方資料有誤
     public const ERROR_SIGN                     = 159;  // 簽章有誤
+    public const HTTP_METHOD_NOT_ALLOWED        = 160;  // 不可用的 http method
     public const DUPLICATE_ORDERID              = 302;  // 已有该订单
     public const GATEWAY_NOT_FOUND              = 303;  // 无此通道资讯
     public const UNSUPPORTED_TYPE               = 317;  // 不支援的支付方式

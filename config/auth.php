@@ -49,7 +49,7 @@ return [
 
         'name' => [
             'driver' => 'name',
-            'provider' => 'merchants',
+            'provider' => 'cache',
             'inputKey' => 'name',
             'storageKey' => 'name',
         ]
@@ -75,6 +75,11 @@ return [
     'providers' => [
         'merchants' => [
             'driver' => 'eloquent',
+            'model' => App\Models\Merchant::class,
+        ],
+
+        'cache' => [
+            'driver' => 'cache',
             'model' => App\Models\Merchant::class,
         ]
 
