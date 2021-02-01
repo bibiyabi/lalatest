@@ -42,8 +42,6 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         $this->validateOrderInput($post);
         # decode
         $settings = $this->decode($order->key->settings);
-
-        Log::channel('withdraw')->info(new LogLine('settings'), $settings);
         # 建立sign
         $this->setCreateSign($post, $settings);
         # set create order post data
@@ -147,7 +145,8 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         ->setPost($this->getCreatePostData())
         ->exec();
 
-        Log::channel('withdraw')->info(new LogLine('CURL 回應'), [$curlRes, $this->getCreatePostData()]);
+        Log::channel('withdraw')->info(new LogLine('CURL result' . print_r($curlRes, true)));
+        Log::channel('withdraw')->info(new LogLine('CURL createPostData '. print_r($this->getCreatePostData(), true)));
 
         return $this->getSendReturn($curlRes);
     }

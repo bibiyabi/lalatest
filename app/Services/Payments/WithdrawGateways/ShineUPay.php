@@ -44,7 +44,8 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
     public function setRequest($post = [], WithdrawOrder $order) : void {
-        Log::channel('withdraw')->info(new LogLine('第三方參數'), ['post'=>$post, 'order' => $order]);
+        Log::channel('withdraw')->info(new LogLine('第三方參數 post ' . json_encode($post)));
+        Log::channel('withdraw')->info(new LogLine('第三方參數 settings ' . $order->key->settings));
         $this->setBaseRequest($order, $post);
     }
 
