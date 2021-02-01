@@ -5,14 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Gateway extends Model
+class GatewayType extends Model
 {
     use HasFactory;
 
-    protected $table = 'gateways';
+    protected $table = 'gateway_types';
 
-    public function gatewayTypes()
+    public function gateway()
     {
-        return $this->hasMany(GatewayType::class);
+        return $this->belongsTo(Gateway::class);
     }
+
+
 }

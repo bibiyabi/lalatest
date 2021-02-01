@@ -13,7 +13,7 @@ class CreateGatewayTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('gateway_types', function (Blueprint $table) {
+        Schema::create('gatewayTypes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('gateways_id');
             $table->integer('types_id');
@@ -31,6 +31,6 @@ class CreateGatewayTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gateway_types');
+        Schema::dropIfExists('gatewayTypes');
     }
 }
