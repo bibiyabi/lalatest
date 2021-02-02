@@ -13,6 +13,6 @@ class Gateway extends Model
 
     public function gatewayTypes()
     {
-        return $this->hasMany(GatewayType::class);
+        return $this->hasMany(GatewayType::class, 'gateways_id', 'id');
     }
 }

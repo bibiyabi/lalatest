@@ -47,7 +47,7 @@ class Handler extends ExceptionHandler
         if ($e instanceof GatewayNotFountException) {
             return RB::asError(ResponseCode::GATEWAY_NOT_FOUND)->withMessage($e->getMessage())->build();
         } elseif ($e instanceof \PDOException) {
-            return RB::asError(ResponseCode::DATABASE_FAILED)->withMessage($e->getMessage())->build();
+            return RB::error(ResponseCode::DATABASE_FAILED);
         } elseif ($e instanceof ValidationException) {
             return RB::error(ResponseCode::ERROR_PARAMETERS);
         } elseif ($e instanceof MethodNotAllowedHttpException) {
