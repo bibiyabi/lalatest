@@ -13,7 +13,7 @@ class GatewayType extends Model
 
     public function gateway()
     {
-        return $this->belongsTo(Gateway::class);
+        return $this->belongsTo(Gateway::class,'gateways_id','id');
     }
 
 

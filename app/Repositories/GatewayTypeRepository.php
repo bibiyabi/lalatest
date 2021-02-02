@@ -2,26 +2,36 @@
 
 
 namespace App\Repositories;
-use App\Models\Gateway;
+
 use App\Models\GatewayType;
+use Illuminate\Database\Query\Builder;
 
 class GatewayTypeRepository
 {
+    /**
+     * @var $gatewayType Builder
+     */
     protected $gatewayType;
 
-    public function __construct(GatewayType $gatewayType)
+    public function __construct()
     {
-        $this->gatewayType = $gatewayType;
+        $this->gatewayType = GatewayType::query();
     }
 
-    public function getGatewayList($type, $support)
+    public function getGatewayList($type, $support) : array
     {
-        return $this->gatewayType
-                    ->leftJoin('gateways','gateway_types.gateways_id', '=', 'gateways.id')
-                    ->select('gateways.id','gateways.name')
-                    ->where('types_id', $type)
-                    ->where($support,1)
-                    ->get()
-                    ->toArray();
+        $list = $this->gatewayType
+                     ->with('gateway')
+                     ->where('types_id', $type)
+                     ->where($support,1)
+                     ->get();
+
+        foreach ($list as $key => $value)
+        {
+            $result[$key]['id'] = $value->gateway->id;
+            $result[$key]['name'] = $value->gateway->name;
+        }
+
+        return $result;
     }
 }
