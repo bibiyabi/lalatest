@@ -15,7 +15,7 @@ use App\Constants\Payments\ResponseCode;
 use App\Contracts\LogLine;
 use App\Constants\Payments\Status;
 use App\Models\WithdrawOrder;
-
+use Throwable;
 
 class WithdrawController extends Controller
 {
@@ -24,9 +24,12 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('代付前端參數'), $request->post());
             $payment->checkInputSetDbSendOrderToQueue($request);
             return RB::success();
-        } catch (WithdrawException $e) {
-            Log::channel('withdraw')->info(new LogLine($e), $request->post());
-            return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
+        } catch (Throwable $e) {
+            Log::channel('withdraw')->info(new LogLine($e));
+            if ($e instanceof WithdrawException) {
+                return RB::asError($e->getCode())->withMessage($e->getMessage())->build();
+            }
+            return RB::error($e->getCode());
         }
 
     }
@@ -50,9 +53,12 @@ class WithdrawController extends Controller
 
             return $res->getMsg();
 
-        } catch (WithdrawException $e) {
+        } catch (Throwable $e) {
             Log::channel('withdraw')->info(new LogLine($e));
-            return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
+            if ($e instanceof WithdrawException) {
+                return RB::asError($e->getCode())->withMessage($e->getMessage())->build();
+            }
+            return RB::error($e->getCode());
         }
     }
 
@@ -62,9 +68,12 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine('重置訂單'), $request->post());
             $payment->resetOrderStatus($request);
             return RB::success();
-        } catch (WithdrawException $e) {
-            Log::channel('withdraw')->info(new LogLine($e), $request->post());
-            return RB::asError(ResponseCode::EXCEPTION)->withMessage($e->getMessage())->build();
+        } catch (Throwable $e) {
+            Log::channel('withdraw')->info(new LogLine($e));
+            if ($e instanceof WithdrawException) {
+                return RB::asError($e->getCode())->withMessage($e->getMessage())->build();
+            }
+            return RB::error($e->getCode());
         }
     }
 }
