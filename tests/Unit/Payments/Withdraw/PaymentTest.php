@@ -194,6 +194,67 @@ class PaymentTest extends TestCase
     }
 
 
+    public function test_contoller_callback_payment_always_failed() {
+
+        $orderId = 'unittest'. uniqid();
+
+        $order = WithdrawOrder::factory([
+            'order_id'    => $orderId,
+        ])->create();
+
+        $container = Container::getInstance();
+        $provider = new GatewayServiceProvider($container);
+        $provider->createGateway('ShineUPay');
+        $container->instance(GatewayServiceProvider::class, $provider);
+
+        $callbackResult = Mockery::mock(CallbackResult::class);
+        $callbackResult->shouldReceive('getSuccess')->andReturn(false);
+        $callbackResult->shouldReceive('getOrder')->andReturn($order);
+        $callbackResult->shouldReceive('getAmount')->andReturn(10);
+        $callbackResult->shouldReceive('getNotifyMessage')->andReturn('unit test msg');
+        $callbackResult->shouldReceive('getMsg')->andReturn('success');
+
+        $payment = Mockery::mock(Payment::class);
+        $payment->shouldReceive('callbackNotifyToQueue')
+        ->andReturn('');
+        $payment->shouldReceive('callback')
+        ->andReturn($callbackResult);
+
+        $container->instance(Payment::class, $payment);
+
+        $res = $this->post('/callback/withdraw/ShineUPay', []);
+
+        $res->assertStatus(200);
+        $this->assertDatabaseHas('withdraw_orders', [
+            'order_id'    => $orderId,
+            'status'      => Status::CALLBACK_FAILED,
+        ]);
+
+    }
+
+
+    public function test_reset_order()
+    {
+        $this->withoutMiddleware();
+
+        $order = WithdrawOrder::factory([
+            'user_id'=>$this->user->id,
+            'key_id'=>1,
+            'gateway_id'=>1,
+            'no_notify'=>0,
+        ])->create();
+
+        $response = $this->post('api/withdraw/reset', [
+            'order_id' => $order->order_id,
+        ]);
+        $this->assertDatabaseHas('withdraw_orders', [
+            'order_id'    => $order->order_id,
+            'no_notify'      => 1
+        ]);
+        $response->assertJsonFragment(['success'=>true]);
+    }
+
+
 
 
 
