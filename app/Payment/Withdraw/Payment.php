@@ -19,6 +19,7 @@ use App\Contracts\Payments\CallbackResult;
 use Exception;
 use App\Constants\Payments\Status;
 
+
 class Payment implements PaymentInterface
 {
     private $settingRepository;
@@ -93,7 +94,6 @@ class Payment implements PaymentInterface
     private function checkInputData(Request $request)  {
         $this->validatePost($request->post());
         $this->defaultOrderParams($request->post());
-        return $this;
     }
 
     private function validatePost($post) {
@@ -118,9 +118,15 @@ class Payment implements PaymentInterface
         return $data;
     }
 
+    /**
+     * /api/withdraw/create 同步API文件
+     *
+     * @return void
+     */
     private function getNeedDefaultValueParams() {
         return  [
             'amount',
+            'bank_card_option',
             'fund_passwd',
             'email',
             'user_country',
@@ -134,9 +140,11 @@ class Payment implements PaymentInterface
             'first_name',
             'mobile',
             'telegram',
+            'network',
             'withdraw_address',
             'gateway_code',
             'ifsc',
+            'zip'
         ];
     }
 

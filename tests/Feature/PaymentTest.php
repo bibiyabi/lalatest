@@ -32,8 +32,6 @@ class PaymentTest extends TestCase
     {
         parent::setUp();
 
-
-
        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
@@ -253,8 +251,5 @@ class PaymentTest extends TestCase
         ]);
         $response->assertJsonFragment(['success'=>true]);
     }
-
-
-
 
 }

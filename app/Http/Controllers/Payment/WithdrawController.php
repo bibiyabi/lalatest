@@ -6,15 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Contracts\Payments\PaymentInterface;
 use App\Exceptions\WithdrawException;
-use App\Repositories\Orders\WithdrawRepository;
 use Illuminate\Support\Facades\Log;
 use App\Services\AbstractWithdrawGateway;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
-use Exception;
-use App\Constants\Payments\ResponseCode;
 use App\Contracts\LogLine;
-use App\Constants\Payments\Status;
-use App\Models\WithdrawOrder;
 use Throwable;
 
 class WithdrawController extends Controller
@@ -36,11 +31,9 @@ class WithdrawController extends Controller
 
     public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway) {
         try {
-            Log::channel('withdraw')->info(new LogLine('代付回調前端參數'),[
-                'post' => $request->post(),
-                'header' => \Request::header(),
-                'phpinput' => file_get_contents("php://input")
-            ]);
+            Log::channel('withdraw')->info(new LogLine('代付回調前端參數 post '. print_r($request->post(), true)));
+            Log::channel('withdraw')->info(new LogLine('代付回調前端參數 headers'), \Request::header());
+            Log::channel('withdraw')->info(new LogLine('代付回調前端參數 php://input ' . print_r(file_get_contents("php://input"), true)));
 
             $res = $payment->callback($request, $gateway);
 
