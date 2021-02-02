@@ -20,14 +20,12 @@ class SettingService
 
     public function createSetting($userId, $data)
     {
-        $settingId = $this->repo->getIdByUserPk($data['id'],$userId)->toArray();
+        $settingId = $this->repo->filterCombinePk($userId, $data['id'])->first();
 
         try {
-            if (empty($settingId)){
-                # create
+            if (empty($settingId)){ # create
                 $this->repo->insertSetting($userId, $data);
-            }else{
-                # update
+            }else{ # update
                 $this->repo->updateSetting($settingId[0]['id'], $data);
             }
         }catch (\Throwable $e){
@@ -40,11 +38,11 @@ class SettingService
     public function deleteSetting($userId, $request)
     {
         try{
-            $settingId = $this->repo->getIdByUserPk($request->input('id'),$userId);
+            $settingId = $this->repo->filterCombinePk($userId, $request->input('id'))->first();
             if (empty($settingId)){
                 return new ServiceResult(false, CODE::FAIL);
             }
-            $this->repo->deleteSetting($settingId[0]['id']);
+            $this->repo->deleteSetting($settingId->id);
         }catch (\Throwable $e){
             Log::info($e->getMessage().' PATH: '.__METHOD__, $request->post());
             return new ServiceResult(false, CODE::FAIL);

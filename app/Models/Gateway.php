@@ -15,4 +15,9 @@ class Gateway extends Model
     {
         return $this->hasMany(GatewayType::class, 'gateways_id', 'id');
     }
+
+    public function settings()
+    {
+        return $this->hasMany(Setting::class,'gateway_id', 'id');
+    }
 }

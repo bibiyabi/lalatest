@@ -26,6 +26,7 @@ class GatewayTypeRepository
                      ->where($support,1)
                      ->get();
 
+        $result = [];
         foreach ($list as $key => $value)
         {
             $result[$key]['id'] = $value->gateway->id;
