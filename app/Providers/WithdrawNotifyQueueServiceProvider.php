@@ -29,11 +29,11 @@ class WithdrawNotifyQueueServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(PlatformNotify $platformNotify, WithdrawRepository $withdrawRepository)
+    public function boot(PlatformNotify $platformNotify)
     {
         $this->app->bindMethod([Notify::class, 'handle'], function ($job, $app)
-        use ($withdrawRepository, $platformNotify) {
-            return $job->handle($app->make(Notify::class), $withdrawRepository, $platformNotify);
+        use ($platformNotify) {
+            return $job->handle($app->make(Notify::class), $platformNotify);
         });
     }
 }

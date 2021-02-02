@@ -22,14 +22,14 @@ use App\Models\WithdrawOrder;
 
 Route::prefix('test')->group(function() {
     Route::post('bbb', function (){
-
-        DB::enableQueryLog();
-        $order = WithdrawOrder::first();
-        dd(DB::getQueryLog());
-
-        dd($order);
-
+        return '@@@';
     });
+
+    Route::post('aaa', function (){
+
+        echo '@@@';
+
+      });
 });
 
 # Java設置資料API

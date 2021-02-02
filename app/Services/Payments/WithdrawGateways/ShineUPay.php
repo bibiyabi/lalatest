@@ -44,9 +44,10 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
     public function setRequest($post = [], WithdrawOrder $order) : void {
-        Log::channel('withdraw')->info(new LogLine('第三方參數'), ['post'=>$post, 'order' => $order]);
         $this->setBaseRequest($order, $post);
     }
+
+
 
     protected function validationCreateInput() {
         return [
@@ -101,7 +102,7 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->createPostData = json_encode($this->getNeedGenSignArray($post,  $settings));
     }
 
-    protected function isCurlUseSSL() {
+    protected function isHttps() {
         return true;
     }
 

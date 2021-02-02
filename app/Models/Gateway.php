@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Gateway extends Model
 {
     use HasFactory;
+
+    protected $table = 'gateways';
+
+    public function gatewayTypes()
+    {
+        return $this->hasMany(GatewayType::class, 'gateways_id', 'id');
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(Setting::class,'gateway_id', 'id');
+    }
 }

@@ -3,9 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\Setting;
+use Illuminate\Database\Query\Builder;
 
 class SettingRepository
 {
+    /**
+     * @var $setting Builder
+     */
     private $setting;
 
     public function __construct()
@@ -48,33 +52,30 @@ class SettingRepository
 
     public function insertSetting($userId, $data)
     {
-        return $this->setting->insert([
-            'user_id'       => $userId,
-            'gateway_id'    => $data['gateway_id'],
-            'user_pk'       => $data['id'],
-            'settings'      => json_encode($data),
-            'created_at'    => date('Y-m-d H:i:s', time()),
-            'updated_at'    => date('Y-m-d H:i:s', time()),
-        ]);
-    }
-
-    public function getIdByUserPk($id, $userId)
-    {
-        return $this->setting->select('id')->where('user_pk','=',$id)->where('user_id','=',$userId)->get();
+        return $this->setting
+                    ->create([
+                        'user_id'       => $userId,
+                        'gateway_id'    => $data['gateway_id'],
+                        'user_pk'       => $data['id'],
+                        'settings'      => json_encode($data),
+                    ]);
     }
 
     public function updateSetting($id, $data)
     {
-        return $this->setting->where('id', '=', $id)->update([
-            'gateway_id'    => $data['gateway_id'],
-            'settings'      => json_encode($data),
-            'updated_at'    => date('Y-m-d H:i:s', time()),
-        ]);
+        return $this->setting
+                    ->where('id', $id)
+                    ->update([
+                        'gateway_id'    => $data['gateway_id'],
+                        'settings'      => json_encode($data),
+                    ]);
     }
 
     public function deleteSetting($id)
     {
-        return $this->setting->where('id','=',$id)->delete();
+        return $this->setting
+                    ->where('id', $id)
+                    ->delete();
     }
 
 }

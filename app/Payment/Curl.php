@@ -40,9 +40,11 @@ class Curl
     }
 
     public function basic() {
+        $this->setTimeoutSecond(10);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->second);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->second);
+
         return $this;
     }
 
@@ -60,18 +62,16 @@ class Curl
     public function exec() {
 
         //$info = curl_getinfo($this->ch);
-
         $curlResult = curl_exec($this->ch);
         $errorNo = curl_errno($this->ch);
+        curl_close($this->ch);
 
         if ($errorNo) {
-
             if ($errorNo === 28) {
                 return ['code' => self::TIMEOUT ,'data' => []];
             }
             return ['code' => self::FAILED ,'data' => []];
         }
-        curl_close($this->ch);
 
         $res = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult];
         return $res;

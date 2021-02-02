@@ -30,11 +30,13 @@ class SettingTest extends TestCase
     public function testCreateSetting()
     {
         $this->withoutMiddleware();
+        $userPk = 88888; // java id
 
         $gateway = Gateway::factory([
             'name' => 'pay',
             'real_name' => 'pay',
         ])->create();
+
         // create
         $data = json_encode([
             'info_title'=> 'i am title',
@@ -47,7 +49,7 @@ class SettingTest extends TestCase
         $response = $this->post('api/key',[
             'data' => urlencode($data),
             'gateway_id'=> $gateway->id,
-            'id'=> 555,
+            'id'=> $userPk,
         ]);
 
         $response->assertJsonFragment(['success'=> true]);
@@ -64,13 +66,13 @@ class SettingTest extends TestCase
         $response = $this->post('api/key',[
             'data' => urlencode($dataUpdate),
             'gateway_id'=> $gateway->id,
-            'id'=> 555,
+            'id'=> $userPk,
         ]);
 
         $response->assertJsonFragment(['success'=> true]);
 
         $this->assertDatabaseHas('settings',[
-            'user_pk' => 555,
+            'user_pk' => $userPk,
             'gateway_id' => $gateway->id,
         ]);
     }

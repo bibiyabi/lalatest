@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Gateway_type;
+use App\Models\GatewayType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class Gateway_typeFactory extends Factory
+class GatewayTypeFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Gateway_type::class;
+    protected $model = GatewayType::class;
 
     /**
      * Define the model's default state.
