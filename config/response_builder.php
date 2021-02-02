@@ -42,6 +42,7 @@ return [
         CODE::AUTHENTICATE_FAILED           => '登入异常',
         CODE::UNSUPPORTED_TYPE              => '不支援的支付方式',
         CODE::HTTP_METHOD_NOT_ALLOWED       => '不可使用的 HTTP 方法',
+        CODE::GATEWAY_ERROR                 => '對接包錯誤',
 	],
 
 	/*
