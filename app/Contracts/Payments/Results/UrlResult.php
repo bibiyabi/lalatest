@@ -10,10 +10,21 @@ class UrlResult implements ResultFactoryInterface
     public function getResult(HttpParam $param): Result
     {
         $method = $param->getMethod();
-        if ($method == 'post') {
-            $result = Http::withOptions(['verify'=>false])->post($param->getUrl(), $param->getBody());
-        } elseif ($method == 'get') {
-            $result = Http::withOptions(['verify'=>false])->get($param->getUrl(), $param->getBody());
+        switch ($method) {
+            case 'post':
+            $result = Http::withHeaders($param->getHeader())
+                ->withOptions(['verify'=>false])
+                ->post($param->getUrl(), $param->getBody());
+                break;
+
+            case 'get':
+            $result = Http::withHeaders($param->getHeader())
+                ->withOptions(['verify'=>false])
+                ->get($param->getUrl(), $param->getBody());
+                break;
+
+            default:
+                throw new \Exception('');
         }
 
         return new Result('url', $result);
