@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (env('APP_ENV') == 'local'){
+        if (config('app.env') == 'local'){
             DB::listen(function($query){
                 Log::info(
                     $query->sql,
