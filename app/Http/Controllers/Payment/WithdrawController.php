@@ -32,7 +32,6 @@ class WithdrawController extends Controller
     }
 
     public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway) {
-
         try {
             Log::channel('withdraw')->info(new LogLine('代付回調前端參數'),[
                 'post' => $request->post(),
@@ -47,29 +46,7 @@ class WithdrawController extends Controller
                 'msg' => $res->getMsg(),
             ]);
 
-            $orderId = $res->getOrder()->order_id;
-
-            if (empty($orderId)) {
-                throw new WithdrawException('order id not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
-            }
-
-            $callbackStatus =  $res->getSuccess() ? Status::CALLBACK_SUCCESS : Status::CALLBACK_FAILED;
-
-            WithdrawOrder::where('order_id', '=', $orderId)->update(
-                [
-                    'status'=> $callbackStatus,
-                    'real_amount' => $res->getAmount(),
-                    'order_param' => json_encode($request->post())
-                ]
-            );
-
-            $order = WithdrawOrder::where('order_id', '=', $orderId)->first();
-
-            if (empty($order)) {
-                throw new WithdrawException('order not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
-            }
-
-            $payment->callbackNotifyToQueue($order, $res->getNotifyMessage());
+            $payment->setCallbackDbResult($res);
 
             return $res->getMsg();
 

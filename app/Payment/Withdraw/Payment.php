@@ -6,9 +6,7 @@ use App\Jobs\Payment\Withdraw\Order;
 use App\Contracts\Payments\PaymentInterface;
 use App\Repositories\SettingRepository;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Bus;
 use Throwable;
-
 use Illuminate\Support\Facades\Validator;
 use App\Jobs\Payment\Withdraw\Notify;
 use App\Services\AbstractWithdrawGateway;
@@ -19,6 +17,7 @@ use App\Models\WithdrawOrder;
 use App\Contracts\LogLine;
 use App\Contracts\Payments\CallbackResult;
 use Exception;
+use App\Constants\Payments\Status;
 
 class Payment implements PaymentInterface
 {
@@ -36,6 +35,59 @@ class Payment implements PaymentInterface
         $this->checkInputData($request);
         $order = $this->setOrderToDb($request);
         $this->dispatchOrderQueue($request, $order);
+    }
+
+    public function callbackNotifyToQueue($order, $message) {
+        try {
+            Notify::dispatch($order, $message);
+        } catch(Throwable $e) {
+            throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
+        }
+    }
+
+    public function callback(Request $request , AbstractWithdrawGateway $gateway): CallbackResult {
+        return $gateway->callback($request);
+    }
+
+    public function resetOrderStatus(Request $request) {
+
+        $post = $request->post();
+
+        $order = WithdrawOrder::where('order_id', $post['order_id'])->first();
+        if (empty($order)) {
+            throw new WithdrawException("Order not found.");
+        }
+
+        $status = WithdrawOrder::where('order_id', $post['order_id'])->update(['no_notify' => 1]);
+
+        if (!$status) {
+            throw new WithdrawException("update failed");
+        }
+    }
+
+    public function setCallbackDbResult(CallbackResult $res) {
+
+        $orderId = $res->getOrder()->order_id;
+
+        if (empty($orderId)) {
+            throw new WithdrawException('order id not found in repository', ResponseCode::RESOURCE_NOT_FOUND);
+        }
+
+        $callbackStatus =  $res->getSuccess() ? Status::CALLBACK_SUCCESS : Status::CALLBACK_FAILED;
+
+        WithdrawOrder::where('order_id', '=', $orderId)->update(
+            [
+                'status'=> $callbackStatus,
+                'real_amount' => $res->getAmount(),
+            ]
+        );
+
+        $this->callbackNotifyToQueue($res->getOrder(), $res->getNotifyMessage());
+
+    }
+
+    private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
+        Order::dispatch($request->post(), $order);
     }
 
     private function checkInputData(Request $request)  {
@@ -102,39 +154,6 @@ class Payment implements PaymentInterface
         return $order;
     }
 
-
-
-    private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
-        Order::dispatch($request->post(), $order);
-    }
-
-    public function callbackNotifyToQueue($order, $message) {
-        try {
-            Notify::dispatch($order, $message);
-        } catch(Throwable $e) {
-            throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
-        }
-    }
-
-    public function callback(Request $request , AbstractWithdrawGateway $gateway): CallbackResult {
-        return $gateway->callback($request);
-    }
-
-    public function resetOrderStatus(Request $request) {
-
-        $post = $request->post();
-
-        $order = WithdrawOrder::where('order_id', $post['order_id'])->first();
-        if (empty($order)) {
-            throw new WithdrawException("Order not found.");
-        }
-
-        $status = WithdrawOrder::where('order_id', $post['order_id'])->update(['no_notify' => 1]);
-
-        if (!$status) {
-            throw new WithdrawException("update failed");
-        }
-    }
 
 
 

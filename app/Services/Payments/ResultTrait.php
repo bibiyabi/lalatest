@@ -17,7 +17,7 @@ trait ResultTrait
         return collect(['code'=> $this->createSuccess, 'msg'=>$msg, 'data' => $data]);
     }
 
-    public function resCreateRetry($msg ='',$data = []) {
+    public function resCreateError($msg ='',$data = []) {
         return collect(['code'=> $this->createTimeout, 'msg'=>$msg, 'data' => $data]);
     }
 
