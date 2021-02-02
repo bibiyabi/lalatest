@@ -63,7 +63,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     # 設定header
     abstract protected function getCurlHeader();
     # 是否用https 有ture 沒有false
-    abstract protected function isCurlUseSSL();
+    abstract protected function isHttps();
 
     # 確認訂單成功狀態
     abstract protected function checkCreateOrderIsSuccess($res);
@@ -122,7 +122,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     }
 
     protected function getCreateUrl() {
-        $http = ($this->isCurlUseSSL()) ? 'https://' : 'http://';
+        $http = ($this->isHttps()) ? 'https://' : 'http://';
         return  $http . $this->domain. $this->createSegments;
     }
 
@@ -135,7 +135,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 
         $url = $this->getCreateUrl();
 
-        if ($this->isCurlUseSSL()) {
+        if ($this->isHttps()) {
             $this->curl->ssl();
         }
 

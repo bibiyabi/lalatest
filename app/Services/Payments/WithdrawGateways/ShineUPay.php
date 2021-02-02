@@ -102,7 +102,7 @@ class ShineUPay extends AbstractWithdrawGateway
         $this->createPostData = json_encode($this->getNeedGenSignArray($post,  $settings));
     }
 
-    protected function isCurlUseSSL() {
+    protected function isHttps() {
         return true;
     }
 
