@@ -3,11 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Gateway;
-use App\Models\Gateway_type;
-use App\Models\Merchant;
+use App\Models\GatewayType;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Constants\Payments\Type;
 
@@ -26,7 +23,7 @@ class PlaceholderTest extends TestCase
             'real_name' => 'pay',
         ])->create();
 
-        $gatewayType = Gateway_type::factory([
+        $gatewayType = GatewayType::factory([
             'gateways_id'           => $gateway->id,
             'types_id'              => Type::type['e_wallet'],
             'is_support_deposit'    => 1,

@@ -14,7 +14,7 @@ class GatewayTypeSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('gateway_types')->insert([
+        DB::table('gatewayTypes')->insert([
             'gateways_id'           => 21,
             'types_id'              => 4,
             'is_support_deposit'    => 1,

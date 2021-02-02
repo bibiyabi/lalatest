@@ -2,13 +2,14 @@
 
 
 namespace App\Repositories;
-use App\Models\Gateway_type;
+use App\Models\Gateway;
+use App\Models\GatewayType;
 
 class GatewayTypeRepository
 {
     protected $gatewayType;
 
-    public function __construct(Gateway_type $gatewayType)
+    public function __construct(GatewayType $gatewayType)
     {
         $this->gatewayType = $gatewayType;
     }
