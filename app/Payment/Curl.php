@@ -40,9 +40,11 @@ class Curl
     }
 
     public function basic() {
+        $this->setTimeoutSecond(10);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->second);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->second);
+
         return $this;
     }
 
