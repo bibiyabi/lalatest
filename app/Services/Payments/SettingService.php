@@ -26,7 +26,7 @@ class SettingService
             if (empty($settingId)){ # create
                 $this->repo->insertSetting($userId, $data);
             }else{ # update
-                $this->repo->updateSetting($settingId[0]['id'], $data);
+                $this->repo->updateSetting($settingId->id, $data);
             }
         }catch (\Throwable $e){
             Log::info($e->getMessage().' PATH: '.__METHOD__, $data);
