@@ -38,18 +38,25 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         $this->curl = $curl;
     }
 
+    public function logRequest($order, $post) {
+        Log::channel('withdraw')->info(new LogLine('第三方參數 post ' . json_encode($post)));
+        Log::channel('withdraw')->info(new LogLine('第三方參數 settings ' . $order->key->settings));
+    }
+
     protected function setBaseRequest($order, $post):void {
+        $this->logRequest($order, $post);
         # 設定model
         $this->setOrder($order);
         # 驗證輸入
         $this->validateOrderInput($post);
         # decode
-        $settings = $this->decode($order->key->settings);
+        $settings = $this->getSettings($order);
         # 建立sign
         $this->setCreateSign($post, $settings);
         # set create order post data
         $this->setCreatePostData($post,  $settings);
     }
+
 
     # 設定回調網址
     protected function setCallBackUrl($class) {
@@ -58,7 +65,9 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     # 設定request
     abstract  public function setRequest($post = [], WithdrawOrder $order);
     # 檢查input
-    abstract protected function validationCreateInput();
+    protected function validationCreateInput() {
+        return [];
+    }
     # 設定發送sign
     abstract protected function setCreateSign($post, $settings);
     # 設定送單array
@@ -158,14 +167,14 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         return $this->createPostData;
     }
 
-    protected function getSettings($order) {
+    public function getSettings($order) {
         $key = $order->key;
 
         if (empty($key)) {
             throw new WithdrawException("key not found." , Status::ORDER_FAILED);
         }
 
-        return $this->decode($key->settings);
+        return $this->decode($key->settings, true);
     }
 
     # for decode

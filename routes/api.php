@@ -30,6 +30,12 @@ Route::prefix('test')->group(function() {
         dd($order);
 
     });
+
+    Route::post('aaa', function (){
+
+        echo '@@@';
+
+      });
 });
 
 # Java設置資料API
