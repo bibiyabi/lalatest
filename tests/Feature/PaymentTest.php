@@ -32,8 +32,6 @@ class PaymentTest extends TestCase
     {
         parent::setUp();
 
-
-
        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
@@ -174,7 +172,7 @@ class PaymentTest extends TestCase
         $callbackResult->shouldReceive('getNotifyMessage')->andReturn('unit test msg');
         $callbackResult->shouldReceive('getMsg')->andReturn('success');
 
-        $payment = Mockery::mock(Payment::class);
+        $payment = Mockery::mock(Payment::class)->makePartial();
         $payment->shouldReceive('callbackNotifyToQueue')
         ->andReturn('');
         $payment->shouldReceive('callback')
@@ -214,7 +212,7 @@ class PaymentTest extends TestCase
         $callbackResult->shouldReceive('getNotifyMessage')->andReturn('unit test msg');
         $callbackResult->shouldReceive('getMsg')->andReturn('success');
 
-        $payment = Mockery::mock(Payment::class);
+        $payment = Mockery::mock(Payment::class)->makePartial();
         $payment->shouldReceive('callbackNotifyToQueue')
         ->andReturn('');
         $payment->shouldReceive('callback')
@@ -253,12 +251,5 @@ class PaymentTest extends TestCase
         ]);
         $response->assertJsonFragment(['success'=>true]);
     }
-
-
-
-
-
-
-
 
 }

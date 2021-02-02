@@ -62,18 +62,16 @@ class Curl
     public function exec() {
 
         //$info = curl_getinfo($this->ch);
-
         $curlResult = curl_exec($this->ch);
         $errorNo = curl_errno($this->ch);
+        curl_close($this->ch);
 
         if ($errorNo) {
-
             if ($errorNo === 28) {
                 return ['code' => self::TIMEOUT ,'data' => []];
             }
             return ['code' => self::FAILED ,'data' => []];
         }
-        curl_close($this->ch);
 
         $res = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult];
         return $res;

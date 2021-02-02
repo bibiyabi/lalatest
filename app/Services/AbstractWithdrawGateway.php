@@ -13,6 +13,9 @@ use App\Services\Payments\ResultTrait;
 use App\Exceptions\WithdrawException;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
+use App\Exceptions\DecodeException;
+use App\Constants\Payments\Status;
+
 abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 {
     use ResultTrait;
@@ -77,11 +80,8 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     protected function validateOrderInput($data) {
         $validator = Validator::make($data, $this->validationCreateInput());
         if ($validator->fails()) {
-            throw new InputException($validator->errors(), ResponseCode::ERROR_PARAMETERS);
+            throw new InputException($validator->errors(), Status::ORDER_FAILED);
         }
-    }
-    protected function getCreateOrderRes($curlRes) {
-        return $this->decode($curlRes['data'], true);
     }
 
     # 取得建單狀態
@@ -89,15 +89,18 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 
         switch ($curlRes['code']) {
             case Curl::STATUS_SUCCESS:
-                $createRes = $this->getCreateOrderRes($curlRes);
-                return $this->returnCreateRes($createRes);
+                return $this->returnCreateRes($this->getCreateOrderRes($curlRes));
             case Curl::FAILED:
                 return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
             case Curl::TIMEOUT:
-                return $this->resCreateRetry('', ['order_id' => $this->order->order_id]);
+                return $this->resCreateError('', ['order_id' => $this->order->order_id]);
             default:
-                throw new WithdrawException("curl rescode default " , ResponseCode::EXCEPTION);
+                throw new WithdrawException("curl rescode default " , Status::ORDER_FAILED);
         }
+    }
+
+    protected function getCreateOrderRes($curlRes) {
+        return $this->decode($curlRes['data'], true);
     }
 
     # curl 取得建單狀態
@@ -112,7 +115,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     # set order object
     private function setOrder($order) {
         if (empty($order)) {
-            throw new WithdrawException('setting empty ', ResponseCode::ERROR_PARAMETERS);
+            throw new WithdrawException('setting empty ', Status::ORDER_FAILED);
         }
         $this->order = $order;
     }
@@ -130,7 +133,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     public function send() {
 
         if (empty($this->getCreatePostData())) {
-            throw new WithdrawException('createPostData empty ', ResponseCode::ERROR_PARAMETERS);
+            throw new WithdrawException('createPostData empty ', Status::ORDER_FAILED);
         }
 
         $url = $this->getCreateUrl();
@@ -159,7 +162,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         $key = $order->key;
 
         if (empty($key)) {
-            throw new WithdrawException("key not found." , ResponseCode::EXCEPTION);
+            throw new WithdrawException("key not found." , Status::ORDER_FAILED);
         }
 
         return $this->decode($key->settings);
@@ -167,7 +170,11 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
 
     # for decode
     protected function decode($data) {
-        return json_decode($data, true);
+        $decode =  json_decode($data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new DecodeException(json_last_error() . 'decode error '. $data, Status::ORDER_ERROR);
+        }
+        return $decode;
     }
 
 }

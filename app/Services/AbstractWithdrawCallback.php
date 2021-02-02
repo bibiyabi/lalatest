@@ -6,6 +6,8 @@ use App\Models\WithdrawOrder;
 use App\Exceptions\WithdrawException;
 use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\CallbackResult;
+use App\Exceptions\InputException;
+use App\Constants\Payments\Status;
 
 abstract class  AbstractWithdrawCallback
 {
@@ -45,8 +47,8 @@ abstract class  AbstractWithdrawCallback
     # 檢查回調input
     protected function validateCallbackInput($post) {
         $validator = Validator::make($post, $this->getCallbackValidateColumns());
-        if($validator->fails()){
-            throw new WithdrawException('callback input check error'. json_encode($validator->errors()), ResponseCode::EXCEPTION);
+        if ($validator->fails()) {
+            throw new InputException('callback input check error'. json_encode($validator->errors()), ResponseCode::EXCEPTION);
         }
     }
 

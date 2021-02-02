@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
 use Illuminate\Http\Request;
 use App\Constants\Payments\Status;
+use App\Contracts\LogLine;
 
 use Throwable;
 class Order implements ShouldQueue
@@ -67,17 +68,18 @@ class Order implements ShouldQueue
             ->update(['status' => $res['code']]);
 
         } catch (Throwable $e) {
-            if ($e instanceof InputException) {
-                // 參數檢查錯誤 直接失敗
+
+            Log::channel('withdraw')->info(new LogLine($e));
+
+            if (in_array($e->getCode(), [Status::ORDER_ERROR, Status::ORDER_FAILED, Status::ORDER_SUCCESS])) {
                 WithdrawOrder::where('order_id', $this->post['order_id'])
-                ->update(['status' => Status::ORDER_FAILED]);
+                ->update(['status' => $e->getCode()]);
 
-                Notify::dispatch($this->order, $e->getMessage());
-                return;
+                if ($e->getCode() == Status::ORDER_FAILED) {
+                    Notify::dispatch($this->order, $e->getMessage());
+                }
             }
-            throw new WithdrawException($e->getMessage() , ResponseCode::EXCEPTION);
         }
-
     }
 
 }
