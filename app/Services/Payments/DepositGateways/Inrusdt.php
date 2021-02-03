@@ -117,18 +117,13 @@ class Inrusdt implements DepositGatewayInterface
     # 該支付有支援的渠道  指定前台欄位
     public function getRequireInfo($type): DepositRequireInfo
     {
-        $column = [];
         switch ($type) {
             case Type::BANK_CARD:
-                $column = [C::ACCT_FN, C::ACCT_LN, C::ACCT_NO, C::AMOUNT];
+                $column = [C::AMOUNT];
                 break;
 
             case Type::WALLET:
-                $column = [C::ACCT_NAME, C::ACCOUNT_ID, C::AMOUNT];
-                break;
-
-            case Type::CRYPTO_CURRENCY:
-                $column = [C::CRYPTO_AMOUNT, C::ADDRESS, C::NETWORK];
+                $column = [C::AMOUNT];
                 break;
 
             default:
@@ -136,6 +131,6 @@ class Inrusdt implements DepositGatewayInterface
                 break;
         }
 
-        return new DepositRequireInfo($type, $column);
+        return new DepositRequireInfo($type, $column, []);
     }
 }

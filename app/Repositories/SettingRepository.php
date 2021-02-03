@@ -3,12 +3,12 @@
 namespace App\Repositories;
 
 use App\Models\Setting;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class SettingRepository
 {
     /**
-     * @var $setting Builder
+     * @var $setting Model
      */
     private $setting;
 
