@@ -67,8 +67,4 @@ class ShineUPayTest extends TestCase
         $this->assertNull($shineupay->setRequest($post, $withdrawOrder));
     }
 
-    public function test_getSendReturn () {
-        $shineupay = new ShineUPay(new Curl());
-
-    }
 }
