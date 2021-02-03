@@ -144,7 +144,9 @@ class Payment implements PaymentInterface
             'withdraw_address',
             'gateway_code',
             'ifsc',
-            'zip'
+            'zip',
+            'bank_name',
+            'upi_id'
         ];
     }
 
