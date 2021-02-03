@@ -121,9 +121,47 @@ class Inrusdt implements DepositGatewayInterface
             case Type::BANK_CARD:
                 $column = [C::AMOUNT];
                 break;
-
+            #for test
             case Type::WALLET:
-                $column = [C::AMOUNT, C::BANK];
+                $column = [
+                    C::BANK_NAME,
+                    C::ACCT_FN,
+                    C::ACCT_LN ,
+                    C::ACCT_NO  ,
+                    C::IFSC  ,
+                    C::AMOUNT       ,
+                    C::BANK_NAME_INPUT ,
+                    C::ACCT_NAME   ,
+                    C::TXN_TIME  ,
+                    C::UPLOAD_TXN   ,
+                    C::CRYPTO_AMOUNT  ,
+                    C::NETWORK    ,
+                    C::ADDRESS   ,
+                    C::QR_CODE  ,
+                    C::TXID       ,
+                    C::DEPOSIT_AMOUNT  ,
+                    C::BANK_NAME_FOR_CARD ,
+                    C::CARD_NUMBER       ,
+                    C::MOBILE_NUMBER     ,
+                    C::ACCOUNT_ID      ,
+                    C::EMAIL            ,
+                    C::COUNTRY         ,
+                    C::STATE           ,
+                    C::CITY             ,
+                    C::ADDRESS_WALLET   ,
+                    C::ZIP             ,
+                    C::LAST_NAME        ,
+                    C::FIRST_NAME       ,
+                    C::TELEGRAM        ,
+                    C::EXPIRED_DATE     ,
+                    C::BANK              ,
+                    C::IFSC_INDIA        ,
+                    C::BANK_PROVINCE     ,
+                    C::BANK_ADDRESS      ,
+                    C::BANK_CITY        ,
+                    C::BANK_ACCOUNT      ,
+                    C::UPI_ID            ,
+                ];
                 break;
 
             default:
