@@ -123,14 +123,25 @@ class Inrusdt implements DepositGatewayInterface
                 break;
 
             case Type::WALLET:
-                $column = [C::AMOUNT];
+                $column = [C::AMOUNT, C::BANK];
                 break;
 
             default:
                 throw new UnsupportedTypeException();
                 break;
         }
+        #for test
+        $bank = [
+            0=>[
+                'id' => '001',
+                'name'=>'樂樂銀行'
+                ],
+            1=>[
+                'id' => '003',
+                'name'=>'悠悠銀行'
+            ],
+        ];
 
-        return new DepositRequireInfo($type, $column, []);
+        return new DepositRequireInfo($type, $column, $bank);
     }
 }
