@@ -1,4 +1,4 @@
-# API文件 V11
+# API文件 V12
 
 ## API必帶參數
 
@@ -33,7 +33,6 @@
 
 ### V6
 
-2021/1/21
 * 新增API 錯誤碼
 * 新增代付重置訂單 API api/withdraw/reset
 
@@ -57,10 +56,15 @@
 * /api/withdraw/create 23 代碼合併到16, 4
 * /api/withdraw/create 14, 2, 15 代碼 , 補齊所有號碼變數
 
-
 ### V11
 
 * /api/placeholder  response 新增帳戶號(account),商戶號(merchantNumber)
+
+### V12
+
+* 對應出入款所需欄位整理V12 更新，入款新增非必填 `upi_id` 欄位
+* 對應出入款所需欄位整理V12 更新，出款新增非必填 `bank_name` 、 `upi_id` 欄位
+
 ---
 
 ### API 錯誤碼
@@ -95,22 +99,22 @@ POST /api/key
 | gateway_id | integer | V        | 金流商/交易所 id                     |
 | data       | string  | V        | 將以下欄位全部urlencode再json_encode |
 
-| data 欄位 內容      | 型態     | 必要參數 | 說明                                 |
-| ----------        | ------- | -------- | :----------------------------------- |
-| info_title          | string  |          | 信息名稱                        |
-| account             | string  |          | 金流帳戶號                      |
-| merchant_number     | string  |          | 金流商戶號                      |
-| md5_key             | string  |          | md5                             |
-| public_key          | string  |          | 公鑰                            |
-| private_key         | string  |          | 私鑰                            |
-| return_url          | string  |          | 同步地址                        |
-| notify_url          | string  |          | 異步地址                        |
-| coin                | string  |          | 幣種-加密貨幣                   |
-| blockchain_contract | string  |          | 區塊鍊網路-加密貨幣             |
-| crypto_address      | string  |          | 充值地址-加密貨幣               |
-| api_key             | string  |          | API Key-加密貨幣                |
-| note1               | string  |          | 備注欄位1                       |
-| note2               | string  |          | 備注欄位2                       |
+| data 欄位 內容      | 型態   | 必要參數 | 說明                |
+| ------------------- | ------ | -------- | ------------------- |
+| info_title          | string |          | 信息名稱            |
+| account             | string |          | 金流帳戶號          |
+| merchant_number     | string |          | 金流商戶號          |
+| md5_key             | string |          | md5                 |
+| public_key          | string |          | 公鑰                |
+| private_key         | string |          | 私鑰                |
+| return_url          | string |          | 同步地址            |
+| notify_url          | string |          | 異步地址            |
+| coin                | string |          | 幣種-加密貨幣       |
+| blockchain_contract | string |          | 區塊鍊網路-加密貨幣 |
+| crypto_address      | string |          | 充值地址-加密貨幣   |
+| api_key             | string |          | API Key-加密貨幣    |
+| note1               | string |          | 備注欄位1           |
+| note2               | string |          | 備注欄位2           |
 
 Response example:
 
@@ -152,9 +156,9 @@ Response example:
 DELETE /api/key
 ```
 
-| 欄位  | 型態     | 必要參數  | 說明        |
-| ---- | ------- | -------- | -----------|
-| id   | integer | V        | 設置資料 id  |
+| 欄位 | 型態    | 必要參數 | 說明        |
+| ---- | ------- | -------- | ----------- |
+| id   | integer | V        | 設置資料 id |
 
 Response example:
 
@@ -185,7 +189,7 @@ Response example:
 GET /api/vendor/list
 ```
 
-| 欄位        | 型態     | 必要參數  | 說明                                                      |
+| 欄位       | 型態    | 必要參數 | 說明                                                      |
 | ---------- | ------- | -------- | :-------------------------------------------------------- |
 | is_deposit | integer | V        | 入款=1 / 出款=0                                           |
 | type       | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
@@ -234,8 +238,8 @@ Response example:
 GET /api/placeholder
 ```
 
-| 欄位          | 型態     | 必要參數  | 說明                                                      |
-| ------------ | ------- | -------- | :-------------------------------------------------------- |
+| 欄位         | 型態    | 必要參數 | 說明                                                      |
+| ------------ | ------- | -------- | -------------------------------------------------------- |
 | is_deposit   | integer | V        | 入款=1 / 出款=0                                           |
 | type         | string  | V        | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | gateway_name | string  | V        | 金流商/交易所名稱                                         |
@@ -278,22 +282,22 @@ GET /api/placeholder
 
 回傳欄位說明:回傳值依據出入款及渠道不同而不固定輸出
 
-| 欄位                  | 型態   |  說明  |
-| -------------------- | ------ |------ |
-| `account`            | string | 帳戶號 |
-| `merchantNumber`     | string | 商戶號 |
-| `publicKey`          | string | 公鑰 |
-| `privateKey`         | string | 私鑰 |
-| `md5Key`             | string | MD5密钥 |
-| `notifyUrl`          | string | 异步通知地址 |
-| `returnUrl`          | string | 同步通知地址 |
+| 欄位                 | 型態   | 說明            |
+| -------------------- | ------ | --------------- |
+| `account`            | string | 帳戶號          |
+| `merchantNumber`     | string | 商戶號          |
+| `publicKey`          | string | 公鑰            |
+| `privateKey`         | string | 私鑰            |
+| `md5Key`             | string | MD5密钥         |
+| `notifyUrl`          | string | 异步通知地址    |
+| `returnUrl`          | string | 同步通知地址    |
 | `transactionType`    | array  | 交易所/交易方式 |
-| `coin`               | array  | 交易币种 |
-| `blockchainContract` | array  | 区块链网络 |
-| `cryptoAddress`      | string | 充值地址 |
-| `apiKey`             | string | API Key |
-| `note1`              | string | 备注栏位1 |
-| `note2`              | string | 备注栏位2 |
+| `coin`               | array  | 交易币种        |
+| `blockchainContract` | array  | 区块链网络      |
+| `cryptoAddress`      | string | 充值地址        |
+| `apiKey`             | string | API Key         |
+| `note1`              | string | 备注栏位1       |
+| `note2`              | string | 备注栏位2       |
 
 沒有提示字/ 找不到該第三方檔案
 
@@ -391,6 +395,7 @@ POST /api/deposit/create
 | bank_province    | string  |          | 33                 | 銀行所在省                                                |
 | bank_address     | string  |          | 34                 | 銀行地址                                                  |
 | bank_city        | string  |          | 35                 | 銀行所在城市                                              |
+| upi_id           | string  |          | 36                 | UPI 通道                                                  |
 
 Response example:
 
@@ -459,8 +464,8 @@ POST /api/withdraw/create
 | order_id         | string  | V        | java                      | 訂單編號                                                  |
 | pk               | integer | V        | java                      | 設定檔流水號（同步商戶資料的那份）                        |
 | type             | string  | V        | java                      | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
-| amount           | integer |          | 1、14                    | 訂單金額 (數字貨幣傳貨幣數量)                             |
-| bank_card_option | integer |          | 2                         | 銀行卡                           |
+| amount           | integer |          | 1、14                     | 訂單金額 (數字貨幣傳貨幣數量)                             |
+| bank_card_option | integer |          | 2                         | 銀行卡                                                    |
 | fund_passwd      | string  |          | 3                         | 資金密碼                                                  |
 | email            | string  |          | 5                         | 電子信箱                                                  |
 | user_country     | string  |          | 6                         | 使用者國家                                                |
@@ -474,11 +479,13 @@ POST /api/withdraw/create
 | first_name       | string  |          | 11                        | 名字                                                      |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
-| network          | string  |          | 15                        | 區塊鏈網路(目前僅顯示)                                                  |
+| network          | string  |          | 15                        | 區塊鏈網路(目前僅顯示)                                    |
 | withdraw_address | string  |          | 16 、4 、23               | 收款地址 、電子錢包帳號 、 银行账号                       |
 | transaction_type | string  |          | 17                        | 金流商（銀行） 通道代碼                                   |
 | ifsc             | string  |          | 18                        | ifsc                                                      |
 | zip              | string  |          | 22                        | 郵遞區號                                                  |
+| bank_name        | string  |          | 24                        | 銀行名稱                                                  |
+| upi_id           | string  |          | 25                        | UPI 通道                                                  |
 
 Response example:
 
