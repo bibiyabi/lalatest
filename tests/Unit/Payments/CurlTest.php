@@ -33,7 +33,7 @@ class CurlTest extends TestCase
     public function test_curl_url_success()
     {
         $curl = new Curl();
-        $res = $curl->setUrl('https://www.google.com.tw/')->exec();
+        $res = $curl->setUrl('https://www.google.com.tw/')->ssl(false)->exec();
 
         $this->assertEquals(Curl::STATUS_SUCCESS, $res['code']);
     }

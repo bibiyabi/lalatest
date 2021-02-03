@@ -64,16 +64,17 @@ class Curl
         //$info = curl_getinfo($this->ch);
         $curlResult = curl_exec($this->ch);
         $errorNo = curl_errno($this->ch);
+        $errorMsg = curl_error($this->ch);
         curl_close($this->ch);
 
         if ($errorNo) {
             if ($errorNo === 28) {
-                return ['code' => self::TIMEOUT ,'data' => []];
+                return ['code' => self::TIMEOUT ,'data' => [], 'errorMsg' => $errorMsg];
             }
-            return ['code' => self::FAILED ,'data' => []];
+            return ['code' => self::FAILED ,'data' => [], 'errorMsg' => $errorMsg];
         }
 
-        $res = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult];
+        $res = ['code' => self::STATUS_SUCCESS, 'data' => $curlResult, 'errorMsg' => ''];
         return $res;
     }
 
