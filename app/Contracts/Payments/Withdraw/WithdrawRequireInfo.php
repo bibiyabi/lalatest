@@ -3,7 +3,6 @@
 
 namespace App\Contracts\Payments\Withdraw;
 
-use App\Constants\Payments\Type;
 use App\Constants\Payments\WithdrawInfo as C;
 
 class WithdrawRequireInfo
@@ -23,15 +22,14 @@ class WithdrawRequireInfo
 
     public function toArray()
     {
-        $type = $this->type;
-        $typeArray = Type::typeName;
         sort($this->column);
         $result['column'] = $this->column;
-        if($type == $typeArray[2]){  # 銀行卡 下拉選單
-            $result['select'] = [
-                C::BANK_CARD => $this->bankCard,
-                C::BANK      => $this->bank,
-            ];
+        if (in_array(C::BANK_CARD, $result['column'])){
+            $result['select'] = [C::BANK_CARD => $this->bankCard];
+        }
+
+        if (in_array(C::BANK, $result['column'])){
+            $result['select'] = [C::BANK => $this->bank];
         }
 
         return $result;

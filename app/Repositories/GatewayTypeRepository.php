@@ -4,12 +4,12 @@
 namespace App\Repositories;
 
 use App\Models\GatewayType;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class GatewayTypeRepository
 {
     /**
-     * @var $gatewayType Builder
+     * @var $gatewayType Model
      */
     protected $gatewayType;
 
