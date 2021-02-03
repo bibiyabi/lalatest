@@ -338,12 +338,25 @@ GET /api/requirement
 }
 ```
 
+urldecode 內容如下所示
+```json
+{
+    "column":[6,31],
+    "select":{
+        "31":[
+            {"id":"001","name":"\u6a02\u6a02\u9280\u884c"},
+            {"id":"003","name":"\u60a0\u60a0\u9280\u884c"}
+        ]
+    }
+}
+```
+
 回傳欄位說明:column為顯示欄位代號(參考出入款所需欄位整理), select為下拉選單如銀行卡,不一定回傳
 
 | 欄位     | 型態  |
 | -------- | ----- |
 | `column` | array |
-| `select` | array |
+| `select` | array (id  name) |
 
 沒有提示字/ 找不到該第三方檔案
 
