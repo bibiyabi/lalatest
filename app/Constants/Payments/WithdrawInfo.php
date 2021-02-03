@@ -29,4 +29,6 @@ class WithdrawInfo
     public const BANK_CITY      = 21;
     public const ZIP            = 22;
     public const BANK_ACCOUNT   = 23;
+    public const BANK_NAME      = 24;
+    public const UPI_ID         = 25;
 }

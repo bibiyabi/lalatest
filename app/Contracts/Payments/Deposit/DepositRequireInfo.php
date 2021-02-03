@@ -2,8 +2,7 @@
 
 namespace App\Contracts\Payments\Deposit;
 
-use App\Constants\Payments\Type;
-use App\Constants\Payments\WithdrawInfo as C;
+use App\Constants\Payments\DepositInfo as C;
 
 class DepositRequireInfo
 {
