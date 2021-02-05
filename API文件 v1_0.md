@@ -408,7 +408,7 @@ POST /api/deposit/create
 | bank_province    | string  |          | 33                 | 銀行所在省                                                |
 | bank_address     | string  |          | 34                 | 銀行地址                                                  |
 | bank_city        | string  |          | 35                 | 銀行所在城市                                              |
-| upi_id           | string  |          | 36                 | UPI 通道                                                  |
+| upi_id           | string  |          | 37                 | UPI 通道                                                  |
 
 Response example:
 
