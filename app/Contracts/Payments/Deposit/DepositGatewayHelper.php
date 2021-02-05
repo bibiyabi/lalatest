@@ -87,6 +87,7 @@ trait DepositGatewayHelper
 
         if (
             config('app.is_check_sign') !== false
+            && $this->getKeySign() !== null
             && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $settingParam))
         ) {
             throw new NotFoundResourceException("Sign error.");
