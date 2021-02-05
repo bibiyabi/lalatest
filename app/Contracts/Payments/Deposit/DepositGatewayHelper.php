@@ -30,9 +30,11 @@ trait DepositGatewayHelper
         $orderParam = OrderParam::createFromJson($order->order_param);
 
         $param = $this->createParam($orderParam, $settingParam);
-        $param[$this->getSignKey()] = $this->createSign($param, $settingParam);
+        if ($signKey = $this->getSignKey()) {
+            $param[$signKey] = $this->createSign($param, $settingParam);
+        }
 
-        return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
+        return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
     }
 
     abstract protected function createParam(OrderParam $orderParam, SettingParam $settingParam): array;
@@ -44,7 +46,7 @@ trait DepositGatewayHelper
         return $this->url . $this->orderUri;
     }
 
-    protected function getHeader(): array
+    protected function getHeader($param, SettingParam $settingParam): array
     {
         return [];
     }
@@ -56,7 +58,7 @@ trait DepositGatewayHelper
 
     protected function getSignKey()
     {
-        return 'sign';
+        return $this->orderKeySign;
     }
 
     protected function getMethod()
@@ -78,14 +80,15 @@ trait DepositGatewayHelper
             throw new NotFoundResourceException("Order not found.");
         }
 
-        $key = $order->key;
-        if (empty($key)) {
+        $settingParam = SettingParam::createFromJson($order->key->settings);
+        if (empty($settingParam)) {
             throw new NotFoundResourceException("Order not found.");
         }
 
         if (
             config('app.is_check_sign') !== false
-            && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $key))
+            && $this->getKeySign() !== null
+            && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $settingParam))
         ) {
             throw new NotFoundResourceException("Sign error.");
         }
@@ -104,6 +107,8 @@ trait DepositGatewayHelper
 
         return new CallbackResult(true, $this->getSuccessReturn(), $order, $data[$this->getKeyAmount()]);
     }
+
+    protected abstract function createCallbackSign($data, SettingParam $key);
 
     protected function getKeyStatus()
     {

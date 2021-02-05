@@ -105,7 +105,7 @@ class DsUpIPay extends AbstractWithdrawGateway
     }
 
     protected function isHttps() {
-        return true;
+        return false;
     }
 
     protected function getCurlHeader() {
