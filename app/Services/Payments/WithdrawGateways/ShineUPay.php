@@ -159,12 +159,55 @@ class ShineUPay extends AbstractWithdrawGateway
                 C::AMOUNT
             ];
         } elseif ($type == Type::WALLET) {
+            #for test
             $column = [
                 C::FUND_PASSWORD,
-                C::AMOUNT
+                C::AMOUNT,
+                C::EMAIL,
+                C::COUNTRY,
+                C::STATE,
+                C::CITY,
+                C::ADDRESS,
+                C::FIRST_NAME,
+                C::LAST_NAME,
+                C::MOBILE,
+                C::TELEGRAM,
+                C::CRYPTO_ADDRESS,
+                C::BANK,
+                C::IFSC,
+                C::BANK_PROVINCE,
+                C::BANK_ADDRESS,
+                C::BANK_CITY,
+                C::ZIP,
+                C::BANK_ACCOUNT,
+                C::BANK_NAME,
+                C::UPI_ID,
             ];
         }
 
-        return new WithdrawRequireInfo($type, $column, [], []);
+        #for test
+        $bankCard = [
+            0=>[
+                'id' => 'AAA',
+                'name'=>'好有錢'
+            ],
+            1=>[
+                'id' => 'BBB',
+                'name'=>'好開心'
+            ],
+        ];
+
+        $bank = [
+            0=>[
+                'id' => '001',
+                'name'=>'樂樂銀行'
+            ],
+            1=>[
+                'id' => '003',
+                'name'=>'悠悠銀行'
+            ],
+        ];
+
+        return new WithdrawRequireInfo($type, $column, $bankCard, $bank);
     }
 }
