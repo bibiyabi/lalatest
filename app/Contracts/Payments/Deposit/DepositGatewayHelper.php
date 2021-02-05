@@ -46,7 +46,7 @@ trait DepositGatewayHelper
         return $this->url . $this->orderUri;
     }
 
-    protected function getHeader($param, $settingParam): array
+    protected function getHeader($param, SettingParam $settingParam): array
     {
         return [];
     }
@@ -87,6 +87,7 @@ trait DepositGatewayHelper
 
         if (
             config('app.is_check_sign') !== false
+            && $this->getKeySign() !== null
             && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $settingParam))
         ) {
             throw new NotFoundResourceException("Sign error.");
