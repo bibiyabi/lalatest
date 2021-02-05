@@ -15,16 +15,16 @@ use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 
-class ShineUPay extends AbstractWithdrawGateway
+class InPay extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
     // 下單domain
-    protected $domain = 'testgateway.shineupay.com';
+    protected $domain = '104.149.202.6:8084';
     // 下單網址
-    protected $createSegments = '/withdraw/create';
+    protected $createSegments = '/api/startPayForAnotherOrder';
     // 設定下單sign
     protected $createSign;
-    protected $isCurlProxy = false;
+
     // ================ 回調參數 ==================
     // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'success';
@@ -35,7 +35,7 @@ class ShineUPay extends AbstractWithdrawGateway
     protected $callbackOrderAmountPosition = 'body.amount';
     protected $callbackOrderMessagePosition = 'body.message';
     // 回調成功狀態
-    protected $callbackSuccessStatus = [1];
+    protected $callbackSuccessStatus = [];
     // 回調確認失敗狀態
     protected $callbackFailedStatus = [2];
 
@@ -53,69 +53,63 @@ class ShineUPay extends AbstractWithdrawGateway
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
-            'first_name'       => 'required',
-            'last_name'        => 'required',
-            'mobile'           => 'required',
-            'bank_address'     => 'required',
-            'ifsc'             => 'required',
             'amount'           => 'required',
-            'email'            => 'required',
+            'upi_id'           => 'required',
         ];
     }
 
 
     protected function setCreateSign($post, $settings) {
         $signParams = $this->getNeedGenSignArray($post,  $settings);
-        $this->createSign =  $this->genSign(json_encode($signParams), $settings);
+        $this->createSign =  $this->genSign($signParams, $settings);
     }
 
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
-        if (empty($settings['merchant_number']) || empty($settings['private_key'])) {
+        if (empty($settings['merchant_number'])) {
             throw new InputException('merchant_username or private key not found', ResponseCode::ERROR_PARAMETERS);
         }
         $array = [];
-        $array['merchantId']             = $settings['merchant_number'];
-        $array['timestamp']              = time() . '000';
-        $array['body']['advPasswordMd5'] = md5($settings['private_key']);
-        $array['body']['orderId']        = $input['order_id'];
-        $array['body']['flag']           = 0; // PM說先寫死0
-        $array['body']['bankCode']       = $input['withdraw_address'];
-        $array['body']['bankUser']       = $input['first_name'] . $input['last_name'];
-        $array['body']['bankUserPhone']  = $input['mobile'];
-        $array['body']['bankAddress']    = $input['bank_address'];
-        $array['body']['bankUserEmail']  = $input['email'];
-        $array['body']['bankUserIFSC']   = $input['ifsc'];
-        $array['body']['amount']         = (float) $input['amount'];
-        $array['body']['realAmount']     = (float) $input['amount'];
-        $array['body']['notifyUrl']      = $this->callbackUrl;
-
+        $array['merchantNum']          = $settings['merchant_number'];
+        $array['orderNo']              = $input['order_id'];
+        $array['amount']               = (float) $input['amount'];
+        $array['notifyUrl']            = $this->callbackUrl;
         return $array;
 
     }
 
     protected function genSign($postData, $settings) {
-        return md5($postData . '|'. $settings['md5_key']);
+        $str = '';
+        foreach ($postData as $value) {
+            $str .= $value;
+        }
+        $str .= $settings['md5_key'];
+        return md5($str);
     }
 
     protected function setCreatePostData($post, $settings) {
-        $this->createPostData = json_encode($this->getNeedGenSignArray($post,  $settings));
+        $array = [];
+        $array['merchantNum']          = $settings['merchant_number'];
+        $array['orderNo']              = $post['order_id'];
+        $array['amount']               = (float) $post['amount'];
+        $array['notifyUrl']            = $this->callbackUrl;
+        $array['channelCode']          = 'upi';
+        $array['upiId']                 = $post['upi_id'];
+        $array['sign']                 = $this->createSign;
+        $this->createPostData = $array;
     }
 
     protected function isHttps() {
-        return true;
+        return false;
     }
 
     protected function getCurlHeader() {
         return [
-            'Content-Type: application/json',
-            'Api-Sign: '. $this->getCreateSign(),
-            //"HOST: ".'testgateway.shineupay.com',
         ];
     }
 
     protected function checkCreateOrderIsSuccess($res) {
-        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
+        return isset($res['code']) && $res['code'] == 200;
     }
 
     // ===========================callback start===============================
@@ -156,13 +150,19 @@ class ShineUPay extends AbstractWithdrawGateway
         if ($type == Type::BANK_CARD) {
             $column = [
                 C::FUND_PASSWORD,
-                C::AMOUNT
+                C::BANK_ACCOUNT,
+                C::FIRST_NAME,
+                C::LAST_NAME,
+                C::MOBILE,
+                C::BANK_ADDRESS,
+                C::IFSC,
+                C::AMOUNT,
+                C::EMAIL,
             ];
+
+
         } elseif ($type == Type::WALLET) {
-            $column = [
-                C::FUND_PASSWORD,
-                C::AMOUNT
-            ];
+            $column = [C::ADDRESS, C::AMOUNT, C::ADDRESS];
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);
