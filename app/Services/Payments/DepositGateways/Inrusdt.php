@@ -124,7 +124,7 @@ class Inrusdt implements DepositGatewayInterface
             #for test
             case Type::WALLET:
                 $column = [
-                    C::ACCT_LN ,
+                    C::AMOUNT ,
                     C::BANK_NAME_INPUT ,
                     C::ACCT_NAME   ,
                     C::TXN_TIME  ,
