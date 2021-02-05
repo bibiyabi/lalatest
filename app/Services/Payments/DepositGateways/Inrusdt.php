@@ -119,7 +119,7 @@ class Inrusdt implements DepositGatewayInterface
             'status'         => $param['status'],
             'sysBizNum'      => $param['sysBizNum'],
             'usdtAmount'     => $param['usdtAmount'],
-            'key'            => $key->coin,
+            'key'            => $key->getMd5Key(),
         ];
 
         return strtoupper(md5(http_build_query($data)));
