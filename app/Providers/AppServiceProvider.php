@@ -35,5 +35,12 @@ class AppServiceProvider extends ServiceProvider
                 );
             });
         }
+
+        if ($this->app->request->get('debuglog')){
+            Log::info(
+                $this->app->request->header(),
+                $this->app->request->all()
+            );
+        }
     }
 }

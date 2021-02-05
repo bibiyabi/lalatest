@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b980e78ff275cd97c9724a9f414d4e44",
+    "content-hash": "c4312f0ca95bef4fc9fd538b42eb63ad",
     "packages": [
         {
             "name": "appstract/laravel-opcache",
@@ -18,7 +18,13 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/appstract/laravel-opcache/zipball/d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3",
                 "reference": "d2ce88cddda6af54c14d1f9ceaaf94b54f38f9d3",
-                "shasum": ""
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.3.1|^7.0",

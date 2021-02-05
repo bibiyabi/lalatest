@@ -29,6 +29,10 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     protected $createSign;
     # 送單post data
     protected $createPostData = [];
+    # domain 是否有第三方派發, 如果是固定讀settins->note1
+    protected $isDomainDynamic = false;
+
+    protected $isCurlProxy = true;
 
     protected $domain = '';
     protected $createSegments = '';
@@ -44,6 +48,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     }
 
     protected function setBaseRequest($order, $post):void {
+
         $this->logRequest($order, $post);
         # 設定model
         $this->setOrder($order);
@@ -53,6 +58,9 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         $settings = $this->getSettings($order);
         # 建立sign
         $this->setCreateSign($post, $settings);
+
+        # 設定商戶domain
+        $this->setDoamin($settings);
         # set create order post data
         $this->setCreatePostData($post,  $settings);
     }
@@ -73,7 +81,9 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
     # 設定header
-    abstract protected function getCurlHeader();
+    protected function getCurlHeader() {
+        return [];
+    }
     # 是否用https 有ture 沒有false
     abstract protected function isHttps();
 
@@ -91,6 +101,13 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         if ($validator->fails()) {
             throw new InputException($validator->errors(), Status::ORDER_FAILED);
         }
+    }
+
+    protected function getProxyIp() {
+        if ($this->isHttps()) {
+            return config('app.proxy_ip') . ':8443';
+        }
+        return  config('app.proxy_ip') . ':8000';
     }
 
     # 取得建單狀態
@@ -134,10 +151,22 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     }
 
     protected function getCreateUrl() {
+        if ($this->isCurlProxy) {
+            return 'http://' . $this->getProxyIp() . $this->createSegments;;
+        }
+
         $http = ($this->isHttps()) ? 'https://' : 'http://';
         return  $http . $this->domain. $this->createSegments;
     }
 
+    public function setDoamin($settings) {
+        if ($this->isDomainDynamic) {
+            if (empty($settings['note1'])) {
+                throw new WithdrawException(' empty dynamic domain in settings note1 ', Status::ORDER_FAILED);
+            }
+            $this->domain = $settings['note1'];
+        }
+    }
 
     public function send() {
 
@@ -157,8 +186,8 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         ->setPost($this->getCreatePostData())
         ->exec();
 
-        Log::channel('withdraw')->info(new LogLine('CURL result' . print_r($curlRes, true)));
-        Log::channel('withdraw')->info(new LogLine('CURL createPostData '. print_r($this->getCreatePostData(), true)));
+        Log::channel('withdraw')->info(new LogLine('CURL result' . print_r($curlRes, true). ' header ' . print_r($this->getCurlHeader(), true)));
+        Log::channel('withdraw')->info(new LogLine('CURL createPostData url:'.$url. ' '. print_r($this->getCreatePostData(), true)));
 
         return $this->getSendReturn($curlRes);
     }
@@ -181,7 +210,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
     protected function decode($data) {
         $decode =  json_decode($data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new DecodeException(json_last_error() . 'decode error '. $data, Status::ORDER_ERROR);
+            throw new DecodeException(json_last_error() . 'decode error @'. $data . '@', Status::ORDER_ERROR);
         }
         return $decode;
     }

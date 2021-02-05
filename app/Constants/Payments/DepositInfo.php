@@ -42,6 +42,7 @@ class DepositInfo
     public const BANK_ADDRESS       = 34;
     public const BANK_CITY          = 35;
     public const BANK_ACCOUNT       = 36;
+    public const UPI_ID             = 37;
 
 
 }
