@@ -47,7 +47,13 @@ class Inrusdt implements DepositGatewayInterface
     # 回調成功回應值
     private $successReturn = 'success';
 
-    # 建立下單參數
+    /**
+     * 建立下單參數
+     *
+     * @param OrderParam $param
+     * @param SettingParam $settings
+     * @return array
+     */
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
         return [
