@@ -30,7 +30,9 @@ trait DepositGatewayHelper
         $orderParam = OrderParam::createFromJson($order->order_param);
 
         $param = $this->createParam($orderParam, $settingParam);
-        $param[$this->getSignKey()] = $this->createSign($param, $settingParam);
+        if ($signKey = $this->getSignKey()) {
+            $param[$signKey] = $this->createSign($param, $settingParam);
+        }
 
         return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
     }
@@ -56,7 +58,7 @@ trait DepositGatewayHelper
 
     protected function getSignKey()
     {
-        return 'sign';
+        return $this->orderKeySign;
     }
 
     protected function getMethod()

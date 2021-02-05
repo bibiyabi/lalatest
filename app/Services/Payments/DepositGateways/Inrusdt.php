@@ -29,6 +29,9 @@ class Inrusdt implements DepositGatewayInterface
     # 下單方式 form url
     private $returnType = 'form';
 
+    # 下單欄位名稱-簽章 null or string
+    private $orderKeySign = null;
+
     # 回調欄位名稱-狀態
     private $keyStatus = 'status';
 
