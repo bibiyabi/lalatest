@@ -17,26 +17,37 @@ class Inrusdt implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
+    # 下單方式 get post
     private $method = 'get';
 
+    # 第三方域名
     private $url = 'https://www.inrusdt.com';
 
+    # 充值 uri
     private $orderUri = '/b/recharge';
 
+    # 下單方式 form url
     private $returnType = 'form';
 
+    # 回調欄位名稱-狀態
     private $keyStatus = 'status';
 
+    # 回調欄位成功狀態值
     private $keyStatusSuccess = 1;
 
+    # 回調欄位名稱-訂單編號
     private $keyOrderId = 'orderId';
 
+    # 回調欄位名稱-簽章
     private $keySign = 'sign';
 
+    # 回調欄位名稱-金額
     private $keyAmount = 'amount';
 
+    # 回調成功回應值
     private $successReturn = 'success';
 
+    # 建立下單參數
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
         return [
@@ -50,6 +61,13 @@ class Inrusdt implements DepositGatewayInterface
         ];
     }
 
+    /**
+     * 建立下單簽名
+     *
+     * @param array $param 下單參數
+     * @param SettingParam $key 後臺設定參數
+     * @return string
+     */
     protected function createSign(array $param, SettingParam $key): string
     {
         ksort($param);
@@ -64,12 +82,25 @@ class Inrusdt implements DepositGatewayInterface
         return strtoupper($sign);
     }
 
+    /**
+     * form 直接回傳，url 回傳 url
+     *
+     * @param string $unprocessed form 會是 form、url 會是第三方回應
+     * @return string
+     */
     public function processOrderResult($unprocessed): string
     {
         return $unprocessed;
     }
 
-    protected function createCallbackSign($param, $key): string
+     /**
+      * 建立回調簽名
+      *
+      * @param array $param request()->all
+      * @param SettingParam $key
+      * @return string
+      */
+    protected function createCallbackSign($param, SettingParam $key): string
     {
         $data = [
             'merchantBizNum' => $param['merchantBizNum'],
@@ -85,6 +116,12 @@ class Inrusdt implements DepositGatewayInterface
         return strtoupper(md5(http_build_query($data)));
     }
 
+    /**
+     * 後台設定提示字（英文）
+     *
+     * @param string $type
+     * @return Placeholder
+     */
     public function getPlaceholder($type): Placeholder
     {
         switch ($type) {
@@ -114,7 +151,12 @@ class Inrusdt implements DepositGatewayInterface
         );
     }
 
-    # 該支付有支援的渠道  指定前台欄位
+    /**
+     * 前台設定應輸入欄位
+     *
+     * @param string $type
+     * @return DepositRequireInfo
+     */
     public function getRequireInfo($type): DepositRequireInfo
     {
         switch ($type) {

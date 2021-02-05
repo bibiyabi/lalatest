@@ -78,14 +78,14 @@ trait DepositGatewayHelper
             throw new NotFoundResourceException("Order not found.");
         }
 
-        $key = $order->key;
-        if (empty($key)) {
+        $settingParam = SettingParam::createFromJson($order->key->settings);
+        if (empty($settingParam)) {
             throw new NotFoundResourceException("Order not found.");
         }
 
         if (
             config('app.is_check_sign') !== false
-            && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $key))
+            && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $settingParam))
         ) {
             throw new NotFoundResourceException("Sign error.");
         }
@@ -104,6 +104,8 @@ trait DepositGatewayHelper
 
         return new CallbackResult(true, $this->getSuccessReturn(), $order, $data[$this->getKeyAmount()]);
     }
+
+    protected abstract function createCallbackSign($data, SettingParam $key);
 
     protected function getKeyStatus()
     {
