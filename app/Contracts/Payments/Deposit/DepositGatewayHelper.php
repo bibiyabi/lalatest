@@ -46,7 +46,7 @@ trait DepositGatewayHelper
         return $this->url . $this->orderUri;
     }
 
-    protected function getHeader($param, $settingParam): array
+    protected function getHeader($param, SettingParam $settingParam): array
     {
         return [];
     }
