@@ -25,7 +25,7 @@ class ShineUPay implements DepositGatewayInterface
     private $method = 'post';
 
     # 第三方域名
-    private $url = 'testgateway.shineupay.com';
+    private $url = 'https://testgateway.shineupay.com';
 
     # 充值 uri
     private $orderUri = '/pay/create';
@@ -64,11 +64,15 @@ class ShineUPay implements DepositGatewayInterface
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
         return [
-            'amount' => $param->getAmount(),
-            'orderId' => $param->getOrderId(),
-            'details' => 'recharge',
-            'userId' => Str::random(8),
-            'notifyUrl' => config('app.url') . '/callback/deposit/Inrusdt',
+            'merchantId' => $settings->getMerchant(),
+            'timestamp' => time() . '000',
+            'body' => [
+                'amount' => (float)$param->getAmount(),
+                'orderId' => $param->getOrderId(),
+                'details' => 'recharge',
+                'userId' => Str::random(8),
+                'notifyUrl' => config('app.url') . '/callback/deposit/Inrusdt',
+            ],
         ];
     }
 
@@ -88,7 +92,7 @@ class ShineUPay implements DepositGatewayInterface
      */
     protected function createSign(array $param, SettingParam $key): string
     {
-        return json_encode($param) . '|' . $key->getMd5Key();
+        return md5(json_encode($param) . '|' . $key->getMd5Key());
     }
 
     public function depositCallback(Request $request): CallbackResult
@@ -136,12 +140,14 @@ class ShineUPay implements DepositGatewayInterface
     /**
      * form 直接回傳，url 回傳 url
      *
-     * @param \Illuminate\Http\Client\Response $unprocessed form 會是 form、url 會是第三方回應
+     * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string
      */
     public function processOrderResult($unprocessed): string
     {
-        return $unprocessed->body('content');
+        $data = json_decode($unprocessed, true);
+
+        return $data['body']['content'];
     }
 
      /**
@@ -167,7 +173,7 @@ class ShineUPay implements DepositGatewayInterface
         return new Placeholder(
             $type,
             '',
-            '',
+            'Please input merchantId',
             '',
             '',
             'Please input MD5 Key',
