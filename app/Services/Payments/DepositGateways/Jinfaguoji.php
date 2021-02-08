@@ -180,7 +180,7 @@ class Jinfaguoji implements DepositGatewayInterface
     {
 		switch ($type) {
             case Type::WALLET:
-                $transactionType = ['UPI'];
+                $transactionType = ['upi'];
                 break;
 			
 			case Type::BANK_CARD:
