@@ -172,10 +172,10 @@ class InPay extends AbstractWithdrawGateway
         return new Placeholder(
             $type,
             '',
-            '请填上商户编号',
+            'please input 商户编号',
             '',
             '',
-            '商户秘钥',
+            'please input 商户秘钥',
             '',
             '',
             $transactionType,

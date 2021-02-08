@@ -41,7 +41,7 @@ class DsupiTest extends TestCase
             'user_id' => $this->user->id,
             'gateway_id' => $gateway->id,
             'user_pk' => 123,
-            'settings' =>  '{"id":1,"user_id":1,"gateway_id":3,"account":"15555551234","merchant_number":"1022239","md5_key":"apHfz0UTH1PzSNvJThlFPvCirKMwV3Ds","note1":"api.fushrshinpay.com"}'
+            'settings' =>  '{"transaction_type":"upi","id":1,"user_id":1,"gateway_id":3,"account":"15555551234","merchant_number":"1022239","md5_key":"apHfz0UTH1PzSNvJThlFPvCirKMwV3Ds","note1":"api.fushrshinpay.com"}'
 
         ])->create();
 
@@ -51,7 +51,6 @@ class DsupiTest extends TestCase
             'pk' => $setting->user_pk,
             'type' => 'bank_card',
             'amount' => 123,
-            'transaction_type' => 'BankCardTransferBankCard'
         ]);
 
         $response->assertJsonFragment(['success'=>true]);
