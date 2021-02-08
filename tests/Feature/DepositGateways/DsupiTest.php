@@ -11,7 +11,7 @@ use App\Models\Merchant;
 use App\Models\Gateway;
 
 
-class AAATest extends TestCase
+class DsupiTest extends TestCase
 {
     use DatabaseTransactions;
 

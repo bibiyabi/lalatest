@@ -11,7 +11,7 @@ use App\Models\Merchant;
 use App\Models\Gateway;
 
 
-class DsUpIPayTest extends TestCase
+class DsupiPayTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -35,12 +35,12 @@ class DsUpIPayTest extends TestCase
      */
     public function test_create()
     {
-        $this->markTestSkipped('還不用測');
+        //$this->markTestSkipped('還不用測');
         $this->withoutMiddleware();
 
         $gateway = Gateway::factory([
-            'name' => 'DsUpiPay',
-            'real_name' => 'DsUpiPay',
+            'name' => 'Dsupi',
+            'real_name' => 'Dsupi',
         ])->create();
 
         $setting = Setting::factory([

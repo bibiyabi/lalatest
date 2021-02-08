@@ -107,7 +107,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         if ($this->isHttps()) {
             return config('app.proxy_ip') . ':8443';
         }
-        return  config('app.proxy_ip') . ':8000';
+        return  config('app.proxy_ip') . ':8080';
     }
 
     # 取得建單狀態

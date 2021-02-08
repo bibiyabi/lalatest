@@ -35,7 +35,6 @@ class InPayTest extends TestCase
      */
     public function test_create()
     {
-        $this->markTestSkipped('還不用測');
         $this->withoutMiddleware();
 
         $gateway = Gateway::factory([
