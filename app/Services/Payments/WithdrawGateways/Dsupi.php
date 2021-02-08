@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 
-class DsUpIPay extends AbstractWithdrawGateway
+class Dsupi extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
     # 商戶動態域名settings->note1

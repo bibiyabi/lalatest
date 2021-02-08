@@ -23,9 +23,9 @@ class Dsupi implements DepositGatewayInterface
 
     private $url = '';
 
-    private $orderUri = '/withdrawal/creatWithdrawal';
+    private $orderUri = '/index/unifiedorder?format=json';
 
-    private $returnType = 'form';
+    private $returnType = 'url';
 
     private $keyStatus = 'code';
 
@@ -39,16 +39,19 @@ class Dsupi implements DepositGatewayInterface
 
     private $successReturn = 'success';
 
+    private $orderKeySign = 'sign';
+
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
+
         return [
             'appid' => $settings->getMerchant(),
             'out_trade_no' => $param->getOrderId(),
             'version' => 'v2.0',
-            'pay_type' => $settings->getTransactionType(),
+            'pay_type' => $settings->getTransactionType() ?: $param->getTransactionType(),
             'amount' =>  sprintf("%.2f", $param->getAmount()),
-            'callback_url' => config('app.url') . '/callback/deposit/Inrusdt',
-            'callback_url' => '',
+            'callback_url' => config('app.url') . '/callback/deposit/Dsupi',
+            'success_url' => '',
             'error_url' => '',
         ];
     }
@@ -61,12 +64,12 @@ class Dsupi implements DepositGatewayInterface
         $param = $this->createParam($orderParam, $settingParam);
         $param[$this->getSignKey()] = $this->createSign($param, $settingParam);
 
-        return new HttpParam($this->getUrl($settingParam), $this->getMethod(), $this->getHeader(), $param, $this->getConfig());
+        return new HttpParam($this->getUrl($settingParam), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
     }
 
     protected function getUrl(SettingParam $key): string
     {
-        return  $key->note1 . $this->orderUri;
+        return  $key->getNote1() . $this->orderUri;
     }
 
     protected function createSign(array $data, SettingParam $key): string
@@ -76,6 +79,7 @@ class Dsupi implements DepositGatewayInterface
         $string_a = http_build_query($data);
         $string_a = urldecode($string_a);
         $string_sign_temp = $string_a . "&key=" . $key->getMd5Key();
+
         $sign = md5($string_sign_temp);
         $result = strtoupper($sign);
 
@@ -97,7 +101,7 @@ class Dsupi implements DepositGatewayInterface
         switch ($type) {
 
             case Type::WALLET:
-                $transactionType = ['wechat', 'alipay'];
+                $transactionType = [];
                 break;
 
             case Type::BANK_CARD:
@@ -111,19 +115,19 @@ class Dsupi implements DepositGatewayInterface
 
         return new Placeholder(
             $type,
-            '用户账号',
-            '用户APPID',
+            'Please input 用户账号',
+            'Please input 用户APPID',
             '',
             '',
             'Please input Key',
             '',
             '',
             $transactionType,
+            null,
+            null,
             '',
             '',
-            '',
-            '',
-            '我司域名'
+            'Please input 域名'
         );
     }
 
@@ -134,40 +138,7 @@ class Dsupi implements DepositGatewayInterface
             case Type::BANK_CARD:
                 $column = [C::AMOUNT];
                 break;
-            #for test
-            case Type::WALLET:
-                $column = [
-                    C::AMOUNT ,
-                    C::BANK_NAME_INPUT ,
-                    C::ACCT_NAME   ,
-                    C::TXN_TIME  ,
-                    C::UPLOAD_TXN   ,
-                    C::CRYPTO_AMOUNT  ,
-                    C::TXID       ,
-                    C::DEPOSIT_AMOUNT  ,
-                    C::BANK_NAME_FOR_CARD ,
-                    C::CARD_NUMBER       ,
-                    C::MOBILE_NUMBER     ,
-                    C::ACCOUNT_ID      ,
-                    C::EMAIL            ,
-                    C::COUNTRY         ,
-                    C::STATE           ,
-                    C::CITY             ,
-                    C::ADDRESS_WALLET   ,
-                    C::ZIP             ,
-                    C::LAST_NAME        ,
-                    C::FIRST_NAME       ,
-                    C::TELEGRAM        ,
-                    C::EXPIRED_DATE     ,
-                    C::BANK              ,
-                    C::IFSC_INDIA        ,
-                    C::BANK_PROVINCE     ,
-                    C::BANK_ADDRESS      ,
-                    C::BANK_CITY        ,
-                    C::BANK_ACCOUNT      ,
-                    C::UPI_ID            ,
-                ];
-                break;
+
 
             default:
                 throw new UnsupportedTypeException();

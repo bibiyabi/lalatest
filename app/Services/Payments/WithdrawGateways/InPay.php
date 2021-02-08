@@ -105,6 +105,7 @@ class InPay extends AbstractWithdrawGateway
 
     protected function getCurlHeader() {
         return [
+            "HOST: ". $this->domain,
         ];
     }
 
