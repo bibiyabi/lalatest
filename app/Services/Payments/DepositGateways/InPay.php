@@ -81,12 +81,11 @@ class InPay implements DepositGatewayInterface
         $keys = ['merchantNum', 'orderNo', 'amount', 'notifyUrl'];
         $md5str = '';
         foreach ($keys as $k) {
-			$md5str .= $k . '=' . $params[$k] . '&';
+			$md5str .= $params[$k];
         }
-        $md5str .= 'key=' . $key->getMd5Key();
+        $md5str .= $key->getMd5Key();
 
-        $sign = md5($md5str);
-        return strtoupper($sign);
+        return md5($md5str);
     }
 
     /**
