@@ -81,7 +81,7 @@ class InPay implements DepositGatewayInterface
         $keys = ['merchantNum', 'orderNo', 'amount', 'notifyUrl'];
         $md5str = '';
         foreach ($keys as $k) {
-			$md5str .= $params[$k];
+			$md5str .= $param[$k];
         }
         $md5str .= $key->getMd5Key();
 
@@ -135,7 +135,7 @@ class InPay implements DepositGatewayInterface
             case Type::WALLET:
                 $transactionType = ['upi'];
                 break;
-			
+
 			case Type::BANK_CARD:
                 $transactionType = ['bankCard'];
                 break;
