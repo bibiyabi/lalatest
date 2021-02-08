@@ -178,8 +178,7 @@ class InPay extends AbstractWithdrawGateway
             '商户秘钥',
             '',
             '',
-            [],
-            $transactionType
+            $transactionType,
         );
     }
 
