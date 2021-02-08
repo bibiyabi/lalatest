@@ -71,7 +71,7 @@ class ShineUPay implements DepositGatewayInterface
                 'orderId' => $param->getOrderId(),
                 'details' => 'recharge',
                 'userId' => Str::random(8),
-                'notifyUrl' => config('app.url') . '/callback/deposit/Inrusdt',
+                'notifyUrl' => config('app.url') . '/callback/deposit/ShineUPay',
             ],
         ];
     }
@@ -160,6 +160,7 @@ class ShineUPay implements DepositGatewayInterface
     protected function createCallbackSign($param, SettingParam $key): string
     {
         return $this->createSign($param, $key);
+
     }
 
     /**
