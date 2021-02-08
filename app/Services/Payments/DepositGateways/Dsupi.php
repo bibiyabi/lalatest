@@ -53,6 +53,7 @@ class Dsupi implements DepositGatewayInterface
             'callback_url' => config('app.url') . '/callback/deposit/Dsupi',
             'success_url' => '',
             'error_url' => '',
+            'full_name' => $param->getTransactionType(),
         ];
     }
 
