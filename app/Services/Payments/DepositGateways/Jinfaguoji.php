@@ -76,7 +76,7 @@ class Jinfaguoji implements DepositGatewayInterface
 			'phone'    		=>  $param->getMobile(),
 			'price' 		=>  $price,
 			'country_code' 	=>  'IND',
-            'pay_type'      => $settings->getTransactionType() ?: $param->getTransactionType(),
+            'pay_type' =>empty($settings->getTransactionType()) ? 'YDBANK': $settings->getTransactionType(),
             'notify_url'    => config('app.url') . '/callback/deposit/Jinfaguoji',
 			'bankno'        => '000000',
 			'bankcode'      => '000000',
@@ -178,6 +178,20 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     public function getPlaceholder($type): Placeholder
     {
+		switch ($type) {
+            case Type::WALLET:
+                $transactionType = ['UPI'];
+                break;
+			
+			case Type::BANK_CARD:
+                $transactionType = [];
+                break;
+
+            default:
+                $transactionType = [];
+                break;
+        }
+		
         return new Placeholder(
             $type,
             '',
