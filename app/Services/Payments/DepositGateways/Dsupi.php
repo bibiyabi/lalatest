@@ -137,8 +137,7 @@ class Dsupi implements DepositGatewayInterface
         switch ($type) {
             case Type::BANK_CARD:
                 $column = [
-                    C::AMOUNT,
-                    C::FUND_PASSWORD
+                    C::AMOUNT
                 ];
                 break;
 
