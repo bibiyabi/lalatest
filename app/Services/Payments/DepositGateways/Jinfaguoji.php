@@ -216,7 +216,7 @@ class Jinfaguoji implements DepositGatewayInterface
             C::AMOUNT,
 			C::LAST_NAME,
 			C::FIRST_NAME,
-			C:EMAIL,
+			C::EMAIL,
 			C::MOBILE_NUMBER,
 //			C::BANK_ACCOUNT,
 //			C::BANK,
