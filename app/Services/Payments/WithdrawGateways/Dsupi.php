@@ -180,7 +180,7 @@ class Dsupi extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-        if ($type == Type::BANK_CARD) {
+        if ($type == Type::WALLET) {
             $column = [
                 C::FUND_PASSWORD,
                 C::BANK_ACCOUNT,
