@@ -180,7 +180,7 @@ class Jinfaguoji implements DepositGatewayInterface
     {
 		switch ($type) {
             case Type::WALLET:
-                $transactionType = ['upi'];
+                $transactionType = ['UPI'];
                 break;
 			
 			case Type::BANK_CARD:
@@ -212,27 +212,40 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     public function getRequireInfo($type): DepositRequireInfo
     {
-        $column = [
-            C::AMOUNT,
-			C::LAST_NAME,
-			C::FIRST_NAME,
-			C::EMAIL,
-			C::MOBILE_NUMBER,
-//			C::BANK_ACCOUNT,
-//			C::BANK,
-        ];
-/* 泰国网银需上传真实银行账户		
-		$bank = [
-            0=>[
-                'id' => '001',
-                'name'=>'樂樂銀行'
-                ],
-            1=>[
-                'id' => '003',
-                'name'=>'悠悠銀行'
-            ],
-        ];
-*/
+		 switch ($type) {
+            case Type::BANK_CARD:
+                $column = [
+						C::AMOUNT,
+						C::LAST_NAME,
+						C::FIRST_NAME,
+						C::EMAIL,
+						C::MOBILE_NUMBER,
+			//			C::BANK_ACCOUNT,
+			//			C::BANK,
+					];
+			/* 泰国网银需上传真实银行账户		
+					$bank = [
+						0=>[
+							'id' => '001',
+							'name'=>'樂樂銀行'
+							],
+						1=>[
+							'id' => '003',
+							'name'=>'悠悠銀行'
+						],
+					];
+			*/
+                break;
+
+			case Type::WALLET:
+                $column = [C::AMOUNT];
+                break;
+
+            default:
+                throw new UnsupportedTypeException();
+                break;
+        }
+		
         return new DepositRequireInfo($type, $column, []);
     }
 }
