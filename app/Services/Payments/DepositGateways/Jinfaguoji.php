@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use Str;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
-class ShineUPay implements DepositGatewayInterface
+class Jinfaguoji implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
@@ -25,10 +25,10 @@ class ShineUPay implements DepositGatewayInterface
     private $method = 'post';
 
     # 第三方域名
-    private $url = 'https://testgateway.shineupay.com';
+    private $url = 'http://pay.gzmnsy.com:8089';
 
     # 充值 uri
-    private $orderUri = '/pay/create';
+    private $orderUri = '/createOrder';
 
     # 下單方式 form url
     private $returnType = 'url';
@@ -40,16 +40,16 @@ class ShineUPay implements DepositGatewayInterface
     private $keyStatus = 'status';
 
     # 回調欄位成功狀態值
-    private $keyStatusSuccess = 1;
+    private $keyStatusSuccess = '00';
 
     # 回調欄位名稱-訂單編號
-    private $keyOrderId = 'orderId';
+    private $keyOrderId = 'order_no';
 
     # 回調欄位名稱-簽章
     private $keySign = null;
 
     # 回調欄位名稱-金額
-    private $keyAmount = 'amount';
+    private $keyAmount = 'price';
 
     # 回調成功回應值
     private $successReturn = 'success';
@@ -63,23 +63,23 @@ class ShineUPay implements DepositGatewayInterface
      */
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
-        return [
-            'merchantId' => $settings->getMerchant(),
-            'timestamp' => time() . '000',
-            'body' => [
-                'amount' => (float)$param->getAmount(),
-                'orderId' => $param->getOrderId(),
-                'details' => 'recharge',
-                'userId' => Str::random(8),
-                'notifyUrl' => config('app.url') . '/callback/deposit/ShineUPay',
-            ],
-        ];
-    }
+		// int	金额，元为单位
+		$num = floor($param->getAmount() * 10) % 10;
+		$price = floor($param->getAmount());
+		$num == 9 AND $price ++;
 
-    protected function getHeader($param, SettingParam $settingParam): array
-    {
         return [
-            'Api-Sign' => $this->createSign($param, $settingParam),
+            'mer_no'   		=> $settings->getMerchant(),
+            'order_no' 		=> $param->getOrderId(),			
+			'pname'    		=>  $param->getLastName().$param->getFirstName(),
+			'pemail'   		=>  $param->getEmail(),
+			'phone'    		=>  $param->getMobile(),
+			'price' 		=>  $price,
+			'country_code' 	=>  'IND',
+            'pay_type'      => $settings->getTransactionType() ?: $param->getTransactionType(),
+            'notify_url'    => config('app.url') . '/callback/deposit/Jinfaguoji',
+			'bankno'        => '000000',
+			'bankcode'      => '000000',
         ];
     }
 
@@ -92,7 +92,15 @@ class ShineUPay implements DepositGatewayInterface
      */
     protected function createSign(array $param, SettingParam $key): string
     {
-        return md5(json_encode($param) . '|' . $key->getMd5Key());
+        ksort($param);
+        $string_a = http_build_query($param);
+        $string_a = urldecode($string_a);
+        $string_sign_temp = $string_a . "&key=" . $key->getMd5Key();
+
+        $sign = md5($string_sign_temp);
+        $result = strtoupper($sign);
+
+        return $result;
     }
 
     public function depositCallback(Request $request): CallbackResult
@@ -147,7 +155,7 @@ class ShineUPay implements DepositGatewayInterface
     {
         $data = json_decode($unprocessed, true);
 
-        return $data['body']['content'];
+        return $data['data']['qrcode_url'];
     }
 
      /**
@@ -160,7 +168,6 @@ class ShineUPay implements DepositGatewayInterface
     protected function createCallbackSign($param, SettingParam $key): string
     {
         return $this->createSign($param, $key);
-
     }
 
     /**
@@ -193,8 +200,25 @@ class ShineUPay implements DepositGatewayInterface
     {
         $column = [
             C::AMOUNT,
+			C::LAST_NAME,
+			C::FIRST_NAME,
+			C:EMAIL,
+			C::MOBILE_NUMBER,
+//			C::BANK_ACCOUNT,
+//			C::BANK,
         ];
-
+/* 泰国网银需上传真实银行账户		
+		$bank = [
+            0=>[
+                'id' => '001',
+                'name'=>'樂樂銀行'
+                ],
+            1=>[
+                'id' => '003',
+                'name'=>'悠悠銀行'
+            ],
+        ];
+*/
         return new DepositRequireInfo($type, $column, []);
     }
 }
