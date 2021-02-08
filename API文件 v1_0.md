@@ -102,6 +102,7 @@ POST /api/key
 | data 欄位 內容      | 型態   | 必要參數 | 說明                |
 | ------------------- | ------ | -------- | ------------------- |
 | info_title          | string |          | 信息名稱            |
+| transaction_type    | string |          | 交易方式-出入款:信用卡/電子錢包            |
 | account             | string |          | 金流帳戶號          |
 | merchant_number     | string |          | 金流商戶號          |
 | md5_key             | string |          | md5                 |
