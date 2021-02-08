@@ -52,7 +52,7 @@ class InPayTest extends TestCase
         $orderId = 'unittest'. uniqid();
 
         $res = $this->post('/api/withdraw/create', [
-            'payment_type'     => 'upi',
+            'type'             => 'e_wallet',
             'order_id'         =>  $orderId,
             'pk'               =>  $setting->user_pk,
             'amount'           => '101',
