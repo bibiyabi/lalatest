@@ -30,7 +30,7 @@ class DepositController extends Controller
         ]);
 
         $service = App::make(DepositService::class);
-        $rs = App::call([$service, 'create'], ['input' => $validated]);
+        $rs = App::call([$service, 'create'], ['input' => $request->post()]);
 
         return $rs->getSuccess()
             ? RB::success($rs->getResult())
