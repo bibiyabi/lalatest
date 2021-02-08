@@ -90,13 +90,28 @@ class InPay extends AbstractWithdrawGateway
     protected function setCreatePostData($post, $settings) {
         $array = [];
         $array['merchantNum']          = $settings['merchant_number'];
+
         $array['orderNo']              = $post['order_id'];
         $array['amount']               = (float) $post['amount'];
         $array['notifyUrl']            = $this->callbackUrl;
-        $array['channelCode']          = 'upi';
-        $array['upiId']                 = $post['upi_id'];
+        $array['channelCode']          = $this->getChannelType($post['type']);
+        $array['accountHolder']        = $post['first_name'] . $post['last_name'];
+        $array['bankCardAccount']      = $post['bank_address'];
+        $array['openAccountBank']      = $post['bank_name'];
+        $array['ifsc']                 = $post['ifsc'];
+        $array['upiId']                = $post['upi_id'];
         $array['sign']                 = $this->createSign;
         $this->createPostData = $array;
+    }
+
+    public function getChannelType($type) {
+        if ($type == Type::BANK_CARD) {
+            return 'bankCard';
+        }
+        if ($type == Type::WALLET) {
+            return 'upi';
+        }
+        return '';
     }
 
     protected function isHttps() {
@@ -139,8 +154,33 @@ class InPay extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type,'','请填上商户编号', '', '提现密码','商户秘钥','',
-        '',);
+
+        switch ($type) {
+            case Type::BANK_CARD:
+                $transactionType = ['bankCard'];
+                break;
+
+            case Type::WALLET:
+                $transactionType = ['upi'];
+                break;
+
+            default:
+                $transactionType = [];
+                break;
+        }
+
+        return new Placeholder(
+            $type,
+            '',
+            '请填上商户编号',
+            '',
+            '',
+            '商户秘钥',
+            '',
+            '',
+            [],
+            $transactionType
+        );
     }
 
 
@@ -150,20 +190,22 @@ class InPay extends AbstractWithdrawGateway
         $column = [];
         if ($type == Type::BANK_CARD) {
             $column = [
+                C::AMOUNT,
                 C::FUND_PASSWORD,
-                C::BANK_ACCOUNT,
+                C::BANK_ADDRESS,
                 C::FIRST_NAME,
                 C::LAST_NAME,
-                C::MOBILE,
-                C::BANK_ADDRESS,
+                C::BANK_NAME,
                 C::IFSC,
-                C::AMOUNT,
-                C::EMAIL,
             ];
 
 
         } elseif ($type == Type::WALLET) {
-            $column = [C::ADDRESS, C::AMOUNT, C::ADDRESS];
+            $column = [
+                C::AMOUNT,
+                C::FUND_PASSWORD,
+                C::UPI_ID,
+            ];
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);
