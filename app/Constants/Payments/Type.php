@@ -10,17 +10,17 @@ class Type
     public const CRYPTO_CURRENCY    = 'cryptocurrency';
 
     const type = [
-        'credit_card'       => 1,
-        'bank_card'         => 2,
-        'e_wallet'          => 3,
-        'cryptocurrency'    => 4,
+        'bank_card'         => 1,
+        'e_wallet'          => 2,
+        'cryptocurrency'    => 3,
+        'credit_card'       => 4,
     ];
 
     const typeName = [
-        1 => self::CREDIT_CARD,
-        2 => self::BANK_CARD,
-        3 => self::WALLET,
-        4 => self::CRYPTO_CURRENCY,
+        1 => self::BANK_CARD,
+        2 => self::WALLET,
+        3 => self::CRYPTO_CURRENCY,
+        4 => self::CREDIT_CARD,
     ];
 
 }
