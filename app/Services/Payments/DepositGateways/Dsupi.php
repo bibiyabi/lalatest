@@ -48,7 +48,7 @@ class Dsupi implements DepositGatewayInterface
             'appid' => $settings->getMerchant(),
             'out_trade_no' => $param->getOrderId(),
             'version' => 'v2.0',
-            'pay_type' => $settings->getTransactionType() ?: $param->getTransactionType(),
+            'pay_type' =>empty($settings->getTransactionType()) ? 'BankCardTransferBankCard': $settings->getTransactionType(),
             'amount' =>  sprintf("%.2f", $param->getAmount()),
             'callback_url' => config('app.url') . '/callback/deposit/Dsupi',
             'success_url' => '',
@@ -62,6 +62,7 @@ class Dsupi implements DepositGatewayInterface
         $orderParam = OrderParam::createFromJson($order->order_param);
 
         $param = $this->createParam($orderParam, $settingParam);
+
         $param[$this->getSignKey()] = $this->createSign($param, $settingParam);
 
         return new HttpParam($this->getUrl($settingParam), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
@@ -99,20 +100,18 @@ class Dsupi implements DepositGatewayInterface
     public function getPlaceholder($type): Placeholder
     {
         switch ($type) {
-
-            case Type::WALLET:
+            case Type::BANK_CARD:
                 $transactionType = [];
                 break;
 
-            case Type::BANK_CARD:
-                $transactionType = ['BankCardTransferBankCard'];
+            case Type::WALLET:
+                $transactionType = ['upi'];
                 break;
 
             default:
                 $transactionType = [];
                 break;
         }
-
         return new Placeholder(
             $type,
             'Please input 用户账号',
@@ -137,7 +136,8 @@ class Dsupi implements DepositGatewayInterface
         switch ($type) {
             case Type::BANK_CARD:
                 $column = [
-                    C::AMOUNT
+                    C::AMOUNT,
+                    C::BANK,
                 ];
                 break;
 
@@ -146,15 +146,55 @@ class Dsupi implements DepositGatewayInterface
                 throw new UnsupportedTypeException();
                 break;
         }
-        #for test
+
         $bank = [
-            0=>[
-                'id' => '001',
-                'name'=>'樂樂銀行'
+            [
+                'id' => '1',
+                'name'=>'ICIC'
                 ],
-            1=>[
-                'id' => '003',
-                'name'=>'悠悠銀行'
+            [
+                'id' => '2',
+                'name'=>'AXIS'
+            ],
+            [
+                'id' => '3',
+                'name'=>'HDFC'
+            ],
+            [
+                'id' => '5',
+                'name'=>'StateBankOfIndia'
+            ],
+            [
+                'id' => '6',
+                'name'=>'PunjabNationalBank'
+            ],
+            [
+                'id' => '7',
+                'name'=>'BankOfIndia'
+            ],
+            [
+                'id' => '8',
+                'name'=>'BankOfBaroda'
+            ],
+            [
+                'id' => '9',
+                'name'=>'CanaraBank'
+            ],
+            [
+                'id' => '10',
+                'name'=>'ReserveBankOfIndia'
+            ],
+            [
+                'id' => '11',
+                'name'=>'UnitedBankOfIndia'
+            ],
+            [
+                'id' => '12',
+                'name'=>'IndianOverseasBank'
+            ],
+            [
+                'id' => '13',
+                'name'=>'KotakMahindraBank'
             ],
         ];
 
