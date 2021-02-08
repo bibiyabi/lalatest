@@ -47,7 +47,7 @@ class DsupiPayTest extends TestCase
             'user_id' => $this->user->id,
             'gateway_id' => $gateway->id,
             'user_pk' => 123,
-            'settings' =>  '{"id":1,"user_id":1,"gateway_id":3,"account":"15555551234","merchant_number":"1022239","md5_key":"apHfz0UTH1PzSNvJThlFPvCirKMwV3Ds","note1":"api.fushrshinpay.com"}'
+            'settings' =>  '{"transaction_type":"1","id":1,"user_id":1,"gateway_id":3,"account":"15555551234","merchant_number":"1022239","md5_key":"apHfz0UTH1PzSNvJThlFPvCirKMwV3Ds","note1":"api.fushrshinpay.com"}'
         ])->create();
 
         $orderId = 'unittest'. uniqid();
@@ -61,7 +61,7 @@ class DsupiPayTest extends TestCase
             'withdraw_address' => '1',
             'first_name'       => 'efefe',
             'last_name'       => 'efefe',
-            'transaction_type'       => '1',
+           // 'transaction_type'       => '1',
             'ifsc'           => '1232312',
         ]);
 

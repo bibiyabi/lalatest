@@ -30,11 +30,11 @@ class Dsupi extends AbstractWithdrawGateway
     // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'success';
     // 回調的orderId位置
-    protected $callbackOrderIdPosition = 'body.orderId';
+    protected $callbackOrderIdPosition = 'data.out_trade_no';
     // 回調的狀態位置
-    protected $callbackOrderStatusPosition = 'body.status';
-    protected $callbackOrderAmountPosition = 'body.amount';
-    protected $callbackOrderMessagePosition = 'body.message';
+    protected $callbackOrderStatusPosition = 'code';
+    protected $callbackOrderAmountPosition = 'data.money';
+    protected $callbackOrderMessagePosition = 'msg';
     // 回調成功狀態
     protected $callbackSuccessStatus = [];
     // 回調確認失敗狀態
@@ -76,7 +76,7 @@ class Dsupi extends AbstractWithdrawGateway
         $array['money']        = sprintf("%.2f",$input['amount']);
         $array['name']         = $input['first_name'] . $input['last_name'];
         $array['bank_type']    = '1';
-        $array['bank_id']      = $input['transaction_type'];
+        $array['bank_id']      = $settings['transaction_type'];
         $array['callback']     = $this->callbackUrl;
         $array['out_trade_no'] = $input['order_id'];
         $array['ifsc']         = $input['ifsc'];
@@ -105,7 +105,7 @@ class Dsupi extends AbstractWithdrawGateway
     }
 
     protected function isHttps() {
-        return false;
+        return true;
     }
 
     protected function getCurlHeader() {
@@ -116,7 +116,7 @@ class Dsupi extends AbstractWithdrawGateway
     }
 
     protected function checkCreateOrderIsSuccess($res) {
-        return isset($res['code']) && $res['code'] == 200;
+        return isset($res['code']) && $res['code'] == 1;
     }
 
     // ===========================callback start===============================
@@ -132,8 +132,9 @@ class Dsupi extends AbstractWithdrawGateway
 
     protected function getCallbackValidateColumns() {
         return [
-            'body.orderId' => 'required',
-            'body.status' => 'required',
+            'code' => 'required',
+            'msg' => 'required',
+            'data.out_trade_no' => 'required',
         ];
     }
 
@@ -145,8 +146,33 @@ class Dsupi extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type,'','请填上商户编号', '', '提现密码','商户秘钥','',
-        '',);
+        switch ($type) {
+
+            case Type::WALLET:
+                $transactionType = ['upi'];
+                break;
+
+            default:
+                $transactionType = [];
+                break;
+        }
+
+        return new Placeholder(
+                $type,
+                'please input 用户账号',
+                'please input APPID',
+                '',
+                '',
+                'please input Key',
+                '',
+                '',
+                $transactionType,
+                [],
+                [],
+                '',
+                '',
+                'please input 域名'
+            );
     }
 
 
@@ -158,18 +184,12 @@ class Dsupi extends AbstractWithdrawGateway
             $column = [
                 C::FUND_PASSWORD,
                 C::BANK_ACCOUNT,
+                C::BANK_ADDRESS,
                 C::FIRST_NAME,
                 C::LAST_NAME,
-                C::MOBILE,
-                C::BANK_ADDRESS,
                 C::IFSC,
-                C::AMOUNT,
-                C::EMAIL,
             ];
 
-
-        } elseif ($type == Type::WALLET) {
-            $column = [C::ADDRESS, C::AMOUNT, C::ADDRESS];
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);
