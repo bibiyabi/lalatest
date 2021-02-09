@@ -98,7 +98,7 @@ class Dsupi implements DepositGatewayInterface
     {
         $data = json_decode($unprocessed, true);
 
-        return $data['data']['url'];
+        return $data['url'];
     }
 
     protected function createCallbackSign($param, $key): string
