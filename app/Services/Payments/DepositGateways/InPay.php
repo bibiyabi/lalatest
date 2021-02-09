@@ -30,7 +30,7 @@ class InPay implements DepositGatewayInterface
     private $returnType = 'form';
 
 	# 下單欄位名稱-簽章 null or string
-	private $orderKeySign = null;
+	private $orderKeySign = 'sign';
 
     # 回調欄位名稱-狀態
     private $keyStatus = 'state';
