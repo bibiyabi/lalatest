@@ -48,7 +48,7 @@ class Dsupi implements DepositGatewayInterface
             'appid' => $settings->getMerchant(),
             'out_trade_no' => $param->getOrderId(),
             'version' => 'v2.0',
-            'pay_type' =>empty($settings->getTransactionType()) ? 'BankCardTransferBankCard': $settings->getTransactionType(),
+            'pay_type' =>empty($settings->getTransactionType()) ? 'CopyToBank': $settings->getTransactionType(),
             'amount' =>  sprintf("%.2f", $param->getAmount()),
             'callback_url' => config('app.url') . '/callback/deposit/Dsupi',
             'success_url' => '',
@@ -136,6 +136,13 @@ class Dsupi implements DepositGatewayInterface
     {
         switch ($type) {
             case Type::BANK_CARD:
+                $column = [
+                    C::AMOUNT,
+                    C::BANK,
+                ];
+                break;
+
+            case Type::WALLET:
                 $column = [
                     C::AMOUNT,
                     C::BANK,
