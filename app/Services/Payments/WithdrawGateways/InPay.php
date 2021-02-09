@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 
+
 class InPay extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
