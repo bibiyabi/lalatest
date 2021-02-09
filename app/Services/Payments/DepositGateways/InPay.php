@@ -12,6 +12,8 @@ use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
 use Str;
+use App\Contracts\Payments\HttpParam;
+use App\Models\Order;
 
 class InPay implements DepositGatewayInterface
 {
@@ -27,7 +29,7 @@ class InPay implements DepositGatewayInterface
     private $orderUri = '/api/startOrder';
 
     # 下單方式 form url
-    private $returnType = 'form';
+    private $returnType = 'url';
 
 	# 下單欄位名稱-簽章 null or string
 	private $orderKeySign = 'sign';
@@ -64,10 +66,34 @@ class InPay implements DepositGatewayInterface
             'orderNo' => $param->getOrderId(),
             'amount' => sprintf("%.2f", $param->getAmount()),
             'notifyUrl' => config('app.url') . '/callback/deposit/InPay',
-			'returnUrl' => '',
+			'returnUrl' => 'aaa',
             'payType' => $settings->getTransactionType(),
         ];
     }
+
+    public function genDepositParam(Order $order): HttpParam
+    {
+        $settingParam = SettingParam::createFromJson($order->key->settings);
+        $orderParam = OrderParam::createFromJson($order->order_param);
+
+        $param = $this->createParam($orderParam, $settingParam);
+        if ($signKey = $this->getSignKey()) {
+            $param[$signKey] = $this->createSign($param, $settingParam);
+        }
+
+        return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
+    }
+
+    protected function getConfig(): array
+    {
+        return ['asForm' => 1];
+    }
+
+    protected function getHeader($param, SettingParam $settingParam): array
+    {
+        return ['Content-Type: application/x-www-form-urlencoded'];
+    }
+
 
     /**
      * 建立下單簽名
@@ -96,7 +122,9 @@ class InPay implements DepositGatewayInterface
      */
     public function processOrderResult($unprocessed): string
     {
-        return $unprocessed;
+        $data = json_decode($unprocessed, true);
+
+        return $data['data']['payUrl'];
     }
 
      /**

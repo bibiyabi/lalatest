@@ -12,10 +12,18 @@ class UrlResult implements ResultFactoryInterface
         $method = $param->getMethod();
         switch ($method) {
             case 'post':
-            $result = Http::withHeaders($param->getHeader())
-                ->withOptions(['verify'=>false])
-                ->post($param->getUrl(), $param->getBody());
-                break;
+               $orderConfig = $param->getOrderConfig();
+               if (isset($orderConfig['asForm'])) {
+                    $result = Http::asForm()->withHeaders($param->getHeader())
+                    ->withOptions(['verify'=>false])
+                    ->post($param->getUrl(), $param->getBody());
+                    break;
+               } else {
+                    $result = Http::withHeaders($param->getHeader())
+                    ->withOptions(['verify'=>false])
+                    ->post($param->getUrl(), $param->getBody());
+                    break;
+               }
 
             case 'get':
             $result = Http::withHeaders($param->getHeader())
