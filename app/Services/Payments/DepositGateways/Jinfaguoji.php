@@ -112,7 +112,7 @@ class Jinfaguoji implements DepositGatewayInterface
             throw new NotFoundResourceException("OrderId not found.");
         }
 
-        $order = Order::where('order_id', $data[$this->getKeyOrderId()])->first();
+        $order = Order::where('order_no', $data[$this->getKeyOrderId()])->first();
         if (empty($order)) {
             throw new NotFoundResourceException("Order not found.");
         }
@@ -201,6 +201,7 @@ class Jinfaguoji implements DepositGatewayInterface
             'Please input MD5 Key',
             '',
             '',
+			$transactionType
         );
     }
 
@@ -220,21 +221,7 @@ class Jinfaguoji implements DepositGatewayInterface
 						C::FIRST_NAME,
 						C::EMAIL,
 						C::MOBILE_NUMBER,
-			//			C::BANK_ACCOUNT,
-			//			C::BANK,
 					];
-			/* 泰国网银需上传真实银行账户		
-					$bank = [
-						0=>[
-							'id' => '001',
-							'name'=>'樂樂銀行'
-							],
-						1=>[
-							'id' => '003',
-							'name'=>'悠悠銀行'
-						],
-					];
-			*/
                 break;
 
 			case Type::WALLET:
