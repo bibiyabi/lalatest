@@ -12,6 +12,8 @@ use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
 use Str;
+use App\Models\Order;
+use App\Contracts\Payments\HttpParam;
 
 class Inrusdt implements DepositGatewayInterface
 {
@@ -89,6 +91,19 @@ class Inrusdt implements DepositGatewayInterface
 
         $sign = md5($md5str);
         return strtoupper($sign);
+    }
+
+    public function genDepositParam(Order $order): HttpParam
+    {
+        $settingParam = SettingParam::createFromJson($order->key->settings);
+        $orderParam = OrderParam::createFromJson($order->order_param);
+
+        $param = $this->createParam($orderParam, $settingParam);
+        if ($signKey = $this->getSignKey()) {
+            $param[$signKey] = $this->createSign($param, $settingParam);
+        }
+
+        return new HttpParam($this->getUrl().'?'. http_build_query($param), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
     }
 
     /**
