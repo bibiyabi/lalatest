@@ -88,9 +88,17 @@ class Dsupi implements DepositGatewayInterface
         return $result;
     }
 
+    /**
+     * form 直接回傳，url 回傳 url
+     *
+     * @param string $unprocessed form 會是 form、url 會是第三方回應
+     * @return string
+     */
     public function processOrderResult($unprocessed): string
     {
-        return $unprocessed;
+        $data = json_decode($unprocessed, true);
+
+        return $data['data']['url'];
     }
 
     protected function createCallbackSign($param, $key): string
