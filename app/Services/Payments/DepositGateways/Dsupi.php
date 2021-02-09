@@ -142,6 +142,13 @@ class Dsupi implements DepositGatewayInterface
                 ];
                 break;
 
+            case Type::WALLET:
+                $column = [
+                    C::AMOUNT,
+                    C::BANK,
+                ];
+                break;
+
 
             default:
                 throw new UnsupportedTypeException();
