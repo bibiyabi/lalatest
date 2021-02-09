@@ -137,6 +137,7 @@ class Inrusdt implements DepositGatewayInterface
             'key'            => $key->getMd5Key(),
         ];
 
+
         return strtoupper(md5(http_build_query($data)));
     }
 
@@ -149,10 +150,6 @@ class Inrusdt implements DepositGatewayInterface
     public function getPlaceholder($type): Placeholder
     {
         switch ($type) {
-            case Type::CREDIT_CARD:
-                $transactionType = ['inrpay', 'upi'];
-                break;
-
             case Type::WALLET:
                 $transactionType = ['inrpay', 'upi'];
                 break;
@@ -184,10 +181,6 @@ class Inrusdt implements DepositGatewayInterface
     public function getRequireInfo($type): DepositRequireInfo
     {
         switch ($type) {
-            case Type::BANK_CARD:
-                $column = [C::AMOUNT];
-                break;
-
             case Type::WALLET:
                 $column = [C::AMOUNT];
                 break;
