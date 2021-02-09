@@ -32,7 +32,7 @@ class DepositController extends Controller
         $service = App::make(DepositService::class);
         $rs = App::call([$service, 'create'], ['input' => $request->post()]);
 
-
+        Log::info('Deposit-create', $rs->getResult());
         return $rs->getSuccess()
             ? RB::success($rs->getResult())
             : RB::error($rs->getErrorCode());
