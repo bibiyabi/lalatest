@@ -182,6 +182,7 @@ class Dsupi extends AbstractWithdrawGateway
         $column = [];
         if ($type == Type::WALLET) {
             $column = [
+                C::AMOUNT,
                 C::FUND_PASSWORD,
                 C::BANK_ACCOUNT,
                 C::BANK_ADDRESS,
