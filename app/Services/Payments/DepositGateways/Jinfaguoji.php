@@ -16,6 +16,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Str;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
+use App\Constants\Payments\Type;
 
 class Jinfaguoji implements DepositGatewayInterface
 {
@@ -70,7 +71,7 @@ class Jinfaguoji implements DepositGatewayInterface
 
         return [
             'mer_no'   		=> $settings->getMerchant(),
-            'order_no' 		=> $param->getOrderId(),			
+            'order_no' 		=> $param->getOrderId(),
 			'pname'    		=>  $param->getLastName().$param->getFirstName(),
 			'pemail'   		=>  $param->getEmail(),
 			'phone'    		=>  $param->getMobile(),
@@ -182,7 +183,7 @@ class Jinfaguoji implements DepositGatewayInterface
             case Type::WALLET:
                 $transactionType = ['UPI'];
                 break;
-			
+
 			case Type::BANK_CARD:
                 $transactionType = [];
                 break;
@@ -191,7 +192,7 @@ class Jinfaguoji implements DepositGatewayInterface
                 $transactionType = [];
                 break;
         }
-		
+
         return new Placeholder(
             $type,
             '',
@@ -232,7 +233,7 @@ class Jinfaguoji implements DepositGatewayInterface
                 throw new UnsupportedTypeException();
                 break;
         }
-		
+
         return new DepositRequireInfo($type, $column, []);
     }
 }
