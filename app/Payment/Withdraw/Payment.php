@@ -98,13 +98,13 @@ class Payment implements PaymentInterface
 
     private function validatePost($post) {
         $validator = Validator::make($post, [
-            'payment_type' => 'required',
+            'type' => 'required',
             'order_id'     => 'required',
             'pk'           => 'required',
         ]);
 
         if ($validator->fails()) {
-            throw new WithdrawException($validator->fails(), ResponseCode::ERROR_PARAMETERS);
+            throw new WithdrawException(json_encode($validator->errors()->all()), ResponseCode::ERROR_PARAMETERS);
         }
     }
 
