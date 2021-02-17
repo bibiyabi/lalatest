@@ -12,8 +12,6 @@ use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
 use Str;
-use App\Models\Order;
-use App\Contracts\Payments\HttpParam;
 
 class Inrusdt implements DepositGatewayInterface
 {
