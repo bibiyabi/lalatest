@@ -11,7 +11,7 @@ use App\Models\Merchant;
 use App\Models\Gateway;
 
 
-class InPayTest extends TestCase
+class InPayWithdrawTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -57,9 +57,15 @@ class InPayTest extends TestCase
             'pk'               =>  $setting->user_pk,
             'amount'           => '101',
             'fund_passwd'      => '1',
+            'first_name' => 'ewfe',
+            'last_name' => 'efef',
+            'bank_address' => 'efef',
+            'bank_name' => 'edfdfef',
+            'ifsc' => 'feef',
             'withdraw_address' => '1',
             'upi_id'           => '1232312',
         ]);
+
 
         $res->assertStatus(200);
         $res->assertJsonFragment(['success'=>true]);
