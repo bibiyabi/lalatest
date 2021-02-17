@@ -33,8 +33,8 @@ class InpayTest extends TestCase
         $this->withoutMiddleware();
 
         $gateway = Gateway::factory([
-            'name' => 'Inpay',
-            'real_name' => 'Inpay',
+            'name' => 'InPay',
+            'real_name' => 'InPay',
         ])->create();
 
         $setting = Setting::factory([
