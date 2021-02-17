@@ -11,16 +11,13 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
-use Str;
-use App\Contracts\Payments\HttpParam;
-use App\Models\Order;
 
 class InPay implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
     # 下單方式 get post
-    private $method = 'post';
+    private $method = 'form';
 
     # 第三方域名
     private $url = 'http://104.149.202.6:8084';
@@ -69,11 +66,6 @@ class InPay implements DepositGatewayInterface
 			'returnUrl' => 'aaa',
             'payType' => $settings->getTransactionType(),
         ];
-    }
-
-    protected function getMethod()
-    {
-        return 'form';
     }
 
     protected function getHeader($param, SettingParam $settingParam): array
