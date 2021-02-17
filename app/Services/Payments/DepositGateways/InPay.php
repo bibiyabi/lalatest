@@ -84,9 +84,9 @@ class InPay implements DepositGatewayInterface
         return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
     }
 
-    protected function getConfig(): array
+    protected function getMethod()
     {
-        return ['asForm' => 1];
+        return 'form';
     }
 
     protected function getHeader($param, SettingParam $settingParam): array
