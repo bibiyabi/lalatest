@@ -93,17 +93,9 @@ class Inrusdt implements DepositGatewayInterface
         return strtoupper($sign);
     }
 
-    public function genDepositParam(Order $order): HttpParam
+    protected function getUrl(SettingParam $settingParam, OrderParam $orderParam, $param): string
     {
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        $orderParam = OrderParam::createFromJson($order->order_param);
-
-        $param = $this->createParam($orderParam, $settingParam);
-        if ($signKey = $this->getSignKey()) {
-            $param[$signKey] = $this->createSign($param, $settingParam);
-        }
-
-        return new HttpParam($this->getUrl().'?'. http_build_query($param), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
+        return $this->url . $this->orderUri . '?' . http_build_query($param);
     }
 
     /**
