@@ -108,6 +108,7 @@ return [
             'path' => storage_path('logs/withdraw.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
+            'permission' => 0666,
         ],
     ],
 
