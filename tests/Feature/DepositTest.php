@@ -77,8 +77,10 @@ class DepositTest extends TestCase
         $response->assertJsonFragment(['success'=>true]);
     }
 
-    public function test_can_callback_()
+    public function test_can_callback()
     {
+        $this->withoutMiddleware();
+
         $gateway = Gateway::factory([
             'name' => 'Inrusdt',
             'real_name' => '印發',
