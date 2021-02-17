@@ -17,7 +17,7 @@ class Inrusdt implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
-    # 下單方式 get post
+    # 下單方式 get post(x-www-form-urlencoded) form(form-data)
     private $method = 'get';
 
     # 第三方域名
@@ -26,7 +26,7 @@ class Inrusdt implements DepositGatewayInterface
     # 充值 uri
     private $orderUri = '/b/recharge';
 
-    # 下單方式 form url
+    # 下單方式 form(回傳form 給前端跳轉) url(直接下單至第三方並返回儲值 url)
     private $returnType = 'form';
 
     # 下單欄位名稱-簽章 null or string
