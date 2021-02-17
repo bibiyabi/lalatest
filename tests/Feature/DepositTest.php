@@ -9,6 +9,8 @@ use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Constants\Payments\Status;
+use App\Jobs\Payment\Deposit\Notify;
+use Bus;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class DepositTest extends TestCase
@@ -81,6 +83,8 @@ class DepositTest extends TestCase
     {
         $this->withoutMiddleware();
 
+        Bus::fake();
+
         $gateway = Gateway::factory([
             'name' => 'Inrusdt',
             'real_name' => '印發',
@@ -107,6 +111,7 @@ class DepositTest extends TestCase
         ]);
 
         $response->assertSeeText('success');
+        Bus::assertDispatched(Notify::class);
         $this->assertDatabaseHas('orders', ['order_id'=>$order->order_id, 'status'=>Status::CALLBACK_SUCCESS]);
     }
 }
