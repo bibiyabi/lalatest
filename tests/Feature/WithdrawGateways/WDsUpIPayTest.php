@@ -11,7 +11,7 @@ use App\Models\Merchant;
 use App\Models\Gateway;
 
 
-class DsupiPayTest extends TestCase
+class WDsupiPayTest extends TestCase
 {
     use DatabaseTransactions;
 

@@ -11,7 +11,7 @@ use App\Models\Merchant;
 use App\Models\Gateway;
 
 
-class InPayTest extends TestCase
+class WInPayTest extends TestCase
 {
     use DatabaseTransactions;
 
