@@ -11,16 +11,13 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
-use Str;
-use App\Contracts\Payments\HttpParam;
-use App\Models\Order;
 
 class InPay implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
     # 下單方式 get post
-    private $method = 'post';
+    private $method = 'form';
 
     # 第三方域名
     private $url = 'http://104.149.202.6:8084';
@@ -71,29 +68,10 @@ class InPay implements DepositGatewayInterface
         ];
     }
 
-    public function genDepositParam(Order $order): HttpParam
-    {
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        $orderParam = OrderParam::createFromJson($order->order_param);
-
-        $param = $this->createParam($orderParam, $settingParam);
-        if ($signKey = $this->getSignKey()) {
-            $param[$signKey] = $this->createSign($param, $settingParam);
-        }
-
-        return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
-    }
-
-    protected function getMethod()
-    {
-        return 'form';
-    }
-
     protected function getHeader($param, SettingParam $settingParam): array
     {
         return ['Content-Type: application/x-www-form-urlencoded'];
     }
-
 
     /**
      * 建立下單簽名
