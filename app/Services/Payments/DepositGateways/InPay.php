@@ -71,19 +71,6 @@ class InPay implements DepositGatewayInterface
         ];
     }
 
-    public function genDepositParam(Order $order): HttpParam
-    {
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        $orderParam = OrderParam::createFromJson($order->order_param);
-
-        $param = $this->createParam($orderParam, $settingParam);
-        if ($signKey = $this->getSignKey()) {
-            $param[$signKey] = $this->createSign($param, $settingParam);
-        }
-
-        return new HttpParam($this->getUrl(), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
-    }
-
     protected function getMethod()
     {
         return 'form';
@@ -93,7 +80,6 @@ class InPay implements DepositGatewayInterface
     {
         return ['Content-Type: application/x-www-form-urlencoded'];
     }
-
 
     /**
      * 建立下單簽名
