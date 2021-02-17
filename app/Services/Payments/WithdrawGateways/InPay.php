@@ -191,20 +191,20 @@ class InPay extends AbstractWithdrawGateway
         if ($type == Type::BANK_CARD) {
             $column = [
                 C::AMOUNT,
-                C::FUND_PASSWORD,
+                C::IFSC,
+                C::BANK_NAME,
                 C::BANK_ADDRESS,
                 C::FIRST_NAME,
                 C::LAST_NAME,
-                C::BANK_NAME,
-                C::IFSC,
+                C::FUND_PASSWORD,
             ];
 
 
         } elseif ($type == Type::WALLET) {
             $column = [
                 C::AMOUNT,
-                C::FUND_PASSWORD,
                 C::UPI_ID,
+                C::FUND_PASSWORD,
             ];
         }
 

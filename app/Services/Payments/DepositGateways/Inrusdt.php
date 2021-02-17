@@ -12,14 +12,12 @@ use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
 use Str;
-use App\Models\Order;
-use App\Contracts\Payments\HttpParam;
 
 class Inrusdt implements DepositGatewayInterface
 {
     use DepositGatewayHelper;
 
-    # 下單方式 get post
+    # 下單方式 get post(x-www-form-urlencoded) form(form-data)
     private $method = 'get';
 
     # 第三方域名
@@ -28,7 +26,7 @@ class Inrusdt implements DepositGatewayInterface
     # 充值 uri
     private $orderUri = '/b/recharge';
 
-    # 下單方式 form url
+    # 下單方式 form(回傳form 給前端跳轉) url(直接下單至第三方並返回儲值 url)
     private $returnType = 'form';
 
     # 下單欄位名稱-簽章 null or string
@@ -93,17 +91,9 @@ class Inrusdt implements DepositGatewayInterface
         return strtoupper($sign);
     }
 
-    public function genDepositParam(Order $order): HttpParam
+    protected function getUrl(SettingParam $settingParam, OrderParam $orderParam, $param): string
     {
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        $orderParam = OrderParam::createFromJson($order->order_param);
-
-        $param = $this->createParam($orderParam, $settingParam);
-        if ($signKey = $this->getSignKey()) {
-            $param[$signKey] = $this->createSign($param, $settingParam);
-        }
-
-        return new HttpParam($this->getUrl().'?'. http_build_query($param), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
+        return $this->url . $this->orderUri . '?' . http_build_query($param);
     }
 
     /**

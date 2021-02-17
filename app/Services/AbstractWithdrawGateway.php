@@ -186,7 +186,7 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         ->setPost($this->getCreatePostData())
         ->exec();
 
-        Log::channel('withdraw')->info(new LogLine('CURL result' . print_r($curlRes, true). ' header ' . print_r($this->getCurlHeader(), true)));
+        Log::channel('withdraw')->info(new LogLine('CURL url:' .$url.' result' . print_r($curlRes, true). ' header ' . print_r($this->getCurlHeader(), true)));
         Log::channel('withdraw')->info(new LogLine('CURL createPostData url:'.$url. ' '. print_r($this->getCreatePostData(), true)));
 
         return $this->getSendReturn($curlRes);
