@@ -57,21 +57,9 @@ class Dsupi implements DepositGatewayInterface
         ];
     }
 
-    public function genDepositParam(Order $order): HttpParam
+    protected function getUrl(SettingParam $settingParam, OrderParam $orderParam, $param): string
     {
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        $orderParam = OrderParam::createFromJson($order->order_param);
-
-        $param = $this->createParam($orderParam, $settingParam);
-
-        $param[$this->getSignKey()] = $this->createSign($param, $settingParam);
-
-        return new HttpParam($this->getUrl($settingParam), $this->getMethod(), $this->getHeader($param, $settingParam), $param, $this->getConfig());
-    }
-
-    protected function getUrl(SettingParam $key): string
-    {
-        return  $key->getNote1() . $this->orderUri;
+        return  $settingParam->getNote1() . $this->orderUri;
     }
 
     protected function createSign(array $data, SettingParam $key): string
