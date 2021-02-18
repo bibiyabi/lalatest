@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Deposit;
+namespace Tests\Unit\Payments\Deposit;
 
 use App\Exceptions\NotifyException;
 use App\Models\Merchant;
