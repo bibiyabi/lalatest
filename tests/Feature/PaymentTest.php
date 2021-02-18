@@ -22,6 +22,7 @@ use App\Payment\Withdraw\Payment;
 use App\Providers\GatewayServiceProvider;
 use App\Services\AbstractWithdrawGateway;
 use Database\Factories\WithdrawOrderFactory;
+use Illuminate\Support\Facades\Queue;
 
 class PaymentTest extends TestCase
 {
@@ -63,7 +64,7 @@ class PaymentTest extends TestCase
 
     public function test_create_order() {
         $this->withoutMiddleware();
-        Bus::fake();
+        Queue::fake();
 
         $gateway = Gateway::factory([
             'name' => 'ShineUPay',
@@ -80,7 +81,7 @@ class PaymentTest extends TestCase
         $orderId = 'unittest'. uniqid();
 
         $res = $this->post('/api/withdraw/create', [
-            'payment_type'     => 'bank_card',
+            'type'     => 'bank_card',
             'order_id'         =>  $orderId,
             'pk'               =>  $setting->user_pk,
             'amount'           => '1',
@@ -108,8 +109,9 @@ class PaymentTest extends TestCase
             'order_id' => $orderId,
             'status' => Status::PENDING
         ]);
-        Bus::assertNotDispatched(Order::class);
-        Bus::assertNotDispatched(Notify::class);
+        Queue::assertNotPushed(Order::class);
+        Queue::assertNotPushed(Notify::class);
+
     }
 
     /**
@@ -136,7 +138,7 @@ class PaymentTest extends TestCase
         $payload = '{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchant_number":"A5LB093F045C2322","timestamp":"1610691875552"}';
 
         $request = Request::create('/callback/withdraw/ShineUPay', 'POST', json_decode($payload, true), [], [],  [
-            'HTTP_Api-Sign' => '5142aade809d9a4038392426c74f859a',
+            'HTTP_Api-Sign' => '07b967e5ae415a121ee8d49bc959fc56',
             'HTTP_CONTENT_LENGTH' => strlen($payload),
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
