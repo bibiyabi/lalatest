@@ -23,7 +23,7 @@ class DepositNotifyTest extends TestCase
     public function test_success_flow()
     {
         Http::fake([
-            config('app.java_domain') . '/deposit/result' => Http::response([
+            '*' => Http::response([
                 'message' => 'success',
                 'status' => '200',
             ])
@@ -39,7 +39,7 @@ class DepositNotifyTest extends TestCase
     public function test_failed_flow()
     {
         Http::fake([
-            config('app.java_domain') . '/deposit/result' => Http::response([
+            '*' => Http::response([
                 'message' => 'failed',
                 'status' => '404',
             ])
