@@ -74,7 +74,7 @@ abstract class  AbstractWithdrawCallback
 
     protected function returnCallbackResult($callbackPost, $checkSign, $callBackSign, $order) {
         if (config('app.is_check_sign') && $checkSign !== $callBackSign) {
-            throw new WithdrawException("check sign error" , ResponseCode::EXCEPTION);
+            throw new WithdrawException("check sign error checkSign " . $checkSign . ' callbackSign ' . $callBackSign  , ResponseCode::EXCEPTION);
         }
 
         # callback 訂單成功
