@@ -9,6 +9,11 @@ use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 class TpartyException extends Exception
 {
+    public function report()
+    {
+
+    }
+
     public function render()
     {
         Log::error('Tparty-Exception ' . $this->getMessage());
