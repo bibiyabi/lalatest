@@ -91,11 +91,6 @@ class Dsupi implements DepositGatewayInterface
         return $data['url'];
     }
 
-    protected function createCallbackSign($param, $key): string
-    {
-      return $this->createSign($param, $key);
-    }
-
     public function getPlaceholder($type): Placeholder
     {
         switch ($type) {
