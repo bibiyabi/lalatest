@@ -11,6 +11,7 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
+use App\Exceptions\CreateOrderException;
 
 class InPay implements DepositGatewayInterface
 {
@@ -101,6 +102,10 @@ class InPay implements DepositGatewayInterface
     public function processOrderResult($unprocessed): string
     {
         $data = json_decode($unprocessed, true);
+
+        if (isset($data['data']['payUrl']) === false) {
+            throw new CreateOrderException($data['msg'] ?? "tparty error.");
+        }
 
         return $data['data']['payUrl'];
     }

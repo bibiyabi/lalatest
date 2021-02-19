@@ -43,6 +43,7 @@ return [
         CODE::UNSUPPORTED_TYPE              => '不支援的支付方式',
         CODE::HTTP_METHOD_NOT_ALLOWED       => '不可使用的 HTTP 方法',
         CODE::GATEWAY_ERROR                 => '對接包錯誤',
+        CODE::TPARTY_ERROR                  => '第三方錯誤',
 	],
 
 	/*

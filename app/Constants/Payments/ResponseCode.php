@@ -21,6 +21,7 @@ class ResponseCode
     public const GATEWAY_NOT_FOUND              = 303;  // 无此通道资讯
     public const UNSUPPORTED_TYPE               = 317;  // 不支援的支付方式
     public const GATEWAY_ERROR                  = 318;  // 通道錯誤
+    public const TPARTY_ERROR                   = 319;  // 第三方錯誤
 
 
 /**  參考error code 以下要用的時候要全部 + 100

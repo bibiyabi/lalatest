@@ -35,7 +35,7 @@ class DepositController extends Controller
         Log::info('Deposit-create', $rs->getResult());
         return $rs->getSuccess()
             ? RB::success($rs->getResult())
-            : RB::error($rs->getErrorCode());
+            : RB::asError($rs->getErrorCode())->withMessage($rs->getMsg())->build();
     }
 
     public function callback(Request $request, $gatewayName)
