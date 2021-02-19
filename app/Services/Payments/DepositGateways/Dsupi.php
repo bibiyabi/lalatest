@@ -11,9 +11,7 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
-use Str;
-use App\Models\Order;
-use App\Contracts\Payments\HttpParam;
+use App\Exceptions\TpartyException;
 
 class Dsupi implements DepositGatewayInterface
 {
@@ -86,12 +84,11 @@ class Dsupi implements DepositGatewayInterface
     {
         $data = json_decode($unprocessed, true);
 
-        return $data['url'];
-    }
+        if (isset($data['url']) === false) {
+            throw new TpartyException($data['msg'] ?? "tparty error.");
+        }
 
-    protected function createCallbackSign($param, $key): string
-    {
-      return $this->createSign($param, $key);
+        return $data['url'];
     }
 
     public function getPlaceholder($type): Placeholder

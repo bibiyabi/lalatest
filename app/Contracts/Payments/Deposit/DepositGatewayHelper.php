@@ -74,30 +74,9 @@ trait DepositGatewayHelper
 
     public function depositCallback(Request $request): CallbackResult
     {
-        $data = $request->all();
-        $status = isset($data[$this->getKeyStatus()]) ? $data[$this->getKeyStatus()] == $this->getKeyStatusSuccess() : true;
-
-        if (!isset($data[$this->getKeyOrderId()])) {
-            throw new NotFoundResourceException("OrderId not found.");
-        }
-
-        $order = Order::where('order_id', $data[$this->getKeyOrderId()])->first();
-        if (empty($order)) {
+        $order = Order::where('order_id', $this->getOrderId($request))->firstOr(function () {
             throw new NotFoundResourceException("Order not found.");
-        }
-
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        if (empty($settingParam)) {
-            throw new NotFoundResourceException("Order not found.");
-        }
-
-        if (
-            config('app.is_check_sign') !== false
-            && $this->getKeySign() !== null
-            && (!isset($data[$this->getKeySign()]) || $data[$this->getKeySign()] != $this->createCallbackSign($data, $settingParam))
-        ) {
-            throw new NotFoundResourceException("Sign error.");
-        }
+        });
 
         if (in_array($order->status, [
             Status::CALLBACK_SUCCESS,
@@ -107,38 +86,49 @@ trait DepositGatewayHelper
             throw new StatusLockedException($this->getSuccessReturn());
         }
 
-        if ($status === false) {
+        $settingParam = SettingParam::createFromJson($order->key->settings);
+        if (empty($settingParam)) {
+            throw new NotFoundResourceException("Order not found.");
+        }
+
+        if (
+            config('app.is_check_sign') !== false
+            && $this->getSign($request) !== $this->createCallbackSign($request, $settingParam)
+        ) {
+            throw new NotFoundResourceException("Sign error.");
+        }
+
+        if ($this->getStatus($request) != $this->getStatusSuccess()) {
             return new CallbackResult(false, $this->getSuccessReturn(), $order);
         }
 
-        return new CallbackResult(true, $this->getSuccessReturn(), $order, $data[$this->getKeyAmount()]);
+        return new CallbackResult(true, $this->getSuccessReturn(), $order, $this->getAmount($request));
     }
 
-    protected abstract function createCallbackSign($data, SettingParam $key);
-
-    protected function getKeyStatus()
+    protected function createCallbackSign($param, SettingParam $key): string
     {
-        return $this->keyStatus;
+        return $this->createSign($param, $key); // 預設同下單簽名
     }
 
-    protected function getKeyStatusSuccess()
+    protected function getOrderId(Request $request): string {
+        return $request->header($this->keyOrderId, $request->input($this->keyOrderId));
+    }
+
+    protected function getStatus(Request $request) {
+        return $request->header($this->keyStatus, $request->input($this->keyStatus));
+    }
+
+    protected function getSign(Request $request): string {
+        return $request->header($this->keySign, $request->input($this->keySign));
+    }
+
+    protected function getAmount(Request $request) {
+        return $request->header($this->keyAmount, $request->input($this->keyAmount));
+    }
+
+    protected function getStatusSuccess()
     {
         return $this->keyStatusSuccess;
-    }
-
-    protected function getKeyOrderId()
-    {
-        return $this->keyOrderId;
-    }
-
-    protected function getKeySign()
-    {
-        return $this->keySign;
-    }
-
-    protected function getKeyAmount()
-    {
-        return $this->keyAmount;
     }
 
     protected function getSuccessReturn()

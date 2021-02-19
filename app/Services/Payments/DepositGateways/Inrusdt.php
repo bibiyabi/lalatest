@@ -107,30 +107,6 @@ class Inrusdt implements DepositGatewayInterface
         return $unprocessed;
     }
 
-     /**
-      * 建立回調簽名
-      *
-      * @param array $param request()->all
-      * @param SettingParam $key
-      * @return string
-      */
-    protected function createCallbackSign($param, SettingParam $key): string
-    {
-        $data = [
-            'merchantBizNum' => $param['merchantBizNum'],
-            'merchantId'     => $param['merchantId'],
-            'merchantPrice'  => $param['merchantPrice'],
-            'money'          => $param['money'],
-            'status'         => $param['status'],
-            'sysBizNum'      => $param['sysBizNum'],
-            'usdtAmount'     => $param['usdtAmount'],
-            'key'            => $key->getMd5Key(),
-        ];
-
-
-        return strtoupper(md5(http_build_query($data)));
-    }
-
     /**
      * 後台設定提示字（英文）
      *

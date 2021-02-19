@@ -58,9 +58,9 @@ class DepositService
         # submit param
         $param = $gateway->genDepositParam($order);
         $result = ResultFactory::createResultFactory($type)->getResult($param);
+        $processedResult = $gateway->processOrderResult($result->getContent());
 
         # return result
-        $processedResult = $gateway->processOrderResult($result->getContent());
         $result->setContent($processedResult);
         return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result->toArray());
     }
