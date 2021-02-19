@@ -45,7 +45,7 @@ class DsupiTest extends TestCase
 
         ])->create();
 
-        $orderId = 'D210121020135606534342';
+        $orderId = 'unittest'. uniqid();
         $response = $this->post('api/deposit/create', [
             'order_id' => $orderId,
             'pk' => $setting->user_pk,

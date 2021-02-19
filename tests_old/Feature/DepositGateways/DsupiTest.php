@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\DepositGateways;
+namespace Tests\Feature\WithdrawGateways;
 
 use Tests\TestCase;
 use Mockery;
@@ -11,7 +11,7 @@ use App\Models\Merchant;
 use App\Models\Gateway;
 
 
-class InpayTest extends TestCase
+class DsupiTest extends TestCase
 {
     use DatabaseTransactions;
 
@@ -33,15 +33,15 @@ class InpayTest extends TestCase
         $this->withoutMiddleware();
 
         $gateway = Gateway::factory([
-            'name' => 'InPay',
-            'real_name' => 'InPay',
+            'name' => 'Dsupi',
+            'real_name' => 'Dsupi',
         ])->create();
 
         $setting = Setting::factory([
             'user_id' => $this->user->id,
             'gateway_id' => $gateway->id,
             'user_pk' => 123,
-            'settings' =>  '{"transaction_type":"upi","id":1,"user_id":1,"gateway_id":3,"merchant_number":"hotwin","md5_key":"94573e1adef367065fef90edba65d588"}'
+            'settings' =>  '{"transaction_type":"upi","id":1,"user_id":1,"gateway_id":3,"account":"15555551234","merchant_number":"1022239","md5_key":"apHfz0UTH1PzSNvJThlFPvCirKMwV3Ds","note1":"api.fushrshinpay.com"}'
 
         ])->create();
 
@@ -49,7 +49,7 @@ class InpayTest extends TestCase
         $response = $this->post('api/deposit/create', [
             'order_id' => $orderId,
             'pk' => $setting->user_pk,
-            'type' => 'e_wallet',
+            'type' => 'bank_card',
             'amount' => 123,
         ]);
 
