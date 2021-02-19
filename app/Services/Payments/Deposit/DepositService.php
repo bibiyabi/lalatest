@@ -9,7 +9,6 @@ use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
-use App\Exceptions\CreateOrderException;
 use App\Exceptions\StatusLockedException;
 use App\Jobs\Payment\Deposit\Notify;
 use App\Repositories\Orders\DepositRepository;
@@ -57,13 +56,9 @@ class DepositService
         }
 
         # submit param
-        try {
-            $param = $gateway->genDepositParam($order);
-            $result = ResultFactory::createResultFactory($type)->getResult($param);
-            $processedResult = $gateway->processOrderResult($result->getContent());
-        } catch (CreateOrderException $e) {
-            return new OrderResult(false, $e->getMessage(), ResponseCode::TPARTY_ERROR);
-        }
+        $param = $gateway->genDepositParam($order);
+        $result = ResultFactory::createResultFactory($type)->getResult($param);
+        $processedResult = $gateway->processOrderResult($result->getContent());
 
         # return result
         $result->setContent($processedResult);
