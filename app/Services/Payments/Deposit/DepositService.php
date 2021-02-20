@@ -41,8 +41,10 @@ class DepositService
 
         # decide how to return value
         try {
-            $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
+            $gatewayName = $key->gateway->name;
+            $gateway = DepositGatewayFactory::createGateway($gatewayName);
             $type = $gateway->getReturnType();
+            Log::info('Deposit-gateway: ' . $gatewayName);
         } catch (\App\Exceptions\GatewayNotFountException $e) {
             return new OrderResult(false, 'Gateway not found.', ResponseCode::GATEWAY_NOT_FOUND);
         } catch (\ErrorException $e) {
