@@ -193,7 +193,7 @@ class InPay implements DepositGatewayInterface
 
         $bank = [
             [
-                'id' => '1',
+                'id' => 'bankCard',
                 'name'=>'bankCard'
             ],
         ];
