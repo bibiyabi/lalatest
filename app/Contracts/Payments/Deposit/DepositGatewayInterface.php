@@ -6,8 +6,6 @@ use App\Contracts\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
-use App\Contracts\Payments\OrderResult;
-use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use App\Contracts\Payments\CallbackResult;
 
@@ -20,14 +18,6 @@ interface DepositGatewayInterface
      * @return HttpParam
      */
     public function genDepositParam(Order $order) : HttpParam;
-
-    /**
-     * 處裡下單結果
-     *
-     * @param Response|form $rs 可能是打第三方的 Response 或 自己產的 HTML Form
-     * @return string 可能是跳轉 Url 或 HTML Form
-     */
-    public function processOrderResult($rs): string;
 
     /**
      * 取得下單方式 post get patch ...
