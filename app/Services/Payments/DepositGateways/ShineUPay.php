@@ -7,15 +7,10 @@ use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Constants\Payments\DepositInfo as C;
-use App\Constants\Payments\Status;
-use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
-use App\Exceptions\StatusLockedException;
-use App\Models\Order;
-use Illuminate\Http\Request;
+use App\Exceptions\TpartyException;
 use Str;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class ShineUPay implements DepositGatewayInterface
 {
@@ -76,7 +71,7 @@ class ShineUPay implements DepositGatewayInterface
         ];
     }
 
-    protected function getHeader($param, SettingParam $settingParam): array
+    protected function getHeader(SettingParam $settingParam, OrderParam $orderParam, $param): array
     {
         return [
             'Api-Sign' => $this->createSign($param, $settingParam),
@@ -96,7 +91,7 @@ class ShineUPay implements DepositGatewayInterface
     }
 
     /**
-     * form 直接回傳，url 回傳 url
+     * form 不用實作，url 回傳 url
      *
      * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string
@@ -104,6 +99,10 @@ class ShineUPay implements DepositGatewayInterface
     public function processOrderResult($unprocessed): string
     {
         $data = json_decode($unprocessed, true);
+
+        if (isset($data['body']['content']) === false) {
+            throw new TpartyException($data['msg'] ?? "tparty error.");
+        }
 
         return $data['body']['content'];
     }

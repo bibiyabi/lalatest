@@ -14,6 +14,7 @@ use App\Jobs\Payment\Deposit\Notify;
 use App\Repositories\Orders\DepositRepository;
 use App\Repositories\SettingRepository;
 use Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class DepositService
@@ -58,7 +59,11 @@ class DepositService
         # submit param
         $param = $gateway->genDepositParam($order);
         $result = ResultFactory::createResultFactory($type)->getResult($param);
-        $processedResult = $gateway->processOrderResult($result->getContent());
+        Log::info('Deposit-Result: ' . $result->getContent());
+
+        $processedResult = ($type == 'url')
+            ? $gateway->processOrderResult($result->getContent())
+            : $result->getContent();
 
         # return result
         $result->setContent($processedResult);

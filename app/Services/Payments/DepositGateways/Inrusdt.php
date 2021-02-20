@@ -97,17 +97,6 @@ class Inrusdt implements DepositGatewayInterface
     }
 
     /**
-     * form 直接回傳，url 回傳 url
-     *
-     * @param string $unprocessed form 會是 form、url 會是第三方回應
-     * @return string
-     */
-    public function processOrderResult($unprocessed): string
-    {
-        return $unprocessed;
-    }
-
-    /**
      * 後台設定提示字（英文）
      *
      * @param string $type

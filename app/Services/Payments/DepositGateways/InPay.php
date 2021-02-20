@@ -69,7 +69,7 @@ class InPay implements DepositGatewayInterface
         ];
     }
 
-    protected function getHeader($param, SettingParam $settingParam): array
+    protected function getHeader(SettingParam $settingParam, OrderParam $orderParam, $param): array
     {
         return ['Content-Type: application/x-www-form-urlencoded'];
     }
@@ -94,7 +94,7 @@ class InPay implements DepositGatewayInterface
     }
 
     /**
-     * form 直接回傳，url 回傳 url
+     * form 不用實作，url 回傳 url
      *
      * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string

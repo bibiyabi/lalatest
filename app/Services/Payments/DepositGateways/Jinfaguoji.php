@@ -10,6 +10,7 @@ use App\Constants\Payments\DepositInfo as C;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Constants\Payments\Type;
+use App\Exceptions\TpartyException;
 use App\Exceptions\UnsupportedTypeException;
 
 class Jinfaguoji implements DepositGatewayInterface
@@ -99,7 +100,7 @@ class Jinfaguoji implements DepositGatewayInterface
     }
 
     /**
-     * form 直接回傳，url 回傳 url
+     * form 不用實作，url 回傳 url
      *
      * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string
@@ -107,6 +108,10 @@ class Jinfaguoji implements DepositGatewayInterface
     public function processOrderResult($unprocessed): string
     {
         $data = json_decode($unprocessed, true);
+
+        if (isset($data['data']['qrcode_url']) === false) {
+            throw new TpartyException($data['msg'] ?? "tparty error.");
+        }
 
         return $data['data']['qrcode_url'];
     }

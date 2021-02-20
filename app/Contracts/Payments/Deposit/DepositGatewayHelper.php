@@ -36,8 +36,8 @@ trait DepositGatewayHelper
 
         return new HttpParam(
             $this->getUrl($settingParam, $orderParam, $param),
-            $this->getMethod(),
-            $this->getHeader($param, $settingParam),
+            $this->getMethod($settingParam, $orderParam, $param),
+            $this->getHeader($settingParam, $orderParam, $param),
             $param,
             $this->getConfig($settingParam, $orderParam, $param)
         );
@@ -52,7 +52,7 @@ trait DepositGatewayHelper
         return $this->url . $this->orderUri;
     }
 
-    protected function getHeader($param, SettingParam $settingParam): array
+    protected function getHeader(SettingParam $settingParam, OrderParam $orderParam, $param): array
     {
         return [];
     }
@@ -67,7 +67,7 @@ trait DepositGatewayHelper
         return $this->orderKeySign;
     }
 
-    protected function getMethod()
+    protected function getMethod(SettingParam $settingParam, OrderParam $orderParam, $param)
     {
         return $this->method;
     }
