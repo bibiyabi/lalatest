@@ -102,6 +102,10 @@ abstract class  AbstractWithdrawCallback
         throw new WithdrawException("callback result error" . json_encode($callbackPost) , ResponseCode::EXCEPTION);
     }
 
+    protected function getCallbackOrderStatus($post) {
+        return data_get($post, $this->callbackOrderStatusPosition);
+    }
+
     protected function genCallbackSign($postJson, $settings) {
         return $this->genSign($postJson, $settings);
     }
