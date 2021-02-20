@@ -61,7 +61,7 @@ class DepositService
         # submit param
         $param = $gateway->genDepositParam($order);
         $result = ResultFactory::createResultFactory($type)->getResult($param);
-        Log::info('Deposit-Result: ' . $result->getContent());
+        Log::info('Deposit-Tparty-Result ' . $result->getContent());
 
         $processedResult = ($type == 'url')
             ? $gateway->processOrderResult($result->getContent())

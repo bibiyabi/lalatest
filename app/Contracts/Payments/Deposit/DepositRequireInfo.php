@@ -19,7 +19,6 @@ class DepositRequireInfo
 
     public function toArray()
     {
-        sort($this->column);
         $result['column'] = $this->column;
 
         if (in_array(C::BANK, $result['column'])){
