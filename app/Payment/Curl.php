@@ -18,6 +18,10 @@ class Curl
     }
 
     public function setUrl($url) {
+        if (!$this->ch) {
+            $this->ch = curl_init();
+            $this->basic();
+        }
         curl_setopt($this->ch, CURLOPT_URL, $url);
         return $this;
     }
