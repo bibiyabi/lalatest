@@ -44,6 +44,14 @@ abstract class  AbstractWithdrawCallback
         return $this->returnCallbackResult($post, $checkSign, $postSign, $order);
     }
 
+    protected function getCallbackSign(Request $request) {
+        return '';
+    }
+
+    public function  getCallBackInput(Request $request) {
+        return  file_get_contents("php://input");
+    }
+
     # 檢查回調input
     protected function validateCallbackInput($post) {
         $validator = Validator::make($post, $this->getCallbackValidateColumns());

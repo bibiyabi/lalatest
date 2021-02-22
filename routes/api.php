@@ -26,8 +26,8 @@ Route::prefix('test')->group(function() {
     });
 
     Route::post('aaa', function (){
-
-        echo '@@@';
+        $order = WithdrawOrder::where('order_id', 'aaaaa')->first();
+        var_dump($order);
 
       });
 });

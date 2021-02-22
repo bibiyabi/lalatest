@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\WithdrawGateways;
+namespace Tests\Feature\DepositGateways;
 
 use Tests\TestCase;
 use Mockery;

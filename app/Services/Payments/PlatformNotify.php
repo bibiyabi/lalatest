@@ -3,8 +3,7 @@ namespace App\Services\Payments;
 
 
 use App\Payment\Curl;
-use App\Repositories\MerchantRepository;
-use App\Contracts\LogLine;
+
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
 use App\Services\Signature;
@@ -20,9 +19,8 @@ class PlatformNotify
     const SUCCESS = '000';
     const FAIL = '001';
 
-    public function __construct(Curl $curl, MerchantRepository $repo) {
+    public function __construct(Curl $curl) {
         $this->curl = $curl;
-        $this->repo = $repo;
 
     }
 
@@ -33,10 +31,8 @@ class PlatformNotify
 
     public function setOrder($order){
         $this->order = $order;
-        $merchant = $order->merchant;
-
-        $this->javaKey = $this->repo->getKey($merchant);
-        $this->javaUrl = $this->repo->getNotifyUrl($merchant);
+        $this->javaKey = config('app.sign_key');
+        $this->javaUrl = config('app.java_domain');
 
         return $this;
     }

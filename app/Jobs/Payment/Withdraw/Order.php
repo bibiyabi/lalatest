@@ -19,7 +19,8 @@ use App\Exceptions\WithdrawException;
 use Illuminate\Http\Request;
 use App\Constants\Payments\Status;
 use App\Contracts\LogLine;
-
+use App\Constants\Payments\Type;
+use App\Jobs\Payment\Withdraw\CryptoCurrencySearch;
 use Throwable;
 class Order implements ShouldQueue
 {
@@ -66,6 +67,12 @@ class Order implements ShouldQueue
 
             WithdrawOrder::where('order_id', $this->post['order_id'])
             ->update(['status' => $res['code']]);
+
+            if ($this->post['type'] == Type::CRYPTO_CURRENCY) {
+                $order = WithdrawOrder::where('order_id', $this->post['order_id'])->first();
+                CryptoCurrencySearch::dispatch($order, $paymentGateway);
+                Log::channel('withdraw')->info(new LogLine('數字貨幣訂單 search queue sended: ' . $this->post['order_id']));
+            }
 
         } catch (Throwable $e) {
 
