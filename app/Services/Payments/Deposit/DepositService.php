@@ -9,12 +9,12 @@ use App\Constants\Payments\ResponseCode;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
-use App\Exceptions\CreateOrderException;
 use App\Exceptions\StatusLockedException;
 use App\Jobs\Payment\Deposit\Notify;
 use App\Repositories\Orders\DepositRepository;
 use App\Repositories\SettingRepository;
 use Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class DepositService
@@ -41,8 +41,10 @@ class DepositService
 
         # decide how to return value
         try {
-            $gateway = DepositGatewayFactory::createGateway($key->gateway->name);
+            $gatewayName = $key->gateway->name;
+            $gateway = DepositGatewayFactory::createGateway($gatewayName);
             $type = $gateway->getReturnType();
+            Log::info('Deposit-gateway: ' . $gatewayName);
         } catch (\App\Exceptions\GatewayNotFountException $e) {
             return new OrderResult(false, 'Gateway not found.', ResponseCode::GATEWAY_NOT_FOUND);
         } catch (\ErrorException $e) {
@@ -57,13 +59,13 @@ class DepositService
         }
 
         # submit param
-        try {
-            $param = $gateway->genDepositParam($order);
-            $result = ResultFactory::createResultFactory($type)->getResult($param);
-            $processedResult = $gateway->processOrderResult($result->getContent());
-        } catch (CreateOrderException $e) {
-            return new OrderResult(false, $e->getMessage(), ResponseCode::TPARTY_ERROR);
-        }
+        $param = $gateway->genDepositParam($order);
+        $result = ResultFactory::createResultFactory($type)->getResult($param);
+        Log::info('Deposit-Tparty-Result ' . $result->getContent());
+
+        $processedResult = ($type == 'url')
+            ? $gateway->processOrderResult($result->getContent())
+            : $result->getContent();
 
         # return result
         $result->setContent($processedResult);

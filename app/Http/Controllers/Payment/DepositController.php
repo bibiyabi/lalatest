@@ -23,7 +23,7 @@ class DepositController extends Controller
     {
         Log::info('Deposit-create', $request->post());
 
-        $validated = $request->validate([
+        $request->validate([
             'order_id' => 'required',
             'pk'   => 'required',
             'amount'   => 'required|numeric|min:0'
@@ -32,10 +32,10 @@ class DepositController extends Controller
         $service = App::make(DepositService::class);
         $rs = App::call([$service, 'create'], ['input' => $request->post()]);
 
-        Log::info('Deposit-create', $rs->getResult());
+        Log::info('Deposit-result', $rs->getResult());
         return $rs->getSuccess()
             ? RB::success($rs->getResult())
-            : RB::asError($rs->getErrorCode())->withMessage($rs->getMsg())->build();
+            : RB::error(ResponseCode::EXCEPTION);
     }
 
     public function callback(Request $request, $gatewayName)

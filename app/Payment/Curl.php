@@ -33,6 +33,12 @@ class Curl
         return $this;
     }
 
+    public function followLocation() {
+
+        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
+        return $this;
+    }
+
     public function setPost($post) {
         curl_setopt($this->ch, CURLOPT_POST, 1);
         curl_setopt($this->ch, CURLOPT_POSTFIELDS, $post);
@@ -54,7 +60,7 @@ class Curl
     }
 
     public function ssl($bollean = false){
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $bollean);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $bollean ? 2 : $bollean );
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, $bollean);
         return $this;
     }

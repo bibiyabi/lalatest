@@ -7,16 +7,11 @@ use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Contracts\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Constants\Payments\DepositInfo as C;
-use App\Constants\Payments\Status;
-use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
-use App\Exceptions\StatusLockedException;
-use App\Models\Order;
-use Illuminate\Http\Request;
-use Str;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 use App\Constants\Payments\Type;
+use App\Exceptions\TpartyException;
+use App\Exceptions\UnsupportedTypeException;
 
 class Jinfaguoji implements DepositGatewayInterface
 {
@@ -47,7 +42,7 @@ class Jinfaguoji implements DepositGatewayInterface
     private $keyOrderId = 'order_no';
 
     # 回調欄位名稱-簽章
-    private $keySign = null;
+    private $keySign = 'Api-Sign';
 
     # 回調欄位名稱-金額
     private $keyAmount = 'price';
@@ -104,50 +99,8 @@ class Jinfaguoji implements DepositGatewayInterface
         return $result;
     }
 
-    public function depositCallback(Request $request): CallbackResult
-    {
-        $data = $request->all();
-        $status = isset($data[$this->getKeyStatus()]) ? $data[$this->getKeyStatus()] == $this->getKeyStatusSuccess() : true;
-
-        if (!isset($data[$this->getKeyOrderId()])) {
-            throw new NotFoundResourceException("OrderId not found.");
-        }
-
-        $order = Order::where('order_no', $data[$this->getKeyOrderId()])->first();
-        if (empty($order)) {
-            throw new NotFoundResourceException("Order not found.");
-        }
-
-        $settingParam = SettingParam::createFromJson($order->key->settings);
-        if (empty($settingParam)) {
-            throw new NotFoundResourceException("Order not found.");
-        }
-
-        if (
-            config('app.is_check_sign') !== false
-            && $this->getKeySign() !== null
-            && (!isset($data[$this->getKeySign()]) || $request->header('Api-Sign') != $this->createCallbackSign($data, $settingParam))
-        ) {
-            throw new NotFoundResourceException("Sign error.");
-        }
-
-        if (in_array($order->status, [
-            Status::CALLBACK_SUCCESS,
-            Status::CALLBACK_FAILED,
-            Status::TERMINATED,
-        ])) {
-            throw new StatusLockedException($this->getSuccessReturn());
-        }
-
-        if ($status === false) {
-            return new CallbackResult(false, $this->getSuccessReturn(), $order);
-        }
-
-        return new CallbackResult(true, $this->getSuccessReturn(), $order, $data[$this->getKeyAmount()]);
-    }
-
     /**
-     * form 直接回傳，url 回傳 url
+     * form 不用實作，url 回傳 url
      *
      * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string
@@ -156,19 +109,11 @@ class Jinfaguoji implements DepositGatewayInterface
     {
         $data = json_decode($unprocessed, true);
 
-        return $data['data']['qrcode_url'];
-    }
+        if (isset($data['data']['qrcode_url']) === false) {
+            throw new TpartyException($data['msg'] ?? "tparty error.");
+        }
 
-     /**
-      * 建立回調簽名
-      *
-      * @param array $param request()->all
-      * @param SettingParam $key
-      * @return string
-      */
-    protected function createCallbackSign($param, SettingParam $key): string
-    {
-        return $this->createSign($param, $key);
+        return $data['data']['qrcode_url'];
     }
 
     /**

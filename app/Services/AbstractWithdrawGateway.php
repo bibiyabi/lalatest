@@ -77,7 +77,9 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         return [];
     }
     # 設定發送sign
-    abstract protected function setCreateSign($post, $settings);
+    protected function setCreateSign($post, $settings) {
+        $this->createSign = '';
+    }
     # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
     # 設定header
@@ -213,6 +215,11 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
             throw new DecodeException(json_last_error() . 'decode error @'. $data . '@', Status::ORDER_ERROR);
         }
         return $decode;
+    }
+
+    // for test
+    public function setCurl() {
+        $this->curl = new Curl();
     }
 
 }

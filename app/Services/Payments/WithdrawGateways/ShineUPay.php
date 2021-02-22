@@ -136,10 +136,6 @@ class ShineUPay extends AbstractWithdrawGateway
         ];
     }
 
-    protected function getCallbackOrderStatus($post) {
-        return data_get($post, $this->callbackOrderStatusPosition);
-    }
-
     // ======================= 下拉提示 ===========================
 
     public function getPlaceholder($type):Placeholder

@@ -22,7 +22,6 @@ class WithdrawRequireInfo
 
     public function toArray()
     {
-        sort($this->column);
         $result['column'] = $this->column;
         if (in_array(C::BANK_CARD, $result['column'])){
             $result['select'] = [C::BANK_CARD => $this->bankCard];

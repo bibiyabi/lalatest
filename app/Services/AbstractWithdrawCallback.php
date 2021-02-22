@@ -44,6 +44,14 @@ abstract class  AbstractWithdrawCallback
         return $this->returnCallbackResult($post, $checkSign, $postSign, $order);
     }
 
+    protected function getCallbackSign(Request $request) {
+        return '';
+    }
+
+    public function  getCallBackInput(Request $request) {
+        return  file_get_contents("php://input");
+    }
+
     # 檢查回調input
     protected function validateCallbackInput($post) {
         $validator = Validator::make($post, $this->getCallbackValidateColumns());
@@ -100,6 +108,10 @@ abstract class  AbstractWithdrawCallback
         }
 
         throw new WithdrawException("callback result error" . json_encode($callbackPost) , ResponseCode::EXCEPTION);
+    }
+
+    protected function getCallbackOrderStatus($post) {
+        return data_get($post, $this->callbackOrderStatusPosition);
     }
 
     protected function genCallbackSign($postJson, $settings) {

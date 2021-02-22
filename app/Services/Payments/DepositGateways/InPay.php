@@ -11,7 +11,7 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
-use App\Exceptions\CreateOrderException;
+use App\Exceptions\TpartyException;
 
 class InPay implements DepositGatewayInterface
 {
@@ -64,12 +64,12 @@ class InPay implements DepositGatewayInterface
             'orderNo' => $param->getOrderId(),
             'amount' => sprintf("%.2f", $param->getAmount()),
             'notifyUrl' => config('app.url') . '/callback/deposit/InPay',
-			'returnUrl' => 'aaa',
-            'payType' => $settings->getTransactionType(),
+            'returnUrl' => 'aaa',
+            'payType' => $settings->getTransactionType() ?: $param->getTransactionType(),
         ];
     }
 
-    protected function getHeader($param, SettingParam $settingParam): array
+    protected function getHeader(SettingParam $settingParam, OrderParam $orderParam, $param): array
     {
         return ['Content-Type: application/x-www-form-urlencoded'];
     }
@@ -94,7 +94,7 @@ class InPay implements DepositGatewayInterface
     }
 
     /**
-     * form 直接回傳，url 回傳 url
+     * form 不用實作，url 回傳 url
      *
      * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string
@@ -104,7 +104,7 @@ class InPay implements DepositGatewayInterface
         $data = json_decode($unprocessed, true);
 
         if (isset($data['data']['payUrl']) === false) {
-            throw new CreateOrderException($data['msg'] ?? "tparty error.");
+            throw new TpartyException($data['msg'] ?? "tparty error.");
         }
 
         return $data['data']['payUrl'];
@@ -179,7 +179,7 @@ class InPay implements DepositGatewayInterface
     {
         switch ($type) {
             case Type::BANK_CARD:
-                $column = [C::AMOUNT];
+                $column = [C::AMOUNT, C::BANK];
                 break;
 
             case Type::WALLET:
@@ -191,7 +191,13 @@ class InPay implements DepositGatewayInterface
                 break;
         }
 
+        $bank = [
+            [
+                'id' => 'bankCard',
+                'name'=>'bankCard'
+            ],
+        ];
 
-        return new DepositRequireInfo($type, $column, []);
+        return new DepositRequireInfo($type, $column, $bank);
     }
 }

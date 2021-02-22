@@ -11,7 +11,7 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\UnsupportedTypeException;
-use App\Exceptions\CreateOrderException;
+use App\Exceptions\TpartyException;
 
 class Dsupi implements DepositGatewayInterface
 {
@@ -75,7 +75,7 @@ class Dsupi implements DepositGatewayInterface
     }
 
     /**
-     * form 直接回傳，url 回傳 url
+     * form 不用實作，url 回傳 url
      *
      * @param string $unprocessed form 會是 form、url 會是第三方回應
      * @return string
@@ -85,15 +85,10 @@ class Dsupi implements DepositGatewayInterface
         $data = json_decode($unprocessed, true);
 
         if (isset($data['url']) === false) {
-            throw new CreateOrderException($data['msg'] ?? "tparty error.");
+            throw new TpartyException($data['msg'] ?? "tparty error.");
         }
 
         return $data['url'];
-    }
-
-    protected function createCallbackSign($param, $key): string
-    {
-      return $this->createSign($param, $key);
     }
 
     public function getPlaceholder($type): Placeholder
@@ -143,7 +138,6 @@ class Dsupi implements DepositGatewayInterface
             case Type::WALLET:
                 $column = [
                     C::AMOUNT,
-                    C::BANK,
                 ];
                 break;
 
