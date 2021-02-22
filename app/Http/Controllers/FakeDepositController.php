@@ -39,6 +39,8 @@ class FakeDepositController extends Controller
             ? Status::CALLBACK_SUCCESS
             : Status::CALLBACK_FAILED;
 
+        $order->real_amount = $order->amount;
+
         try {
             $this->service->notify($order);
         } catch (NotifyException $e) {
