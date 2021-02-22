@@ -34,4 +34,9 @@ class Order extends Model
     {
         return $this->belongsTo(Merchant::class, 'user_id', 'id');
     }
+
+    public function gateway()
+    {
+        return $this->belongsTo(Gateway::class);
+    }
 }

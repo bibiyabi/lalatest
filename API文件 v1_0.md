@@ -358,6 +358,8 @@ urldecode 內容如下所示
 | -------- | ----- |
 | `column` | array |
 | `select` | array (id  name) |
+| `select.31.[].id`   | 第三方通道代碼 |
+| `select.31.[].name` | 第三方通道名稱 |
 
 沒有提示字/ 找不到該第三方檔案
 

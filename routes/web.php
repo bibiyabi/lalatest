@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FakeDepositController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,4 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('fake_tparty')->group(function () {
+    Route::get('deposit', [FakeDepositController::class, 'index']);
 });

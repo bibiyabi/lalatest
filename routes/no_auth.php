@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FakeDepositController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Payment\DepositController;
@@ -18,3 +19,7 @@ use App\Http\Controllers\Payment\WithdrawController;
 
 Route::match(['get', 'post'], 'withdraw/{gatewayName}', [WithdrawController::class, 'callback']);
 Route::match(['get', 'post'], 'deposit/{gatewayName}', [DepositController::class, 'callback']);
+
+Route::prefix('fake_deposit')->group(function () {
+    Route::post('orders/{order}', [FakeDepositController::class, 'sendNotify'])->middleware('web');
+});

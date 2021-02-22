@@ -138,7 +138,6 @@ class Dsupi implements DepositGatewayInterface
             case Type::WALLET:
                 $column = [
                     C::AMOUNT,
-                    C::BANK,
                 ];
                 break;
 
