@@ -27,6 +27,10 @@ class FakeDepositController extends Controller
 
     public function sendNotify(Order $order, Request $request)
     {
+        if (config('app.env') === 'vip') {
+            return response(['success'=>false]);
+        }
+
         $validated = $request->validate([
             'success' => 'required|boolean'
         ]);
