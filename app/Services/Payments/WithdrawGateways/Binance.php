@@ -17,6 +17,8 @@ use App\Exceptions\InputException;
 use Illuminate\Support\Facades\Http;
 use App\Payment\CryptCallbackResult;
 use App\Constants\Payments\CryptoCurrencyStatus;
+use Cache;
+use App\Constants\RedisKeys;
 
 
 class Binance extends AbstractWithdrawGateway
@@ -68,8 +70,6 @@ class Binance extends AbstractWithdrawGateway
             "timestamp"       => time() . '000',
         ];
 
-        var_dump($array);
-
         return $array;
 
     }
@@ -108,7 +108,7 @@ class Binance extends AbstractWithdrawGateway
     {
         switch ($type) {
             case Type::CRYPTO_CURRENCY:
-                $coin = ['TRC20'];
+                $coin = ['TRX'];
                 $blockchainContract = ['USDT'];
                 break;
             default:
@@ -136,16 +136,10 @@ class Binance extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         $column = [];
-        if ($type == Type::BANK_CARD) {
+        if ($type == Type::CRYPTO_CURRENCY) {
             $column = [
+                C::CRYPTO_ADDRESS,
                 C::AMOUNT,
-                C::IFSC,
-                C::BANK_ACCOUNT,
-                C::BANK_ADDRESS,
-                C::FIRST_NAME,
-                C::LAST_NAME,
-                C::MOBILE,
-                C::EMAIL,
                 C::FUND_PASSWORD
             ];
         }
@@ -171,17 +165,12 @@ class Binance extends AbstractWithdrawGateway
         $signature = hash_hmac('sha256', $query, $this->api_secret);
         $url = 'http://'.$this->getProxyIp().'/wapi/v3/withdrawHistory.html' .'?' . $query . '&signature=' . $signature;
 
-        $res = $this->curl
-        ->setUrl($url)
-        ->setHeader($this->getCurlHeader())
-        ->followLocation()
-        ->exec();
+        $res = $this->getCrypSearchResult($url);
 
-        $res = $this->decode($res['data']);
-
-        if (!isset($res['success']) || !isset($res['withdrawList']) || $res['success'] !== true ) {
+        if (!isset($res['success']) || $res['success'] !== true ) {
             return new CryptCallbackResult(CryptoCurrencyStatus::API_FAIL, json_encode($res));
         }
+
 
         if (empty($res['withdrawList'])) {
             return new CryptCallbackResult(CryptoCurrencyStatus::ORDER_NOT_FOUND, json_encode($res));
@@ -189,7 +178,7 @@ class Binance extends AbstractWithdrawGateway
 
         foreach ($res['withdrawList'] as $history) {
 
-            if ($order['order_id'] === $history['withdrawOrderId']) {
+            if ($order['order_id'] !== $history['withdrawOrderId']) {
                 continue;
             }
 
@@ -208,5 +197,28 @@ class Binance extends AbstractWithdrawGateway
 
         return new CryptCallbackResult(CryptoCurrencyStatus::ORDER_NOT_FOUND, json_encode($res));
 
+    }
+
+    public function getCrypSearchResult($url) {
+
+        $redisKey = RedisKeys::CRYPTOCURRENCY_BINANCE_SEARCH_CACHE . $this->api_secret;
+        $cache = Cache::get($redisKey);
+
+        if ($cache) {
+            return json_decode($cache, true);
+        }
+
+        $res = $this->curl
+        ->setUrl($url)
+        ->setHeader($this->getCurlHeader())
+        ->followLocation()
+        ->exec();
+
+        if (!empty($res['data'])) {
+            Cache::put($redisKey, $res['data'], 30);
+            $cache = Cache::get($redisKey);
+        };
+
+        return $this->decode($res['data']);
     }
 }

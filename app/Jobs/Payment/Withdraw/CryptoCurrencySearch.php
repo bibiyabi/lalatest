@@ -42,9 +42,7 @@ class CryptoCurrencySearch implements ShouldQueue
      */
     public function handle()
     {
-        $this->gateway->setCurl();
-        $result = $this->gateway->search($this->order);
-
+        $result = $this->getGatewayResult($this->gateway);
         Log::info('CryptoCurrencySearch orderId:' . $this->order['order_id']. ' ,result code: ' . $result->getCode());
 
         switch($result->getCode()) {
@@ -67,5 +65,9 @@ class CryptoCurrencySearch implements ShouldQueue
             default:
                 throw new \Exception($result->getCode() . ' code not found in CurrencySearch');
         }
+    }
+
+    public function getGatewayResult($gateway) {
+        return $gateway->search($this->order);
     }
 }
