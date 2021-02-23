@@ -182,6 +182,8 @@ class Binance extends AbstractWithdrawGateway
                 continue;
             }
 
+            Log::channel('withdraw')->info(new LogLine('數字貨幣 order search found ' . json_encode($res)));
+
             # 提現失敗
             if (in_array($history['status'], [1,3,5])) {
                 return new CryptCallbackResult(CryptoCurrencyStatus::ORDER_FAIL, json_encode($res));
