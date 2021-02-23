@@ -53,13 +53,13 @@ class CryptoCurrencySearch implements ShouldQueue
             case CryptoCurrencyStatus::ORDER_FAIL:
                 WithdrawOrder::where('order_id', $this->order['order_id'])
                 ->update(['status' => STATUS::ORDER_FAILED]);
-                Notify::dispatch($this->order, $result->getMsg());
+                Notify::dispatch($this->order, $result->getMsg())->onQueue('notify');
                 break;
 
             case CryptoCurrencyStatus::ORDER_SUCCESS:
                 WithdrawOrder::where('order_id', $this->order['order_id'])
                 ->update(['status' => STATUS::CALLBACK_SUCCESS]);
-                Notify::dispatch($this->order, $result->getMsg());
+                Notify::dispatch($this->order, $result->getMsg())->onQueue('notify');
                 break;
 
             default:

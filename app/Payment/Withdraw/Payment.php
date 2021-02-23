@@ -40,7 +40,7 @@ class Payment implements PaymentInterface
 
     public function callbackNotifyToQueue($order, $message) {
         try {
-            Notify::dispatch($order, $message);
+            Notify::dispatch($order, $message)->onQueue('notify');
         } catch(Throwable $e) {
             throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
         }
@@ -88,7 +88,7 @@ class Payment implements PaymentInterface
     }
 
     private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
-        Order::dispatch($request->post(), $order);
+        Order::dispatch($request->post(), $order)->onQueue('withdrawOrder');
     }
 
     private function checkInputData(Request $request)  {

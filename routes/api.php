@@ -50,6 +50,7 @@ Route::prefix('withdraw')->group(function ()
 {
     Route::post('create', [WithdrawController::class, 'create']);
     Route::post('reset', [WithdrawController::class, 'reset']);
+    Route::post('testQueue', [WithdrawController::class, 'testQueue']);
 });
 
 
