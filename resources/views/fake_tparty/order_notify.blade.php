@@ -32,7 +32,7 @@
         function notify(id, success) {
             var data = {success: success};
             $.post({
-                url: "/callback/fake_deposit/orders/" + id,
+                url: "{{$url}}" + id,
                 dataType: "json",
                 cache: false,
                 data: data,
