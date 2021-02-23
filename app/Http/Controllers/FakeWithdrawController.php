@@ -48,6 +48,8 @@ class FakeWithdrawController extends Controller
             $this->service->notify($status);
         } catch (NotifyException $e) {
             return response(['success'=>false]);
+        } finally {
+            return response(['success'=>false]);
         }
 
         return response(['success'=>true]);
