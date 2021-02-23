@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\WithdrawOrder;
@@ -9,7 +10,7 @@ use App\Contracts\Payments\CallbackResult;
 use App\Exceptions\InputException;
 use App\Constants\Payments\Status;
 
-abstract class  AbstractWithdrawCallback
+Trait WithdrawCallback
 {
 
     // 停止callback回應的訊息

@@ -70,7 +70,7 @@ class Order implements ShouldQueue
 
             if ($this->post['type'] == Type::CRYPTO_CURRENCY) {
                 $order = WithdrawOrder::where('order_id', $this->post['order_id'])->first();
-                CryptoCurrencySearch::dispatch($order, $paymentGateway);
+                CryptoCurrencySearch::dispatch($order, $paymentGateway)->onQueue('cryptocurrency');
                 Log::channel('withdraw')->info(new LogLine('數字貨幣訂單 search queue sended: ' . $this->post['order_id']));
             }
 
@@ -83,7 +83,7 @@ class Order implements ShouldQueue
                 ->update(['status' => $e->getCode()]);
 
                 if ($e->getCode() == Status::ORDER_FAILED) {
-                    Notify::dispatch($this->order, $e->getMessage());
+                    Notify::dispatch($this->order, $e->getMessage())->onQueue('notify');
                 }
             }
         }

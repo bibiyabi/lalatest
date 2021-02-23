@@ -1,24 +1,22 @@
 <?php
 namespace App\Services;
+
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
-use Illuminate\Http\Request;
 use App\Payment\Curl;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\LogLine;
-use App\Services\AbstractWithdrawCallback;
-use App\Services\Payments\ResultTrait;
 use App\Exceptions\WithdrawException;
-use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 use App\Exceptions\DecodeException;
 use App\Constants\Payments\Status;
+use App\Services\WithdrawCallback;
 
-abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
+abstract class AbstractWithdrawGateway
 {
-    use ResultTrait;
+    use WithdrawCallback;
     # url object
     protected $curl;
     # 回調網址

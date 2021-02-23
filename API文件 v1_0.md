@@ -64,6 +64,7 @@
 
 * 對應出入款所需欄位整理V12 更新，入款新增非必填 `upi_id` 欄位
 * 對應出入款所需欄位整理V12 更新，出款新增非必填 `bank_name` 、 `upi_id` 欄位
+* 2021/2/23 withdraw/create 10,11中文修正
 
 ---
 
@@ -491,8 +492,8 @@ POST /api/withdraw/create
 | bank_province    | string  |          | 19                        | 銀行省                                                    |
 | bank_city        | string  |          | 21                        | 銀行城市                                                  |
 | bank_address     | string  |          | 20                        | 銀行地址                                                  |
-| last_name        | string  |          | 10                        | 姓氏                                                      |
-| first_name       | string  |          | 11                        | 名字                                                      |
+| first_name       | string  |          | 10                        | 名子                                                      |
+| last_name        | string  |          | 11                        | 姓氏                                                 |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
 | network          | string  |          | 15                        | 區塊鏈網路(目前僅顯示)                                    |
