@@ -65,7 +65,6 @@
 * 對應出入款所需欄位整理V12 更新，入款新增非必填 `upi_id` 欄位
 * 對應出入款所需欄位整理V12 更新，出款新增非必填 `bank_name` 、 `upi_id` 欄位
 * 2021/2/23 withdraw/create 10,11中文修正
-* 2021/2/23 withdraw/create add 23 金色狂風資金密碼
 
 ---
 
@@ -484,7 +483,7 @@ POST /api/withdraw/create
 | type             | string  | V        | java                      | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | amount           | integer |          | 1、14                     | 訂單金額 (數字貨幣傳貨幣數量)                             |
 | bank_card_option | integer |          | 2                         | 銀行卡                                                    |
-| fund_passwd      | string  |          | 3、26                     | 資金密碼    (3 t2平台, 26 金色狂風用)                                              |
+| fund_passwd      | string  |          | 3                         | 資金密碼                                            |
 | email            | string  |          | 5                         | 電子信箱                                                  |
 | user_country     | string  |          | 6                         | 使用者國家                                                |
 | user_state       | string  |          | 7                         | 使用者區                                                  |
