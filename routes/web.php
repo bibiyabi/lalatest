@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FakeDepositController;
+use App\Http\Controllers\FakeWithdrawController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,4 +21,6 @@ Route::get('/', function () {
 
 Route::prefix('fake_tparty')->group(function () {
     Route::get('deposit', [FakeDepositController::class, 'index']);
+    Route::get('withdraw', [FakeWithdrawController::class, 'index']);
 });
+
