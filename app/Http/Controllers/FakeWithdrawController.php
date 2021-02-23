@@ -10,6 +10,7 @@ use App\Services\Payments\Deposit\DepositNotify;
 use App\Services\Payments\PlatformNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 class FakeWithdrawController extends Controller
 {
@@ -46,9 +47,7 @@ class FakeWithdrawController extends Controller
 
         try {
             $this->service->notify($status);
-        } catch (NotifyException $e) {
-            return response(['success'=>false]);
-        } finally {
+        } catch (Throwable $e) {
             return response(['success'=>false]);
         }
 
