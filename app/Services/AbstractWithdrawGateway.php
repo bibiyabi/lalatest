@@ -1,23 +1,23 @@
 <?php
 namespace App\Services;
+
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
-use Illuminate\Http\Request;
 use App\Payment\Curl;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Contracts\LogLine;
-use App\Services\AbstractWithdrawCallback;
-use App\Services\Payments\ResultTrait;
 use App\Exceptions\WithdrawException;
-use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 use App\Exceptions\DecodeException;
 use App\Constants\Payments\Status;
+use App\Services\WithdrawCallback;
+use App\Services\Payments\ResultTrait;
 
-abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
+abstract class AbstractWithdrawGateway
 {
+    use WithdrawCallback;
     use ResultTrait;
     # url object
     protected $curl;
@@ -77,7 +77,9 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
         return [];
     }
     # 設定發送sign
-    abstract protected function setCreateSign($post, $settings);
+    protected function setCreateSign($post, $settings) {
+        $this->createSign = '';
+    }
     # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
     # 設定header
@@ -213,6 +215,11 @@ abstract class AbstractWithdrawGateway extends AbstractWithdrawCallback
             throw new DecodeException(json_last_error() . 'decode error @'. $data . '@', Status::ORDER_ERROR);
         }
         return $decode;
+    }
+
+    // for test
+    public function setCurl() {
+        $this->curl = new Curl();
     }
 
 }

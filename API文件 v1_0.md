@@ -64,6 +64,7 @@
 
 * 對應出入款所需欄位整理V12 更新，入款新增非必填 `upi_id` 欄位
 * 對應出入款所需欄位整理V12 更新，出款新增非必填 `bank_name` 、 `upi_id` 欄位
+* 2021/2/23 withdraw/create 10,11中文修正
 
 ---
 
@@ -482,7 +483,7 @@ POST /api/withdraw/create
 | type             | string  | V        | java                      | 渠道名稱:bank_card, e_wallet, cryptocurrency, credit_card |
 | amount           | integer |          | 1、14                     | 訂單金額 (數字貨幣傳貨幣數量)                             |
 | bank_card_option | integer |          | 2                         | 銀行卡                                                    |
-| fund_passwd      | string  |          | 3                         | 資金密碼                                                  |
+| fund_passwd      | string  |          | 3                         | 資金密碼                                            |
 | email            | string  |          | 5                         | 電子信箱                                                  |
 | user_country     | string  |          | 6                         | 使用者國家                                                |
 | user_state       | string  |          | 7                         | 使用者區                                                  |
@@ -491,8 +492,8 @@ POST /api/withdraw/create
 | bank_province    | string  |          | 19                        | 銀行省                                                    |
 | bank_city        | string  |          | 21                        | 銀行城市                                                  |
 | bank_address     | string  |          | 20                        | 銀行地址                                                  |
-| last_name        | string  |          | 10                        | 姓氏                                                      |
-| first_name       | string  |          | 11                        | 名字                                                      |
+| first_name       | string  |          | 10                        | 名子                                                      |
+| last_name        | string  |          | 11                        | 姓氏                                                 |
 | mobile           | string  |          | 12                        | 手機號                                                    |
 | telegram         | string  |          | 13                        | telegram                                                  |
 | network          | string  |          | 15                        | 區塊鏈網路(目前僅顯示)                                    |

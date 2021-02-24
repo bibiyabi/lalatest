@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\WithdrawOrder;
@@ -9,7 +10,7 @@ use App\Contracts\Payments\CallbackResult;
 use App\Exceptions\InputException;
 use App\Constants\Payments\Status;
 
-abstract class  AbstractWithdrawCallback
+Trait WithdrawCallback
 {
 
     // 停止callback回應的訊息
@@ -42,6 +43,14 @@ abstract class  AbstractWithdrawCallback
         $settings = $this->getSettings($order);
         $checkSign = $this->genCallbackSign($postJson, $settings);
         return $this->returnCallbackResult($post, $checkSign, $postSign, $order);
+    }
+
+    protected function getCallbackSign(Request $request) {
+        return '';
+    }
+
+    public function  getCallBackInput(Request $request) {
+        return  file_get_contents("php://input");
     }
 
     # 檢查回調input

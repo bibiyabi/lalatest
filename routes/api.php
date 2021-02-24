@@ -26,8 +26,8 @@ Route::prefix('test')->group(function() {
     });
 
     Route::post('aaa', function (){
-
-        echo '@@@';
+        $order = WithdrawOrder::where('order_id', 'aaaaa')->first();
+        var_dump($order);
 
       });
 });
@@ -50,6 +50,7 @@ Route::prefix('withdraw')->group(function ()
 {
     Route::post('create', [WithdrawController::class, 'create']);
     Route::post('reset', [WithdrawController::class, 'reset']);
+    Route::post('testQueue', [WithdrawController::class, 'testQueue']);
 });
 
 

@@ -18,6 +18,10 @@ class Curl
     }
 
     public function setUrl($url) {
+        if (!$this->ch) {
+            $this->ch = curl_init();
+            $this->basic();
+        }
         curl_setopt($this->ch, CURLOPT_URL, $url);
         return $this;
     }
@@ -30,6 +34,12 @@ class Curl
     public function setHeader($array) {
         $this->header = $array;
         curl_setopt($this->ch, CURLOPT_HTTPHEADER, $array);
+        return $this;
+    }
+
+    public function followLocation() {
+
+        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
         return $this;
     }
 
@@ -54,7 +64,7 @@ class Curl
     }
 
     public function ssl($bollean = false){
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $bollean);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $bollean ? 2 : $bollean );
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, $bollean);
         return $this;
     }
