@@ -41,7 +41,7 @@ class CryptoCurrencySearchQueueTest extends TestCase
             'user_id' => 111,
             'gateway_id' => 2222,
             'user_pk' => 999988776 ,
-            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"private_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24","md5_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW"}'
+            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
         ]);
 
 
@@ -82,7 +82,7 @@ class CryptoCurrencySearchQueueTest extends TestCase
             'user_id' => 111,
             'gateway_id' => 2222,
             'user_pk' => 999988776 ,
-            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"private_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24","md5_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW"}'
+            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
         ]);
 
         $orderId = 'unittest'. uniqid();

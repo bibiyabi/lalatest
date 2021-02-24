@@ -57,7 +57,7 @@ class BinanceTest extends TestCase
             'user_id' => $this->user->id,
             'gateway_id' => $gateway->id,
             'user_pk' => 123,
-            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"private_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24","md5_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW"}'
+            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
 
         ])->create();
 
@@ -116,7 +116,7 @@ class BinanceTest extends TestCase
             'user_id' => rand(),
             'gateway_id' => rand(),
             'user_pk' => rand(),
-            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"private_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24","md5_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW"}'
+            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
         ]);
 
         $orderId = 'unittest'. uniqid();
