@@ -110,7 +110,7 @@ class Jinfaguoji implements DepositGatewayInterface
         $data = json_decode($unprocessed, true);
 
         if (isset($data['data']['qrcode_url']) === false) {
-            throw new TpartyException($data['msg'] ?? "tparty error.");
+            throw new TpartyException($data['message'] ?? "tparty error.");
         }
 
         return $data['data']['qrcode_url'];
