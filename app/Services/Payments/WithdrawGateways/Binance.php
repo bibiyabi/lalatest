@@ -146,8 +146,8 @@ class Binance extends AbstractWithdrawGateway
         $column = [];
         if ($type == Type::CRYPTO_CURRENCY) {
             $column = [
-                C::CRYPTO_ADDRESS,
                 C::AMOUNT,
+                C::CRYPTO_ADDRESS,
                 C::FUND_PASSWORD
             ];
         }
