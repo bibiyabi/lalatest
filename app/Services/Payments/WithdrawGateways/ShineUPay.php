@@ -14,7 +14,7 @@ use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
-
+use App\Constants\Payments\Status;
 class ShineUPay extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
@@ -72,7 +72,7 @@ class ShineUPay extends AbstractWithdrawGateway
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number']) || empty($settings['private_key'])) {
-            throw new InputException('merchant_username or private key not found', ResponseCode::ERROR_PARAMETERS);
+            throw new InputException('merchant_username or private key not found', Status::ORDER_FAILED);
         }
         $array = [];
         $array['merchantId']             = $settings['merchant_number'];
