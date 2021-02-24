@@ -5,20 +5,16 @@ namespace App\Http\Controllers;
 use App\Constants\Payments\Status;
 use App\Exceptions\NotifyException;
 use App\Models\Order;
-use App\Models\WithdrawOrder;
 use App\Services\Payments\Deposit\DepositNotify;
-use App\Services\Payments\PlatformNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class FakeDepositController extends Controller
 {
     private $service;
-    private $withdrawService;
 
-    public function __construct(DepositNotify $service, PlatformNotify $withdrawService) {
+    public function __construct(DepositNotify $service) {
         $this->service = $service;
-        $this->withdrawService = $withdrawService;
     }
 
     public function index()
@@ -31,17 +27,6 @@ class FakeDepositController extends Controller
 
     public function sendNotify(Order $order, Request $request)
     {
-        $this->send($order, $request, $this->service);
-    }
-
-
-    public function withdrawSendNotify(WithdrawOrder $order, Request $request)
-    {
-        $this->withdrawService->setOrder($order);
-        $this->send($order, $request, $this->withdrawService);
-    }
-
-    private function send($order, Request $request, $service) {
         if (config('app.env') === 'vip') {
             return response(['success'=>false]);
         }
@@ -57,7 +42,7 @@ class FakeDepositController extends Controller
         $order->real_amount = $order->amount;
 
         try {
-            $service->notify($order);
+            $this->service->notify($order);
         } catch (NotifyException $e) {
             return response(['success'=>false]);
         }
