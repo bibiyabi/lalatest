@@ -128,7 +128,7 @@ class Binance extends AbstractWithdrawGateway
             '',
             '',
             '',
-            'Please input MD5 Key',
+            'Please input Secret Key',
             '',
             '',
             '',
