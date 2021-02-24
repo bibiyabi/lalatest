@@ -65,7 +65,7 @@ class InPay implements DepositGatewayInterface
             'amount' => sprintf("%.2f", $param->getAmount()),
             'notifyUrl' => config('app.url') . '/callback/deposit/InPay',
             'returnUrl' => 'aaa',
-            'payType' => $settings->getTransactionType() ?: $param->getTransactionType(),
+            'payType' => $settings->getTransactionType() ?: 'bankCard',
         ];
     }
 
@@ -179,7 +179,7 @@ class InPay implements DepositGatewayInterface
     {
         switch ($type) {
             case Type::BANK_CARD:
-                $column = [C::AMOUNT, C::BANK];
+                $column = [C::AMOUNT];
                 break;
 
             case Type::WALLET:
@@ -191,13 +191,6 @@ class InPay implements DepositGatewayInterface
                 break;
         }
 
-        $bank = [
-            [
-                'id' => 'bankCard',
-                'name'=>'bankCard'
-            ],
-        ];
-
-        return new DepositRequireInfo($type, $column, $bank);
+        return new DepositRequireInfo($type, $column, []);
     }
 }
