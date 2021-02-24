@@ -13,10 +13,12 @@ use App\Exceptions\InputException;
 use App\Exceptions\DecodeException;
 use App\Constants\Payments\Status;
 use App\Services\WithdrawCallback;
+use App\Services\Payments\ResultTrait;
 
 abstract class AbstractWithdrawGateway
 {
     use WithdrawCallback;
+    use ResultTrait;
     # url object
     protected $curl;
     # 回調網址
