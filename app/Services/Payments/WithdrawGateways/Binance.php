@@ -57,7 +57,6 @@ class Binance extends AbstractWithdrawGateway
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
 
-
         $array = [
             "asset"           => $settings['coin'],
             "network"         => $this->getNetwork($settings['blockchain_contract']),
@@ -80,7 +79,7 @@ class Binance extends AbstractWithdrawGateway
     }
 
     protected function genSign($postData, $settings) {
-        return hash_hmac('sha256', http_build_query($postData, '', '&'), $settings['md5_key']);
+        return hash_hmac('sha256', http_build_query($postData, '', '&'), $settings['private_key']);
     }
 
     protected function setCreatePostData($post, $settings) {
@@ -146,8 +145,8 @@ class Binance extends AbstractWithdrawGateway
         $column = [];
         if ($type == Type::CRYPTO_CURRENCY) {
             $column = [
-                C::CRYPTO_ADDRESS,
                 C::AMOUNT,
+                C::CRYPTO_ADDRESS,
                 C::FUND_PASSWORD
             ];
         }
@@ -160,7 +159,7 @@ class Binance extends AbstractWithdrawGateway
     {
         $settings = $this->getSettings($order);
         $this->api_key = $settings['api_key'];
-        $this->api_secret = $settings['md5_key'];
+        $this->api_secret = $settings['private_key'];
 
         $params = [
             'asset' => $settings['coin'],
