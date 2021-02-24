@@ -57,15 +57,15 @@ class BinanceTest extends TestCase
             'user_id' => $this->user->id,
             'gateway_id' => $gateway->id,
             'user_pk' => 123,
-            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
+            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRC20","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
 
         ])->create();
 
         $orderId = 'unittest'. uniqid();
 
-        # 這是dennis的
+        # 這是dennis的不要亂用
         #$address = 'TBvrFcquLk5zBzinutkDvrs3vrLk4qncDj';
-        $address = 'do_not_test';
+        $address = '';
 
         $res = $this->post('/api/withdraw/create', [
             'type'     => 'cryptocurrency',
@@ -90,7 +90,8 @@ class BinanceTest extends TestCase
             'ifsc'             => '1'
         ]);
 
-        $res->assertStatus(200);
+
+
         $res->assertJsonFragment(['success'=>true]);
         $this->assertDatabaseHas('withdraw_orders', [
             'order_id' => $orderId,
@@ -102,7 +103,7 @@ class BinanceTest extends TestCase
 
     public function test_search()
     {
-        //$this->markTestSkipped('skip.');
+       // $this->markTestSkipped('skip.');
         # test api  fail
         $this->test_search_status(false, 3, CryptoCurrencyStatus::API_FAIL);
         # test order status is fail
@@ -116,7 +117,7 @@ class BinanceTest extends TestCase
             'user_id' => rand(),
             'gateway_id' => rand(),
             'user_pk' => rand(),
-            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRX","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
+            'settings' =>  '{"coin":"USDT","blockchain_contract":"TRC20","id":1,"user_id":1,"gateway_id":3,"api_key":"76jJmqVMkD9waAgAzgp5YDSaaRLJYSJO65Aumyv5JFemOvb9jVcYULUht767TAzW","md5_key":"7nx5jaYLAYrukclpvXzc9IF5IYasfJwY12hOJqE4ZPrUEw0CaCqsZKgI0rmMZs24"}'
         ]);
 
         $orderId = 'unittest'. uniqid();
@@ -134,7 +135,7 @@ class BinanceTest extends TestCase
         $shineUpay->shouldReceive('getCallBackInput')
         ->andReturn([]);
 
-        //$binanceResSample = '{"withdrawList":[{"amount":9.8,"transactionFee":0.2,"address":"TBvrFcquLk5zBzinutkDvrs3vrLk4qncDj","withdrawOrderId":"unittest603320540cf11","txId":"bd877cd0280aa2e6a7d5d38f5a426d183147d101008b92176ece4759043af997","id":"f92c958671f6424384658a157281aa5d","asset":"USDT","applyTime":1613963381000,"status":6,"network":"TRX"}],"success":true}';
+        //$binanceResSample = '{"withdrawList":[{"amount":9.8,"transactionFee":0.2,"address":"TBvrFcquLk5zBzinutkDvrs3vrLk4qncDj","withdrawOrderId":"unittest603320540cf11","txId":"bd877cd0280aa2e6a7d5d38f5a426d183147d101008b92176ece4759043af997","id":"f92c958671f6424384658a157281aa5d","asset":"USDT","applyTime":1613963381000,"status":6,"network":"TRC20"}],"success":true}';
 
         $result = [];
         $orderArray = [];
