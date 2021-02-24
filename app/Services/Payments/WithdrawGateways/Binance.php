@@ -33,13 +33,10 @@ class Binance extends AbstractWithdrawGateway
     protected $isCurlProxy = true;
 
     public function __construct(Curl $curl) {
-
         parent::__construct($curl);
-
     }
 
     public function setRequest($post = [], WithdrawOrder $order) : void {
-
         $this->setBaseRequest($order, $post);
     }
 
@@ -53,7 +50,6 @@ class Binance extends AbstractWithdrawGateway
     }
 
     protected function setCreateSign($post, $settings) {
-
         $signParams = $this->getNeedGenSignArray($post,  $settings);
         $this->createSign =  $this->genSign($signParams, $settings);
     }
@@ -61,17 +57,26 @@ class Binance extends AbstractWithdrawGateway
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
 
+
         $array = [
             "asset"           => $settings['coin'],
-            "network"         => $settings['blockchain_contract'],
+            "network"         => $this->getNetwork($settings['blockchain_contract']),
             "withdrawOrderId" => $input['order_id'],
             "address"         => $input['withdraw_address'],
             "amount"          => $input['amount'],
             "timestamp"       => time() . '000',
         ];
-
         return $array;
 
+    }
+
+    private function getNetwork($contract) {
+        switch ($contract) {
+            case 'TRC20':
+                return 'TRX';
+            default:
+                return $contract;
+        }
     }
 
     protected function genSign($postData, $settings) {
@@ -82,6 +87,7 @@ class Binance extends AbstractWithdrawGateway
         $this->api_key = $settings['api_key'];
 
         $options = $this->getNeedGenSignArray($post, $settings);
+
         $options['signature'] = $this->createSign;
 
         $this->createPostData =  http_build_query($options, '', '&');;
@@ -108,7 +114,7 @@ class Binance extends AbstractWithdrawGateway
     {
         switch ($type) {
             case Type::CRYPTO_CURRENCY:
-                $coin = ['TRX'];
+                $coin = ['TRC20'];
                 $blockchainContract = ['USDT'];
                 break;
             default:
