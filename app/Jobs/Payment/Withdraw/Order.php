@@ -68,6 +68,11 @@ class Order implements ShouldQueue
             WithdrawOrder::where('order_id', $this->post['order_id'])
             ->update(['status' => $res['code']]);
 
+            if ($res['code'] == Status::ORDER_FAILED) {
+                Notify::dispatch($this->order, $res['msg'])->onQueue('notify');
+                return;
+            }
+
             if ($this->post['type'] == Type::CRYPTO_CURRENCY) {
                 $order = WithdrawOrder::where('order_id', $this->post['order_id'])->first();
                 CryptoCurrencySearch::dispatch($order, $paymentGateway)->onQueue('cryptocurrency');
