@@ -83,13 +83,8 @@ class GatewayService
     {
         $this->checkType($request->input('type'));
 
-        try {
-            $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
-            $result = $gateway->getRequireInfo($request->input('type'))->toArray();
-        }catch(\Throwable $e){
-            Log::info($e->getMessage(), $request->post());
-            return new ServiceResult(false,CODE::ERROR_DATA_IN_PAYMENT);
-        }
+        $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
+        $result = $gateway->getRequireInfo($request->input('type'))->toArray();
 
         return new ServiceResult(true, CODE::SUCCESS, urlencode(json_encode($result)));
     }
