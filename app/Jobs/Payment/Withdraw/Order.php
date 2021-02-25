@@ -64,7 +64,6 @@ class Order implements ShouldQueue
             if (!isset($res['code'])) {
                 throw new WithdrawException('res code not set' , ResponseCode::EXCEPTION);
             }
-
             WithdrawOrder::where('order_id', $this->post['order_id'])
             ->update(['status' => $res['code']]);
 
@@ -82,7 +81,6 @@ class Order implements ShouldQueue
         } catch (Throwable $e) {
 
             Log::channel('withdraw')->info(new LogLine($e));
-
             if (in_array($e->getCode(), [Status::ORDER_ERROR, Status::ORDER_FAILED, Status::ORDER_SUCCESS])) {
                 WithdrawOrder::where('order_id', $this->post['order_id'])
                 ->update(['status' => $e->getCode()]);
@@ -90,7 +88,11 @@ class Order implements ShouldQueue
                 if ($e->getCode() == Status::ORDER_FAILED) {
                     Notify::dispatch($this->order, $e->getMessage())->onQueue('notify');
                 }
+                return;
             }
+
+            WithdrawOrder::where('order_id', $this->post['order_id'])
+                ->update(['status' => Status::ORDER_ERROR]);
         }
     }
 
