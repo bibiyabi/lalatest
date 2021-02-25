@@ -7,6 +7,7 @@ use App\Constants\Payments\ResponseCode as CODE;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Withdraw\WithdrawGatewayFactory;
+use App\Exceptions\UnsupportedTypeException;
 use App\Repositories\GatewayTypeRepository;
 use App\Contracts\Payments\ServiceResult;
 use Illuminate\Support\Facades\Log;
@@ -49,11 +50,10 @@ class GatewayService
             foreach ($result as $key => $value){
                 $result[$key] = (array)$value;
             }
-            $resultEncode = urlencode(json_encode($result));
-            return new ServiceResult(true,CODE::SUCCESS, $resultEncode);
-        }else{
-            return new ServiceResult(true, CODE::RESOURCE_NOT_FOUND);
         }
+
+        $resultEncode = urlencode(json_encode($result));
+        return new ServiceResult(true,CODE::SUCCESS, $resultEncode);
     }
 
     /**
@@ -62,15 +62,12 @@ class GatewayService
      */
     public function getPlaceholder($request)
     {
-        $this->checkType($request->input('type'));
-
-        try {
-            $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
-            $result = $gateway->getPlaceholder($request->input('type'))->toArray();
-        }catch(\Throwable $e){
-            Log::info($e->getMessage(), $request->post());
-            return new ServiceResult(false,CODE::ERROR_DATA_IN_PAYMENT);
+        if (!array_key_exists($request->input('type'), Type::type)){
+            return new ServiceResult(false,CODE::ERROR_CONFIG_PARAMETERS);
         }
+
+        $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
+        $result = $gateway->getPlaceholder($request->input('type'))->toArray();
 
         return new ServiceResult(true, CODE::SUCCESS, urlencode(json_encode($result)));
     }
@@ -81,19 +78,14 @@ class GatewayService
      */
     public function getRequireInfo($request)
     {
-        $this->checkType($request->input('type'));
+        if (!array_key_exists($request->input('type'), Type::type)){
+            return new ServiceResult(false,CODE::ERROR_CONFIG_PARAMETERS);
+        }
 
         $gateway = $this->getFactory($request->input('is_deposit'),$request->input('gateway_name'));
         $result = $gateway->getRequireInfo($request->input('type'))->toArray();
 
         return new ServiceResult(true, CODE::SUCCESS, urlencode(json_encode($result)));
-    }
-
-    private function checkType($type)
-    {
-        if (!array_key_exists($type, Type::type)){
-            return new ServiceResult(false,CODE::ERROR_CONFIG_PARAMETERS);
-        }
     }
 
     private function getFactory($isDeposit, $gatewayName)

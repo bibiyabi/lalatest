@@ -16,6 +16,6 @@ class GatewayNotFountException extends Exception
 
     public function render()
     {
-        return RB::error(ResponseCode::ERROR_DATA_IN_PAYMENT);
+        return RB::error(ResponseCode::GATEWAY_NOT_FOUND);
     }
 }
