@@ -17,9 +17,9 @@ class WithdrawGatewayFactory
         $class = self::$namespace.$gatewayName;
         try {
             $gateway = new $class(new Curl());
-        }catch(\Exception $e){
-            Log::info($e->getMessage());
-            throw new GatewayNotFountException();
+        }catch(\Throwable $e){
+            Log::info(__NAMESPACE__.'     '. $e->getMessage());
+            throw new GatewayNotFountException($gatewayName.' Withdraw Gateway Not Found.');
         }
 
         return $gateway;
