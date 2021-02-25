@@ -4,6 +4,7 @@ namespace App\Services\Payments\WithdrawGateways;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
+use App\Exceptions\UnsupportedTypeException;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use App\Payment\Curl;
@@ -179,18 +180,21 @@ class Dsupi extends AbstractWithdrawGateway
     public function getRequireInfo($type): WithdrawRequireInfo
     {
         # 該支付有支援的渠道  指定前台欄位
-        $column = [];
-        if ($type == Type::WALLET) {
-            $column = [
-                C::AMOUNT,
-                C::IFSC,
-                C::BANK_ACCOUNT,
-                C::BANK_ADDRESS,
-                C::FIRST_NAME,
-                C::LAST_NAME,
-                C::FUND_PASSWORD
-            ];
-
+        switch ($type) {
+            case Type::WALLET:
+                $column = [
+                    C::AMOUNT,
+                    C::IFSC,
+                    C::BANK_ACCOUNT,
+                    C::BANK_ADDRESS,
+                    C::FIRST_NAME,
+                    C::LAST_NAME,
+                    C::FUND_PASSWORD
+                ];
+                break;
+            default:
+                throw new UnsupportedTypeException();
+                break;
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);

@@ -4,6 +4,7 @@ namespace App\Services\Payments\WithdrawGateways;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
+use App\Exceptions\UnsupportedTypeException;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use App\Payment\Curl;
@@ -142,13 +143,17 @@ class Binance extends AbstractWithdrawGateway
     public function getRequireInfo($type): WithdrawRequireInfo
     {
         # 該支付有支援的渠道  指定前台欄位
-        $column = [];
-        if ($type == Type::CRYPTO_CURRENCY) {
-            $column = [
-                C::AMOUNT,
-                C::CRYPTO_ADDRESS,
-                C::FUND_PASSWORD
-            ];
+        switch ($type) {
+            case Type::CRYPTO_CURRENCY:
+                $column = [
+                    C::AMOUNT,
+                    C::CRYPTO_ADDRESS,
+                    C::FUND_PASSWORD
+                ];
+                break;
+            default:
+                throw new UnsupportedTypeException();
+                break;
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);
