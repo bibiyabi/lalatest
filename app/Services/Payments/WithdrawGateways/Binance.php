@@ -170,7 +170,7 @@ class Binance extends AbstractWithdrawGateway
 
         $query = http_build_query($params, '', '&');
         $signature = hash_hmac('sha256', $query, $this->api_secret);
-        $url = 'http://'.$this->getProxyIp().'/wapi/v3/withdrawHistory.html' .'?' . $query . '&signature=' . $signature;
+        $url = 'http://'.$this->getProxyIp($this->isHttps()).'/wapi/v3/withdrawHistory.html' .'?' . $query . '&signature=' . $signature;
 
         $res = $this->getCrypSearchResult($url);
 

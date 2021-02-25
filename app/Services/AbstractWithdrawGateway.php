@@ -14,11 +14,13 @@ use App\Exceptions\DecodeException;
 use App\Constants\Payments\Status;
 use App\Services\WithdrawCallback;
 use App\Services\Payments\ResultTrait;
+use App\Services\Payments\ProxyTrait;
 
 abstract class AbstractWithdrawGateway
 {
     use WithdrawCallback;
     use ResultTrait;
+    use ProxyTrait;
     # url object
     protected $curl;
     # 回調網址
@@ -105,13 +107,6 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    protected function getProxyIp() {
-        if ($this->isHttps()) {
-            return config('app.proxy_ip') . ':8443';
-        }
-        return  config('app.proxy_ip') . ':8080';
-    }
-
     # 取得建單狀態
     protected function getSendReturn($curlRes) {
 
@@ -154,7 +149,7 @@ abstract class AbstractWithdrawGateway
 
     protected function getCreateUrl() {
         if ($this->isCurlProxy) {
-            return 'http://' . $this->getProxyIp() . $this->createSegments;;
+            return 'http://' . $this->getProxyIp($this->isHttps()) . $this->createSegments;;
         }
 
         $http = ($this->isHttps()) ? 'https://' : 'http://';
