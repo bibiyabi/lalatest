@@ -49,11 +49,10 @@ class GatewayService
             foreach ($result as $key => $value){
                 $result[$key] = (array)$value;
             }
-            $resultEncode = urlencode(json_encode($result));
-            return new ServiceResult(true,CODE::SUCCESS, $resultEncode);
-        }else{
-            return new ServiceResult(true, CODE::RESOURCE_NOT_FOUND);
         }
+
+        $resultEncode = urlencode(json_encode($result));
+        return new ServiceResult(true,CODE::SUCCESS, $resultEncode);
     }
 
     /**
