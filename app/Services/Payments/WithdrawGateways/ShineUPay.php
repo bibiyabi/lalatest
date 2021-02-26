@@ -24,6 +24,7 @@ class ShineUPay extends AbstractWithdrawGateway
     protected $domain = 'testgateway.shineupay.com';
     // 下單網址
     protected $createSegments = '/withdraw/create';
+    protected $createResultMessagePosition = 'message';
     // 設定下單sign
     protected $createSign;
     protected $isCurlProxy = false;
