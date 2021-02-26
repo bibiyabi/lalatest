@@ -28,8 +28,9 @@ class SettingService
             }else{ # update
                 $this->repo->updateSetting($settingId->id, $data);
             }
-        }catch (\Throwable $e){
-            Log::info($e->getMessage().' PATH: '.__METHOD__, $data);
+        }catch (\PDOException $e){
+            echo $e->getMessage().' PATH: '.__METHOD__;
+            Log::info($e->getMessage()."\n".' PATH: '.__METHOD__);
             return new ServiceResult(false, CODE::FAIL);
         }
         return new ServiceResult(true, CODE::SUCCESS);
@@ -43,7 +44,7 @@ class SettingService
                 return new ServiceResult(false, CODE::FAIL);
             }
             $this->repo->deleteSetting($settingId->id);
-        }catch (\Throwable $e){
+        }catch (\PDOException $e){
             Log::info($e->getMessage().' PATH: '.__METHOD__, $request->post());
             return new ServiceResult(false, CODE::FAIL);
         }
