@@ -427,6 +427,7 @@ class PaymentTest extends TestCase
         $result = $shineUpay->send();
 
         $this->assertEquals(Status::ORDER_FAILED, $result['code']);
+        $this->assertEquals('curl fail', $result['msg']);
 
     }
 
@@ -469,7 +470,47 @@ class PaymentTest extends TestCase
         $result = $shineUpay->send();
 
         $this->assertEquals(Status::ORDER_ERROR, $result['code']);
+        $this->assertEquals('curl timeout', $result['msg']);
 
+    }
+
+    public function test_order_return_error_msg() {
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $orderId = 'unittest'. uniqid();
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = $orderId;
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => '{"status":2,"message":"Invalid amount","merchantId":"A5LB093F045C2322","timestamp":"1614319980311"}', 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+
+        $result = $shineUpay->send();
+        $this->assertEquals('Invalid amount', $result['msg']);
     }
 
 

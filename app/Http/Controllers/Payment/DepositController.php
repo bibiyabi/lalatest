@@ -13,9 +13,10 @@ use Illuminate\Support\Facades\Log;
 
 class DepositController extends Controller
 {
-    private $depositRepo;
+    private $service;
 
-    public function __construct(DepositRepository $depositRepo) {
+    public function __construct(DepositService $service, DepositRepository $depositRepo) {
+        $this->service = $service;
         $this->depositRepo = $depositRepo;
     }
 
@@ -29,13 +30,10 @@ class DepositController extends Controller
             'amount'   => 'required|numeric|min:0'
         ]);
 
-        $service = App::make(DepositService::class);
-        $rs = App::call([$service, 'create'], ['input' => $request->post()]);
+        $rs = $this->service->create($request);
 
         Log::info('Deposit-result', $rs->getResult());
-        return $rs->getSuccess()
-            ? RB::success($rs->getResult())
-            : RB::error(ResponseCode::EXCEPTION);
+        return RB::success($rs->getResult());
     }
 
     public function callback(Request $request, $gatewayName)
@@ -51,16 +49,10 @@ class DepositController extends Controller
     public function reset(Request $request)
     {
         $validated = $request->validate(['order_id' => 'required']);
-        $user = $request->user();
 
-        Log::info('Deposit-reset order_id:' . $validated['order_id'] . ' user:' . $user->id);
-        $order = $this->depositRepo->user($user->id)->orderId($validated['order_id'])->first();
+        Log::info('Deposit-reset order_id:' . $validated['order_id']);
 
-        if (empty($order)) {
-            return RB::error(ResponseCode::RESOURCE_NOT_FOUND);
-        }
-
-        return $order->delete()
+        return $this->service->reset($request->user()->id, $validated['order_id'])
             ? RB::success()
             : RB::error(ResponseCode::EXCEPTION);
     }
