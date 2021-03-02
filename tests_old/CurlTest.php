@@ -14,6 +14,7 @@ class CurlTest extends TestCase
      *
      * @return void
      */
+    /*
     public function test_curl_timeout()
     {
         $curl = new Curl();
@@ -21,6 +22,7 @@ class CurlTest extends TestCase
 
         $this->assertEquals(Curl::TIMEOUT, $res['code']);
     }
+
 
     public function test_curl_url_not_connected()
     {
@@ -37,4 +39,5 @@ class CurlTest extends TestCase
 
         $this->assertEquals(Curl::STATUS_SUCCESS, $res['code']);
     }
+    */
 }
