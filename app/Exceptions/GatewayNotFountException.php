@@ -11,12 +11,12 @@ class GatewayNotFountException extends Exception
 {
     public function report()
     {
-        return false;
+        return ;
     }
 
     public function render()
     {
-        Log::info('Gateway Not Found Exception');
+        Log::info($this->getMessage());
         return RB::error(ResponseCode::GATEWAY_NOT_FOUND);
     }
 }
