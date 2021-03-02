@@ -20,9 +20,9 @@ use App\Payment\CryptCallbackResult;
 use App\Constants\Payments\CryptoCurrencyStatus;
 use Cache;
 use App\Constants\RedisKeys;
+use App\Constants\Payments\CryptoCurrencySearch;
 
-
-class Binance extends AbstractWithdrawGateway
+class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
 {
     // ================ 下單參數 ==================
     // 下單domain
