@@ -11,9 +11,9 @@ use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
 use App\Exceptions\StatusLockedException;
 use App\Jobs\Payment\Deposit\Notify;
+use App\Repositories\GatewayRepository;
 use App\Repositories\Orders\DepositRepository;
 use App\Repositories\SettingRepository;
-use Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
@@ -23,58 +23,53 @@ class DepositService
 
     private $settingRepo;
 
-    public function __construct(DepositRepository $orderRepo, SettingRepository $settingRepo) {
+    private $gatewayRepo;
+
+    public function __construct(DepositRepository $orderRepo, SettingRepository $settingRepo, GatewayRepository $gatewayRepo)
+    {
         $this->orderRepo = $orderRepo;
         $this->settingRepo = $settingRepo;
+        $this->gatewayRepo = $gatewayRepo;
     }
 
-    public function create(array $input): OrderResult
+    public function create(Request $request): OrderResult
     {
-        # create order param
-        $user = Auth::user();
-        $userPk = $input['pk'];
-
-        $key = $this->settingRepo->filterCombinePk($user->id, $userPk)->first();
-        if (empty($key)) {
-            return new OrderResult(false, 'Key not found', ResponseCode::RESOURCE_NOT_FOUND);
+        # get user
+        $user = $request->user();
+        $setting = $this->settingRepo->filterCombinePk($user->id, $request->post('pk'))->first();
+        if ($setting === null) {
+            throw new NotFoundResourceException('Setting not found.');
         }
 
-        # decide how to return value
-        try {
-            $gatewayName = $key->gateway->name;
-            $gateway = DepositGatewayFactory::createGateway($gatewayName);
-            $type = $gateway->getReturnType();
-            Log::info('Deposit-gateway: ' . $gatewayName);
-        } catch (\App\Exceptions\GatewayNotFountException $e) {
-            return new OrderResult(false, 'Gateway not found.', ResponseCode::GATEWAY_NOT_FOUND);
-        } catch (\ErrorException $e) {
-            return new OrderResult(false, 'Key setting error.', ResponseCode::GATEWAY_NOT_FOUND);
+        # get gateway class
+        $gatewayModel = $this->gatewayRepo->filterGatewayId($setting->gateway_id)->first();
+        if ($gatewayModel === null) {
+            throw new NotFoundResourceException("Gateway not found.");
         }
+        $gateway = DepositGatewayFactory::createGateway($gatewayModel->name);
+        Log::info('Deposit-gateway: ' . $gatewayModel->name);
 
-        try {
-            $temp = $key->gateway_id;
-            $order = $this->orderRepo->create($input, $user->id, $key->id, $temp);
-        } catch (\PDOException $e) {
-            return new OrderResult(false, 'Duplicate OrderId.', ResponseCode::DUPLICATE_ORDERID);
-        }
+        # insert order to db
+        $order = $this->orderRepo->create(
+            $request->post(),
+            $user->id,
+            $setting->id,
+            $setting->gateway_id
+        );
 
         # submit param
-        $param = $gateway->genDepositParam($order);
-        $result = ResultFactory::createResultFactory($type)->getResult($param);
+        $depositParam = $gateway->genDepositParam($order);
+        $result = ResultFactory::createResultFactory($gateway->getReturnType())->getResult($depositParam);
         Log::info('Deposit-Tparty-Result ' . $result->getContent());
 
-        $processedResult = ($type == 'url')
+        # get url from tparty response or rerutn form directly
+        $processedResult = ($gateway->getReturnType() == 'url')
             ? $gateway->processOrderResult($result->getContent())
             : $result->getContent();
 
         # return result
         $result->setContent($processedResult);
         return new OrderResult(true, 'Success.', ResponseCode::SUCCESS, $result->toArray());
-    }
-
-    public function search()
-    {
-        # code...
     }
 
     public function callback(Request $request, $gatewayName) : CallbackResult
@@ -110,5 +105,10 @@ class DepositService
         }
 
         return $result;
+    }
+
+    public function reset(int $userId, string $orderId)
+    {
+        return $this->orderRepo->user($userId)->orderId($orderId)->reset();
     }
 }

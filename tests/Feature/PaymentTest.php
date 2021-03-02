@@ -17,12 +17,14 @@ use App\Models\Gateway;
 use Illuminate\Support\Facades\Bus;
 use App\Models\WithdrawOrder;
 use App\Contracts\Payments\CallbackResult;
+use App\Exceptions\DecodeException;
 use App\Http\Controllers\Payment\WithdrawController;
 use App\Payment\Withdraw\Payment;
 use App\Providers\GatewayServiceProvider;
 use App\Services\AbstractWithdrawGateway;
 use Database\Factories\WithdrawOrderFactory;
 use Illuminate\Support\Facades\Queue;
+use Mockery\MockInterface;
 
 class PaymentTest extends TestCase
 {
@@ -253,5 +255,263 @@ class PaymentTest extends TestCase
         ]);
         $response->assertJsonFragment(['success'=>true]);
     }
+
+    public function test_curl_return_json_exception() {
+
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = '123456600131627297f';
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => 'json error format', 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+        $this->expectException(DecodeException::class);
+
+        $shineUpay->send();
+    }
+
+
+    public function test_order_fail_if_curl_success_but_json_is_wrong() {
+
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = '123456600131627297f';
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => json_encode(['order_id']), 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+
+        $result = $shineUpay->send();
+
+        $this->assertEquals(Status::ORDER_FAILED, $result['code']);
+
+    }
+
+
+
+    public function test_order_success_if_curl_success_and_json_is_correct() {
+
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = '123456600131627297f';
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => json_encode(
+                ['status' => 0,
+                'body' => ['platformOrderId' => 'test']
+            ]
+            ), 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+
+        $result = $shineUpay->send();
+
+        $this->assertEquals(Status::ORDER_SUCCESS, $result['code']);
+
+    }
+
+    public function test_order_failed_is_curl_is_fail() {
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = '123456600131627297f';
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::FAILED, 'data' => json_encode(['order_id']), 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+
+        $result = $shineUpay->send();
+
+        $this->assertEquals(Status::ORDER_FAILED, $result['code']);
+        $this->assertEquals('curl fail', $result['msg']);
+
+    }
+
+
+    public function test_order_error_is_curl_timeout() {
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = '123456600131627297f';
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::TIMEOUT, 'data' => json_encode(['order_id']), 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+
+        $result = $shineUpay->send();
+
+        $this->assertEquals(Status::ORDER_ERROR, $result['code']);
+        $this->assertEquals('curl timeout', $result['msg']);
+
+    }
+
+    public function test_order_return_error_msg() {
+
+        $key = Setting::create([
+            'user_id' => 1,
+            'gateway_id' => 1,
+            'user_pk' => 777,
+            'settings' => '{"id":1,"user_id":1,"gateway_id":3,"merchant_number":"A5LB093F045C2322","md5_key":"fed8b982f9044290af5aba64d156e0d9", "private_key": "A948C01Y9JB47290"}'
+        ]);
+
+        $orderId = 'unittest'. uniqid();
+        $factory = new WithdrawOrderFactory();
+        $orderArray = $factory->definition();
+        $orderArray['order_id'] = $orderId;
+        $orderArray['key_id'] = $key->id;
+        $order = WithdrawOrder::create($orderArray);
+
+        $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
+            $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => '{"status":2,"message":"Invalid amount","merchantId":"A5LB093F045C2322","timestamp":"1614319980311"}', 'errorMsg' => '']);
+        });
+
+        $mockCurl->__construct();
+        $shineUpay = new ShineUPay($mockCurl);
+        $shineUpay->setRequest([
+            'withdraw_address' => 'test',
+            'first_name'       => 'test',
+            'last_name'        => 'test',
+            'mobile'           => 'test',
+            'bank_address'     => 'test',
+            'ifsc'             => 'test',
+            'amount'           => 'test',
+            'email'            => 'test',
+            'order_id'         => 'test'
+        ], $order);
+
+
+        $result = $shineUpay->send();
+        $this->assertEquals('Invalid amount', $result['msg']);
+    }
+
 
 }

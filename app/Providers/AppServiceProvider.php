@@ -27,11 +27,23 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         if (config('app.env') == 'local'){
+
+
+
+
             DB::listen(function($query){
+
+                $i = 0;
+                $bindings = $query->bindings;
+                $rawSql = preg_replace_callback('/\?/', function ($matches) use ($bindings, &$i) {
+                    $item = isset($bindings[$i]) ? $bindings[$i] : $matches[0];
+                    $i++;
+                    return gettype($item) == 'string' ? "'$item'" : $item;
+                }, $query->sql);
+
                 Log::info(
-                    $query->sql,
-                    $query->bindings,
-                    $query->time
+                    $rawSql,
+                    [$query->time]
                 );
             });
         }

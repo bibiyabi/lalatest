@@ -4,6 +4,7 @@ namespace App\Services\Payments\WithdrawGateways;
 use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
+use App\Exceptions\UnsupportedTypeException;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use App\Payment\Curl;
@@ -19,9 +20,9 @@ use App\Payment\CryptCallbackResult;
 use App\Constants\Payments\CryptoCurrencyStatus;
 use Cache;
 use App\Constants\RedisKeys;
+use App\Constants\Payments\CryptoCurrencySearch;
 
-
-class Binance extends AbstractWithdrawGateway
+class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
 {
     // ================ 下單參數 ==================
     // 下單domain
@@ -142,13 +143,17 @@ class Binance extends AbstractWithdrawGateway
     public function getRequireInfo($type): WithdrawRequireInfo
     {
         # 該支付有支援的渠道  指定前台欄位
-        $column = [];
-        if ($type == Type::CRYPTO_CURRENCY) {
-            $column = [
-                C::AMOUNT,
-                C::CRYPTO_ADDRESS,
-                C::FUND_PASSWORD
-            ];
+        switch ($type) {
+            case Type::CRYPTO_CURRENCY:
+                $column = [
+                    C::AMOUNT,
+                    C::CRYPTO_ADDRESS,
+                    C::FUND_PASSWORD
+                ];
+                break;
+            default:
+                throw new UnsupportedTypeException();
+                break;
         }
 
         return new WithdrawRequireInfo($type, $column, [], []);
@@ -170,7 +175,7 @@ class Binance extends AbstractWithdrawGateway
 
         $query = http_build_query($params, '', '&');
         $signature = hash_hmac('sha256', $query, $this->api_secret);
-        $url = 'http://'.$this->getProxyIp().'/wapi/v3/withdrawHistory.html' .'?' . $query . '&signature=' . $signature;
+        $url = 'http://'.$this->getProxyIp($this->isHttps()).'/wapi/v3/withdrawHistory.html' .'?' . $query . '&signature=' . $signature;
 
         $res = $this->getCrypSearchResult($url);
 

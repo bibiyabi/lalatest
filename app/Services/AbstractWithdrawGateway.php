@@ -14,13 +14,16 @@ use App\Exceptions\DecodeException;
 use App\Constants\Payments\Status;
 use App\Services\WithdrawCallback;
 use App\Services\Payments\ResultTrait;
+use App\Services\Payments\ProxyTrait;
 
 abstract class AbstractWithdrawGateway
 {
     use WithdrawCallback;
     use ResultTrait;
+    use ProxyTrait;
     # url object
     protected $curl;
+    protected $createResultMessagePosition = 'message';
     # 回調網址
     protected $callbackUrl;
     # order modal
@@ -36,6 +39,7 @@ abstract class AbstractWithdrawGateway
 
     protected $domain = '';
     protected $createSegments = '';
+
 
 
     public function __construct($curl) {
@@ -105,13 +109,6 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    protected function getProxyIp() {
-        if ($this->isHttps()) {
-            return config('app.proxy_ip') . ':8443';
-        }
-        return  config('app.proxy_ip') . ':8080';
-    }
-
     # 取得建單狀態
     protected function getSendReturn($curlRes) {
 
@@ -119,9 +116,9 @@ abstract class AbstractWithdrawGateway
             case Curl::STATUS_SUCCESS:
                 return $this->returnCreateRes($this->getCreateOrderRes($curlRes));
             case Curl::FAILED:
-                return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
+                return $this->resCreateFailed('curl fail', ['order_id' => $this->order->order_id]);
             case Curl::TIMEOUT:
-                return $this->resCreateError('', ['order_id' => $this->order->order_id]);
+                return $this->resCreateError('curl timeout', ['order_id' => $this->order->order_id]);
             default:
                 throw new WithdrawException("curl rescode default " , Status::ORDER_FAILED);
         }
@@ -134,9 +131,10 @@ abstract class AbstractWithdrawGateway
     # curl 取得建單狀態
     protected function returnCreateRes($createRes) {
         if ($this->checkCreateOrderIsSuccess($createRes)) {
-            return $this->resCreateSuccess('', ['order_id' => $this->order->order_id]);
+            return $this->resCreateSuccess('success', ['order_id' => $this->order->order_id]);
         } else {
-            return $this->resCreateFailed('', ['order_id' => $this->order->order_id]);
+            $errorMsg = $this->getCreateOrderMsg($createRes);
+            return $this->resCreateFailed($errorMsg, ['order_id' => $this->order->order_id]);
         }
     }
 
@@ -154,7 +152,7 @@ abstract class AbstractWithdrawGateway
 
     protected function getCreateUrl() {
         if ($this->isCurlProxy) {
-            return 'http://' . $this->getProxyIp() . $this->createSegments;;
+            return 'http://' . $this->getProxyIp($this->isHttps()) . $this->createSegments;;
         }
 
         $http = ($this->isHttps()) ? 'https://' : 'http://';
@@ -192,6 +190,10 @@ abstract class AbstractWithdrawGateway
         Log::channel('withdraw')->info(new LogLine('CURL createPostData url:'.$url. ' '. print_r($this->getCreatePostData(), true)));
 
         return $this->getSendReturn($curlRes);
+    }
+
+    protected function getCreateOrderMsg($result) {
+        return data_get($result, $this->createResultMessagePosition, '');
     }
 
     protected function getCreatePostData() {
