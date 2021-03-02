@@ -15,8 +15,6 @@ class DepositController extends Controller
 {
     private $service;
 
-    private $depositRepo;
-
     public function __construct(DepositService $service, DepositRepository $depositRepo) {
         $this->service = $service;
         $this->depositRepo = $depositRepo;
@@ -32,13 +30,10 @@ class DepositController extends Controller
             'amount'   => 'required|numeric|min:0'
         ]);
 
-        $service = App::make(DepositService::class);
-        $rs = App::call([$service, 'create'], ['input' => $request->post()]);
+        $rs = $this->service->create($request);
 
         Log::info('Deposit-result', $rs->getResult());
-        return $rs->getSuccess()
-            ? RB::success($rs->getResult())
-            : RB::error(ResponseCode::EXCEPTION);
+        return RB::success($rs->getResult());
     }
 
     public function callback(Request $request, $gatewayName)

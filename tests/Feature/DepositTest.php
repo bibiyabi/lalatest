@@ -6,7 +6,6 @@ use App\Models\Gateway;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\Setting;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Constants\Payments\Status;
 use App\Jobs\Payment\Deposit\Notify;
@@ -23,9 +22,9 @@ class DepositTest extends TestCase
     {
         parent::setUp();
 
-        $user = Merchant::factory([
-            'name' => 'java',
-        ])->create();
+        $user = Merchant::where(['name' => 'java'])->firstOr(function () {
+            return Merchant::factory(['name'=>'java'])->create();
+        });
 
         $this->user = $user;
 
