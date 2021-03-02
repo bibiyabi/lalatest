@@ -77,6 +77,10 @@ class DepositTest extends TestCase
         ]);
 
         $response->assertJsonFragment(['success'=>true]);
+        $this->assertDatabaseHas('orders', [
+            'order_id' => $order->order_id,
+            'no_notify' => true,
+        ]);
     }
 
     public function test_can_callback()
