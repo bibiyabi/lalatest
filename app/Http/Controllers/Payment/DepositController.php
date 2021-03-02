@@ -13,9 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class DepositController extends Controller
 {
+    private $service;
+
     private $depositRepo;
 
-    public function __construct(DepositRepository $depositRepo) {
+    public function __construct(DepositService $service, DepositRepository $depositRepo) {
+        $this->service = $service;
         $this->depositRepo = $depositRepo;
     }
 
@@ -51,16 +54,10 @@ class DepositController extends Controller
     public function reset(Request $request)
     {
         $validated = $request->validate(['order_id' => 'required']);
-        $user = $request->user();
 
-        Log::info('Deposit-reset order_id:' . $validated['order_id'] . ' user:' . $user->id);
-        $order = $this->depositRepo->user($user->id)->orderId($validated['order_id'])->first();
+        Log::info('Deposit-reset order_id:' . $validated['order_id']);
 
-        if (empty($order)) {
-            return RB::error(ResponseCode::RESOURCE_NOT_FOUND);
-        }
-
-        return $order->delete()
+        return $this->service->reset($request->user()->id, $validated['order_id'])
             ? RB::success()
             : RB::error(ResponseCode::EXCEPTION);
     }

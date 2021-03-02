@@ -111,4 +111,9 @@ class DepositService
 
         return $result;
     }
+
+    public function reset(int $userId, string $orderId)
+    {
+        return $this->orderRepo->user($userId)->orderId($orderId)->reset();
+    }
 }
