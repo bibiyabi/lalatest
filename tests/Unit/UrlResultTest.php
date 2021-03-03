@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Contracts\Payments\HttpParam;
 use App\Contracts\Payments\Results\UrlResult;
+use App\Exceptions\TpartyException;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -50,5 +51,13 @@ class UrlResultTest extends TestCase
 
         $service = new UrlResult();
         $service->getResult(new HttpParam('foo.com','asdf',[],[],[]));
+    }
+
+    public function test_undefiended_host()
+    {
+        $this->expectException(TpartyException::class);
+
+        $service = new UrlResult();
+        $service->getResult(new HttpParam('fooasdf45你好.com','post',[],[],[]));
     }
 }
