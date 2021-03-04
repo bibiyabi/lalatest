@@ -38,10 +38,10 @@ class Fpm extends Controller
             $data = json_decode($lineData, true);
             $hostname = $data['hostname'];
             $acceptedconn = $data['acceptedconn'];
+            $listenqueuelen = $data['listenqueuelen'];
             $data['time'] = date("Y-m-d H:i:s", strtotime($data['time'] . " +8 hours"));
             $listenqueue .= '{x:"'.$data['time'].'", y:'.$data['listenqueue'].'},';
             $maxlistenqueue .= '{x:"'.$data['time'].'", y:'.$data['maxlistenqueue'].'},';
-            $listenqueuelen .= '{x:"'.$data['time'].'", y:'.$data['listenqueuelen'].'},';
             $idleprocesses .= '{x:"'.$data['time'].'", y:'.$data['idleprocesses'].'},';
             $activeprocesses .= '{x:"'.$data['time'].'", y:'.$data['activeprocesses'].'},';
             $totalprocesses .= '{x:"'.$data['time'].'", y:'.$data['totalprocesses'].'},';
