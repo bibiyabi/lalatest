@@ -15,7 +15,7 @@ class Fpm extends Controller
     public function index()
     {
         if (config('app.env') !== 'local'){
-            $file = file('/home/pmuser/colin/fpm.log');
+            $file = file('/var/www/html/agent/fpm.log');
         } else {
             $file = file(dirname(__FILE__) . '/fpm.log');
         }
@@ -23,15 +23,14 @@ class Fpm extends Controller
 
         $acceptedconn = '';
         $listenqueue = '';
-        $maxlistenqueue = '';
-        $listenqueuelen = '';
-        $idleprocesses = '';
-        $activeprocesses = '';
-        $totalprocesses = '';
-        $maxactiveprocesses = '';
-        $maxchildrenreached = '';
+        $maxlistenqueue = ''; // 请求等待队列最高的数量
+        $listenqueuelen = ''; // socket等待队列长度
+        $idleprocesses = ''; // 空闲进程数量
+        $activeprocesses = ''; //活跃进程数量
+        $totalprocesses = ''; //总进程数量
+        $maxactiveprocesses = ''; //最大的活跃进程数量（FPM启动开始算）
+        $maxchildrenreached = ''; //大道进程最大数量限制的次数，如果这个数量不为0，那说明你的最大进程数量太小了，请改大一点
         $slowrequests = '';
-        $startsince = '';
         $hostname = '';
 
         foreach( $file as $lineNum => $lineData ) {
@@ -40,7 +39,6 @@ class Fpm extends Controller
             $hostname = $data['hostname'];
             $data['time'] = date("Y-m-d H:i:s", strtotime($data['time'] . " +8 hours"));
             $acceptedconn .= '{x:"'.$data['time'].'", y:'.$data['acceptedconn'].'},';
-            $startsince .= '{x:"'.$data['time'].'", y:'.$data['startsince'].'},';
             $listenqueue .= '{x:"'.$data['time'].'", y:'.$data['listenqueue'].'},';
             $maxlistenqueue .= '{x:"'.$data['time'].'", y:'.$data['maxlistenqueue'].'},';
             $listenqueuelen .= '{x:"'.$data['time'].'", y:'.$data['listenqueuelen'].'},';
@@ -52,7 +50,6 @@ class Fpm extends Controller
             $slowrequests .= '{x:"'.$data['time'].'", y:'.$data['slowrequests'].'},';
         }
 
-        $startsince = substr( $startsince, 0, -1);
         $acceptedconn = substr( $acceptedconn, 0, -1);
         $listenqueue = substr( $listenqueue, 0, -1);
         $maxlistenqueue = substr( $maxlistenqueue, 0, -1);

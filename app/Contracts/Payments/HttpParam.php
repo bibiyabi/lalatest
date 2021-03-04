@@ -46,4 +46,15 @@ class HttpParam
     {
         return $this->orderConfig;
     }
+
+    public function toArray()
+    {
+        return [
+            'url' => $this->url,
+            'method' => $this->method,
+            'header' => $this->header,
+            'body' => $this->body,
+            'orderConfig' => $this->orderConfig,
+        ];
+    }
 }
