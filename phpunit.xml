@@ -16,6 +16,11 @@
         <include>
             <directory suffix=".php">./app</directory>
         </include>
+        <exclude>
+            <directory suffix=".php">./app/Exceptions</directory>
+            <directory suffix=".php">./app/Services/Payments/DepositGateways</directory>
+            <directory suffix=".php">./app/Services/Payments/WithdrawGateways</directory>
+        </exclude>
         <report>
             <html outputDirectory="reports/coverage"/>
         </report>
