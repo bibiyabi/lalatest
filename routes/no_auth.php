@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawController;
-
+use App\Http\Controllers\tools\Fpm;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,4 +27,9 @@ Route::prefix('fake_deposit')->group(function () {
 
 Route::prefix('fake_withdraw')->group(function () {
     Route::post('orders/{order}', [FakeWithdrawController::class, 'sendNotify'])->middleware('web');
+});
+
+// fpm chart
+Route::prefix('fpm')->group(function () {
+    Route::get('chart/', [Fpm::class, 'index'])->middleware('web');
 });
