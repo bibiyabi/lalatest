@@ -159,10 +159,10 @@ class InPay implements DepositGatewayInterface
         return new Placeholder(
             $type,
             '',
-            'Please input 商户号',
+            'Please input MerchantID',
             '',
             '',
-            'Please input KEY',
+            'Please input MD5 key',
             '',
             '',
             $transactionType
