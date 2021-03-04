@@ -37,8 +37,8 @@ class Fpm extends Controller
             if (empty($lineData)) continue;
             $data = json_decode($lineData, true);
             $hostname = $data['hostname'];
+            $acceptedconn = $data['acceptedconn'];
             $data['time'] = date("Y-m-d H:i:s", strtotime($data['time'] . " +8 hours"));
-            $acceptedconn .= '{x:"'.$data['time'].'", y:'.$data['acceptedconn'].'},';
             $listenqueue .= '{x:"'.$data['time'].'", y:'.$data['listenqueue'].'},';
             $maxlistenqueue .= '{x:"'.$data['time'].'", y:'.$data['maxlistenqueue'].'},';
             $listenqueuelen .= '{x:"'.$data['time'].'", y:'.$data['listenqueuelen'].'},';

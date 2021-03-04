@@ -169,7 +169,7 @@
 </head>
 
 <body>
-    <h1>{{ $hostname }}</h1>
+    <h1>{{ $hostname }} acceptedconn {!! $acceptedconn !!}</h1>
 	<div style="width:75%;">
 		<canvas id="canvas"></canvas>
 	</div>
@@ -193,14 +193,6 @@
 			data: {
 
 				datasets: [{
-					label: 'acceptedconn',
-					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.red,
-					fill: false,
-					data: [
-						{!! $acceptedconn !!}
-					],
-				},{
 					label: 'idleprocesses',
 					backgroundColor: color(window.chartColors.orange).alpha(0.5).rgbString(),
 					borderColor: window.chartColors.orange,
