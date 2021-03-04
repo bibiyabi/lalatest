@@ -169,7 +169,7 @@
 </head>
 
 <body>
-    <h1>{{ $hostname }} acceptedconn {!! $acceptedconn !!}</h1>
+    <h1>{{ $hostname }} acceptedconn {!! $acceptedconn !!} listenqueuelen {!! $listenqueuelen !!}</h1>
 	<div style="width:75%;">
 		<canvas id="canvas"></canvas>
 	</div>
@@ -215,13 +215,7 @@
 					fill: false,
 					data: [{!! $maxlistenqueue !!}],
 				},
-                {
-					label: 'listenqueuelen',
-					backgroundColor: color(window.chartColors.yellow).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.yellow,
-					fill: false,
-					data: [{!! $listenqueuelen !!}],
-				},
+
                 {
 					label: 'maxlistenqueue',
 					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
