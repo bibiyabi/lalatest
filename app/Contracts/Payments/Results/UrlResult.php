@@ -5,12 +5,15 @@ namespace App\Contracts\Payments\Results;
 use App\Contracts\Payments\HttpParam;
 use App\Exceptions\TpartyException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class UrlResult implements ResultFactoryInterface
 {
     public function getResult(HttpParam $param): Result
     {
         $method = $param->getMethod();
+
+        Log::info('submit', $param->toArray());
 
         try {
             switch ($method) {
