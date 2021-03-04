@@ -193,12 +193,28 @@
 			data: {
 
 				datasets: [{
+					label: 'startsince',
+					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.red,
+					fill: false,
+					data: [
+						{!! $startsince !!}
+					],
+				},{
 					label: 'acceptedconn',
 					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
 					borderColor: window.chartColors.red,
 					fill: false,
 					data: [
 						{!! $acceptedconn !!}
+					],
+				},{
+					label: 'idleprocesses',
+					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.red,
+					fill: false,
+					data: [
+						{!! $idleprocesses !!}
 					],
 				}, {
 					label: 'listenqueue',
@@ -242,6 +258,13 @@
 					borderColor: window.chartColors.green,
 					fill: false,
 					data: [{!! $maxactiveprocesses !!}],
+				},
+                {
+					label: 'activeprocesses',
+					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.green,
+					fill: false,
+					data: [{!! $activeprocesses !!}],
 				},
                 {
 					label: 'maxchildrenreached',
