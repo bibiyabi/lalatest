@@ -202,8 +202,8 @@
 					],
 				},{
 					label: 'idleprocesses',
-					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.red,
+					backgroundColor: color(window.chartColors.orange).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.orange,
 					fill: false,
 					data: [
 						{!! $idleprocesses !!}
@@ -225,8 +225,8 @@
 				},
                 {
 					label: 'listenqueuelen',
-					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.green,
+					backgroundColor: color(window.chartColors.yellow).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.yellow,
 					fill: false,
 					data: [{!! $listenqueuelen !!}],
 				},
@@ -239,22 +239,22 @@
 				},
                 {
 					label: 'totalprocesses',
-					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.green,
+					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.red,
 					fill: false,
 					data: [{!! $totalprocesses !!}],
 				},
                 {
 					label: 'maxactiveprocesses',
-					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.green,
+					backgroundColor: color(window.chartColors.orange).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.orange,
 					fill: false,
 					data: [{!! $maxactiveprocesses !!}],
 				},
                 {
 					label: 'activeprocesses',
-					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.green,
+					backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.blue,
 					fill: false,
 					data: [{!! $activeprocesses !!}],
 				},
@@ -267,8 +267,8 @@
 				},
                 {
 					label: 'slowrequests',
-					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.green,
+					backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+					borderColor: window.chartColors.red,
 					fill: false,
 					data: [{!! $slowrequests !!}],
 				},

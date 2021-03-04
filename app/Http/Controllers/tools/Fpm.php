@@ -21,8 +21,8 @@ class Fpm extends Controller
         }
         $array = '';
 
-        $acceptedconn = '';
-        $listenqueue = '';
+        $acceptedconn = ''; //當前池子接受的請求數
+        $listenqueue = ''; //請求等待佇列
         $maxlistenqueue = ''; // 请求等待队列最高的数量
         $listenqueuelen = ''; // socket等待队列长度
         $idleprocesses = ''; // 空闲进程数量
