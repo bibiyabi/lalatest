@@ -62,7 +62,6 @@ class Fpm extends Controller
         $slowrequests = substr( $slowrequests, 0, -1);
 
         return view('tools.fpm' ,compact('acceptedconn',
-        'startsince',
         'listenqueue' ,
         'maxlistenqueue',
         'listenqueuelen',
