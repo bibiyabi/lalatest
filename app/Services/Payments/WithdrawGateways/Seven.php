@@ -143,7 +143,7 @@ class Seven extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type,'','Please input MerchantID', '', 'Please input Private Key', 'Please input MD5 Key','',
+        return new Placeholder($type,'','Please input MerchantID', '', '', 'Please input MD5 Key','',
         '',);
     }
 
