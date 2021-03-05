@@ -117,10 +117,10 @@ class Inrusdt implements DepositGatewayInterface
         return new Placeholder(
             $type,
             '',
-            'Please input 商户Id',
+            'Please input MerchantID',
             '',
             '',
-            'Please input APPKEY',
+            'Please input MD5 Key',
             '',
             '',
             $transactionType

@@ -208,12 +208,6 @@
 					data: [
 						{!! $listenqueue !!}
 					],
-				}, {
-					label: 'maxlistenqueue',
-					backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
-					borderColor: window.chartColors.green,
-					fill: false,
-					data: [{!! $maxlistenqueue !!}],
 				},
 
                 {

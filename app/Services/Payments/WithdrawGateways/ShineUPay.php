@@ -143,7 +143,7 @@ class ShineUPay extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type,'','请填上商户编号', '', '提现密码','商户秘钥','',
+        return new Placeholder($type,'','Please input MerchantID', '', 'Please input Private Key', 'Please input MD5 Key','',
         '',);
     }
 

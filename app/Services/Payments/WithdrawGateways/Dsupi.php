@@ -160,11 +160,11 @@ class Dsupi extends AbstractWithdrawGateway
 
         return new Placeholder(
                 $type,
-                'please input 用户账号',
-                'please input APPID',
+                'Please input Account',
+                'please input MerchantID',
                 '',
                 '',
-                'please input Key',
+                'Please input MD5 Key',
                 '',
                 '',
                 $transactionType,
@@ -172,7 +172,7 @@ class Dsupi extends AbstractWithdrawGateway
                 [],
                 '',
                 '',
-                'please input 域名'
+                'Please input Domain'
             );
     }
 

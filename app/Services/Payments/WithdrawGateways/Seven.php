@@ -5,28 +5,25 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
 use App\Exceptions\UnsupportedTypeException;
-use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
 use App\Payment\Curl;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
-use App\Contracts\LogLine;
 use App\Models\WithdrawOrder;
-use Illuminate\Support\Facades\Log;
-use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
+use App\Constants\Payments\Status;
 
-
-class InPay extends AbstractWithdrawGateway
+class Seven extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
     // 下單domain
-    protected $domain = '104.149.202.6:8084';
+    protected $domain = 'api.zf77777.org';
     // 下單網址
-    protected $createSegments = '/api/startPayForAnotherOrder';
+    protected $createSegments = '/api/withdrawal';
+    protected $createResultMessagePosition = 'message';
     // 設定下單sign
     protected $createSign;
-
+    protected $isCurlProxy = true;
     // ================ 回調參數 ==================
     // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'success';
@@ -37,7 +34,7 @@ class InPay extends AbstractWithdrawGateway
     protected $callbackOrderAmountPosition = 'body.amount';
     protected $callbackOrderMessagePosition = 'body.message';
     // 回調成功狀態
-    protected $callbackSuccessStatus = [];
+    protected $callbackSuccessStatus = [1];
     // 回調確認失敗狀態
     protected $callbackFailedStatus = [2];
 
@@ -55,60 +52,46 @@ class InPay extends AbstractWithdrawGateway
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
+            'first_name'       => 'required',
+            'last_name'        => 'required',
+            'bank_name'        => 'required',
+            'ifsc'             => 'required',
             'amount'           => 'required',
-            'upi_id'           => 'required',
         ];
     }
 
 
     protected function setCreateSign($post, $settings) {
-        $signParams = $this->getNeedGenSignArray($post,  $settings);
-        $this->createSign =  $this->genSign($signParams, $settings);
+        $this->createSign =  $this->genSign($post, $settings);
     }
 
     private function getNeedGenSignArray($input, $settings) {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number'])) {
-            throw new InputException('merchant_username or private key not found', ResponseCode::ERROR_PARAMETERS);
+            throw new InputException('merchant_username or private key not found', Status::ORDER_FAILED);
         }
         $array = [];
-        $array['merchantNum']          = $settings['merchant_number'];
-        $array['orderNo']              = $input['order_id'];
-        $array['amount']               = (float) $input['amount'];
-        $array['notifyUrl']            = $this->callbackUrl;
+        $array['orderid']        = $input['order_id'];
+        $array['userid']        = $settings['merchant_number'];
+        $array['amount']         = $input['amount'];
+        $array['type']         =  $this->getChannelType($input['type']);
+        $array['notifyUrl']      = 'http://admin02.6122028.com/callback/withdraw/Seven';
+        $array['ordertype']      = 2;
+        $array['returnurl']      = '';
+        $payload = [];
+        $payload['cardname'] = $input['first_name'] . $input['last_name'];
+        $payload['cardno'] = $input['withdraw_address'];
+        $payload['bankid'] = 10000;
+        $payload['bankname'] = $input['bank_name'];
+        $payload['ifsc'] = $input['ifsc'];
+        $array['payload'] =  json_encode($payload);
         return $array;
 
     }
 
-    protected function genSign($postData, $settings) {
-        $str = '';
-        foreach ($postData as $value) {
-            $str .= $value;
-        }
-        $str .= $settings['md5_key'];
-        return md5($str);
-    }
-
-    protected function setCreatePostData($post, $settings) {
-        $array = [];
-        $array['merchantNum']          = $settings['merchant_number'];
-
-        $array['orderNo']              = $post['order_id'];
-        $array['amount']               = (float) $post['amount'];
-        $array['notifyUrl']            = $this->callbackUrl;
-        $array['channelCode']          = $this->getChannelType($post['type']);
-        $array['accountHolder']        = $post['first_name'] . $post['last_name'];
-        $array['bankCardAccount']      = $post['bank_address'];
-        $array['openAccountBank']      = $post['bank_name'];
-        $array['ifsc']                 = $post['ifsc'];
-        $array['upiId']                = $post['upi_id'];
-        $array['sign']                 = $this->createSign;
-        $this->createPostData = $array;
-    }
-
     public function getChannelType($type) {
         if ($type == Type::BANK_CARD) {
-            return 'bankCard';
+            return 'bank';
         }
         if ($type == Type::WALLET) {
             return 'upi';
@@ -116,18 +99,29 @@ class InPay extends AbstractWithdrawGateway
         return '';
     }
 
+    protected function genSign($postData, $settings) {
+        return strtolower(md5($settings['md5_key'] . $postData['order_id']. $postData['amount']));
+    }
+
+    protected function setCreatePostData($post, $settings) {
+        $param = $this->getNeedGenSignArray($post, $settings);
+        $param['sign'] = $this->createSign;
+        $this->createPostData = json_encode($param);
+    }
+
     protected function isHttps() {
-        return false;
+        return true;
     }
 
     protected function getCurlHeader() {
         return [
-            "HOST: ". $this->domain,
+            'Content-Type: application/json',
+            "HOST: ". $this->domain
         ];
     }
 
     protected function checkCreateOrderIsSuccess($res) {
-        return isset($res['code']) && $res['code'] == 200;
+        return isset($res['success']) && $res['success'] == 1;
     }
 
     // ===========================callback start===============================
@@ -148,40 +142,12 @@ class InPay extends AbstractWithdrawGateway
         ];
     }
 
-    protected function getCallbackOrderStatus($post) {
-        return data_get($post, $this->callbackOrderStatusPosition);
-    }
-
     // ======================= 下拉提示 ===========================
 
     public function getPlaceholder($type):Placeholder
     {
-
-        switch ($type) {
-            case Type::BANK_CARD:
-                $transactionType = ['bankCard'];
-                break;
-
-            case Type::WALLET:
-                $transactionType = ['upi'];
-                break;
-
-            default:
-                $transactionType = [];
-                break;
-        }
-
-        return new Placeholder(
-            $type,
-            '',
-            'Please input MerchantID',
-            '',
-            '',
-            'Please input Private Key',
-            '',
-            '',
-            $transactionType,
-        );
+        return new Placeholder($type,'','Please input MerchantID', '', 'Please input Private Key', 'Please input MD5 Key','',
+        '',);
     }
 
 
@@ -193,18 +159,13 @@ class InPay extends AbstractWithdrawGateway
                 $column = [
                     C::AMOUNT,
                     C::IFSC,
-                    C::BANK_NAME,
+                    C::BANK_ACCOUNT,
                     C::BANK_ADDRESS,
                     C::FIRST_NAME,
                     C::LAST_NAME,
-                    C::FUND_PASSWORD,
-                ];
-                break;
-            case Type::WALLET:
-                $column = [
-                    C::AMOUNT,
-                    C::UPI_ID,
-                    C::FUND_PASSWORD,
+                    C::MOBILE,
+                    C::EMAIL,
+                    C::FUND_PASSWORD
                 ];
                 break;
             default:

@@ -118,7 +118,7 @@ class ShineUPay implements DepositGatewayInterface
         return new Placeholder(
             $type,
             '',
-            'Please input merchantId',
+            'Please input MerchantID',
             '',
             '',
             'Please input MD5 Key',

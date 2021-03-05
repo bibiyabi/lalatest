@@ -108,11 +108,11 @@ class Dsupi implements DepositGatewayInterface
         }
         return new Placeholder(
             $type,
-            'Please input 用户账号',
-            'Please input 用户APPID',
+            'Please input Account',
+            'Please input MerchantID',
             '',
             '',
-            'Please input Key',
+            'Please input MD5 Key',
             '',
             '',
             $transactionType,
@@ -120,7 +120,7 @@ class Dsupi implements DepositGatewayInterface
             null,
             '',
             '',
-            'Please input 域名'
+            'Please input Domain'
         );
     }
 
