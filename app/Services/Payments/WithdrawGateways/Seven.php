@@ -28,15 +28,15 @@ class Seven extends AbstractWithdrawGateway
     // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'success';
     // 回調的orderId位置
-    protected $callbackOrderIdPosition = 'body.orderId';
+    protected $callbackOrderIdPosition = 'orderid';
     // 回調的狀態位置
-    protected $callbackOrderStatusPosition = 'body.status';
-    protected $callbackOrderAmountPosition = 'body.amount';
-    protected $callbackOrderMessagePosition = 'body.message';
+    protected $callbackOrderStatusPosition = 'iscancel';
+    protected $callbackOrderAmountPosition = 'bmount';
+    protected $callbackOrderMessagePosition = 'message';
     // 回調成功狀態
-    protected $callbackSuccessStatus = [1];
+    protected $callbackSuccessStatus = [0];
     // 回調確認失敗狀態
-    protected $callbackFailedStatus = [2];
+    protected $callbackFailedStatus = [1];
 
     public function __construct(Curl $curl) {
         parent::__construct($curl);
@@ -74,8 +74,9 @@ class Seven extends AbstractWithdrawGateway
         $array['orderid']        = $input['order_id'];
         $array['userid']        = $settings['merchant_number'];
         $array['amount']         = $input['amount'];
-        $array['type']         =  $this->getChannelType($input['type']);
-        $array['notifyUrl']      = 'http://admin02.6122028.com/callback/withdraw/Seven';
+        $array['type']         =  'bank';
+        #$array['notifyUrl']      = 'http://admin02.6122028.com/callback/withdraw/Seven';
+        $array['notifyUrl']      = $this->callbackUrl;
         $array['ordertype']      = 2;
         $array['returnurl']      = '';
         $payload = [];
@@ -86,17 +87,6 @@ class Seven extends AbstractWithdrawGateway
         $payload['ifsc'] = $input['ifsc'];
         $array['payload'] =  json_encode($payload);
         return $array;
-
-    }
-
-    public function getChannelType($type) {
-        if ($type == Type::BANK_CARD) {
-            return 'bank';
-        }
-        if ($type == Type::WALLET) {
-            return 'upi';
-        }
-        return '';
     }
 
     protected function genSign($postData, $settings) {
@@ -127,7 +117,8 @@ class Seven extends AbstractWithdrawGateway
     // ===========================callback start===============================
 
     protected function getCallbackSign(Request $request) {
-        return $request->header('api-sign');
+        $post = $this->decode($this->getCallBackInput($request));
+        return $post['sign'];
     }
 
     public function  getCallBackInput(Request $request) {
@@ -137,9 +128,15 @@ class Seven extends AbstractWithdrawGateway
 
     protected function getCallbackValidateColumns() {
         return [
-            'body.orderId' => 'required',
-            'body.status' => 'required',
+            'success' => 'required',
+            'orderid' => 'required',
         ];
+    }
+
+    protected function genCallbackSign($postJson, $settings) {
+        $post = $this->decode($postJson);
+        $post['order_id'] = $post['orderid'];
+        return $this->genSign($post, $settings);
     }
 
     // ======================= 下拉提示 ===========================
@@ -160,14 +157,14 @@ class Seven extends AbstractWithdrawGateway
                     C::AMOUNT,
                     C::IFSC,
                     C::BANK_ACCOUNT,
-                    C::BANK_ADDRESS,
                     C::FIRST_NAME,
                     C::LAST_NAME,
-                    C::MOBILE,
-                    C::EMAIL,
-                    C::FUND_PASSWORD
+                    C::FUND_PASSWORD,
+                    C::BANK_NAME,
                 ];
                 break;
+
+
             default:
                 throw new UnsupportedTypeException();
                 break;

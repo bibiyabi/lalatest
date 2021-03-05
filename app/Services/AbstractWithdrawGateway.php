@@ -214,7 +214,7 @@ abstract class AbstractWithdrawGateway
     protected function decode($data) {
         $decode =  json_decode($data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new DecodeException(json_last_error() . 'decode error @'. $data . '@', Status::ORDER_ERROR);
+            throw new DecodeException(json_last_error() . 'decode error @'. json_encode($data) . '@', Status::ORDER_ERROR);
         }
         return $decode;
     }
