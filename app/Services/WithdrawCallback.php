@@ -35,7 +35,7 @@ Trait WithdrawCallback
     public function callback(Request $request) {
         # 這個取價格小數點才不會有差 10.0000 依然是10.0000 request->post會消掉0
         $postJson = $this->getCallBackInput($request);
-        $post = $request->post();
+        $post = $this->decode($postJson);
         $postSign  = $this->getCallbackSign($request);
         $this->validateCallbackInput($post);
         $this->getCallbackOrderId($post);
