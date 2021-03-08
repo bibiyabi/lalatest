@@ -22,10 +22,7 @@ class WithdrawController extends Controller
             return RB::success();
         } catch (Throwable $e) {
             Log::channel('withdraw')->info(new LogLine($e));
-            if ($e instanceof WithdrawException) {
-                return RB::asError($e->getCode())->withMessage($e->getMessage())->build();
-            }
-            return RB::error($e->getCode());
+            return $this->response($e);
         }
 
     }
@@ -49,10 +46,7 @@ class WithdrawController extends Controller
 
         } catch (Throwable $e) {
             Log::channel('withdraw')->info(new LogLine($e));
-            if ($e instanceof WithdrawException) {
-                return RB::asError($e->getCode())->withMessage($e->getMessage())->build();
-            }
-            return RB::error($e->getCode());
+            return $this->response($e);
         }
     }
 
@@ -64,16 +58,17 @@ class WithdrawController extends Controller
             return RB::success();
         } catch (Throwable $e) {
             Log::channel('withdraw')->info(new LogLine($e));
-            if ($e instanceof WithdrawException) {
-                return RB::asError($e->getCode())->withMessage($e->getMessage())->build();
-            }
-            return RB::error($e->getCode());
+            return $this->response($e);
         }
     }
 
-    public function testQueue() {
-        echo '@@@@@@@@@@@';
-        TestQueue::dispatch()->onQueue('emails');
-
+    private function response($e){
+        $code = ($e->getCode() < 20 || $e->getCode() > 1024) ? 1024 : $e->getCode();
+        if ($e instanceof WithdrawException) {
+            return RB::asError($code)->withMessage($e->getMessage())->build();
+        }
+        return RB::error($code);
     }
+
+
 }
