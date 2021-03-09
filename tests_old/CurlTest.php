@@ -5,7 +5,7 @@ namespace Tests\Unit\Payments;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 
 class CurlTest extends TestCase
 {

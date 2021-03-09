@@ -43,4 +43,6 @@ PHP 檔名
 1. /Services/ 商業邏輯部分 ex: PaymentService
 1. /Repository/ ex: OrderRepo 輔助 model，處理資料庫邏輯，然後注入到 service。
 1. /Service/ ex: OrderService 輔助 controller，處理商業邏輯，然後注入到 controller
+2. /Lib/ 確定可以共用的class
+   
 

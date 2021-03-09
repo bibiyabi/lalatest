@@ -13,7 +13,7 @@ use Database\Factories\WithdrawOrderFactory;
 use App\Models\WithdrawOrder;
 use App\Services\Payments\WithdrawGateways\Binance;
 use Illuminate\Container\container;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 use App\Jobs\Payment\Withdraw\Notify;
 use App\Constants\Payments\CryptoCurrencyStatus;
 

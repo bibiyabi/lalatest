@@ -8,7 +8,7 @@ use Illuminate\Container\container;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use App\Services\Payments\WithdrawGateways\ShineUPay;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 use App\Constants\Payments\Status;
 use App\Jobs\Payment\Deposit\Notify;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

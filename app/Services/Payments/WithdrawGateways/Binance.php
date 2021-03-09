@@ -7,7 +7,7 @@ use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
 use App\Exceptions\UnsupportedTypeException;
 use App\Exceptions\WithdrawException;
 use App\Services\AbstractWithdrawGateway;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
 use App\Contracts\LogLine;
@@ -16,11 +16,12 @@ use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 use Illuminate\Support\Facades\Http;
-use App\Payment\CryptCallbackResult;
+use  App\Services\Payments\Withdraw;
 use App\Constants\Payments\CryptoCurrencyStatus;
 use Cache;
 use App\Constants\RedisKeys;
 use App\Constants\Payments\CryptoCurrencySearch;
+use App\Services\Payments\Withdraw\CryptCallbackResult;
 
 class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
 {

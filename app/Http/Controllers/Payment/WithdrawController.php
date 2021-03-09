@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Log;
 use App\Services\AbstractWithdrawGateway;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use App\Contracts\LogLine;
-use App\Jobs\Payment\Withdraw\TestQueue;
 use Throwable;
 
 class WithdrawController extends Controller
