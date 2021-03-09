@@ -19,7 +19,7 @@ use App\Models\WithdrawOrder;
 use App\Contracts\Payments\CallbackResult;
 use App\Exceptions\DecodeException;
 use App\Http\Controllers\Payment\WithdrawController;
-use App\Payment\Withdraw\Payment;
+use App\Services\Payments\Withdraw\PaymentService;
 use App\Providers\GatewayServiceProvider;
 use App\Services\AbstractWithdrawGateway;
 use Database\Factories\WithdrawOrderFactory;

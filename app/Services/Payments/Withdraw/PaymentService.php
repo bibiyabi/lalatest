@@ -1,5 +1,5 @@
 <?php
-namespace App\Payment\Withdraw;
+namespace App\Services\Payments\Withdraw;
 
 use App\Exceptions\WithdrawException;
 use App\Jobs\Payment\Withdraw\Order;
@@ -20,7 +20,7 @@ use Exception;
 use App\Constants\Payments\Status;
 
 
-class Payment implements PaymentInterface
+class PaymentService implements PaymentInterface
 {
     private $settingRepository;
     private $settings;

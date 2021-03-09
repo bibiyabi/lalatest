@@ -40,7 +40,7 @@ PHP 檔名
 1. /Constants/ 常數 用class宣告
 1. /Constracts/ 介面, Interface 主要, abstract次要 , class不要在這裡
 1. /Helpers/ 寫法參考 https://vocus.cc/@vic612/5fa9fa6cfd89780001283ee1
-1. /Services/ 商業邏輯部分
-1. /Repository/ 輔助 model，處理資料庫邏輯，然後注入到 service。
-1. /Service/ 輔助 controller，處理商業邏輯，然後注入到 controller
+1. /Services/ 商業邏輯部分 ex: PaymentService
+1. /Repository/ ex: OrderRepo 輔助 model，處理資料庫邏輯，然後注入到 service。
+1. /Service/ ex: OrderService 輔助 controller，處理商業邏輯，然後注入到 controller
 
