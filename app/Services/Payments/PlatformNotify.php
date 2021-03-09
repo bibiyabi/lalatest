@@ -2,7 +2,7 @@
 namespace App\Services\Payments;
 
 
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;

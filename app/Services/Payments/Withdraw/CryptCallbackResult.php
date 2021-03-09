@@ -1,7 +1,7 @@
 <?php
-namespace  App\Payment;
+namespace  App\Services\Payments\Withdraw;
 
-use App\Payment\ResultMsg;
+use App\Lib\Result\ResultMsg;
 
 class CryptCallbackResult extends ResultMsg
 {

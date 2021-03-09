@@ -24,21 +24,21 @@ class Placeholder
     protected $note2;
 
     public function __construct(
-        string $type = null,
-        string $account = null,
-        string $merchantNumber = null,
-        string $publicKey = null,
-        string $privateKey = null,
-        string $md5Key = null,
-        string $notifyUrl = null,
-        string $returnUrl = null,
-        array $transactionType = null,
-        array $coin = null,
-        array $blockchainContract = null,
-        string $cryptoAddress = null,
-        string $apiKey = null,
-        string $note1 = null,
-        string $note2 = null
+        string $type = "",
+        string $account = "",
+        string $merchantNumber = "",
+        string $publicKey = "",
+        string $privateKey = "",
+        string $md5Key = "",
+        string $notifyUrl = "",
+        string $returnUrl = "",
+        array $transactionType = [],
+        array $coin = [],
+        array $blockchainContract = [],
+        string $cryptoAddress = "",
+        string $apiKey = "",
+        string $note1 = "",
+        string $note2 = ""
     )
     {
         $this->type = $type;

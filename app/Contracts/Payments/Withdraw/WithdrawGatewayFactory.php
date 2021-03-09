@@ -4,7 +4,7 @@
 namespace App\Contracts\Payments\Withdraw;
 
 use App\Exceptions\GatewayNotFountException;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 use App\Services\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
 

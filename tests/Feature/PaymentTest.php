@@ -8,7 +8,7 @@ use Illuminate\Container\container;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use App\Services\Payments\WithdrawGateways\ShineUPay;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 use App\Constants\Payments\Status;
 use App\Jobs\Payment\Deposit\Notify;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -19,7 +19,7 @@ use App\Models\WithdrawOrder;
 use App\Contracts\Payments\CallbackResult;
 use App\Exceptions\DecodeException;
 use App\Http\Controllers\Payment\WithdrawController;
-use App\Payment\Withdraw\Payment;
+use App\Services\Payments\Withdraw\PaymentService;
 use App\Providers\GatewayServiceProvider;
 use App\Services\AbstractWithdrawGateway;
 use Database\Factories\WithdrawOrderFactory;
@@ -176,13 +176,13 @@ class PaymentTest extends TestCase
         $callbackResult->shouldReceive('getNotifyMessage')->andReturn('unit test msg');
         $callbackResult->shouldReceive('getMsg')->andReturn('success');
 
-        $payment = Mockery::mock(Payment::class)->makePartial();
+        $payment = Mockery::mock(PaymentService::class)->makePartial();
         $payment->shouldReceive('callbackNotifyToQueue')
         ->andReturn('');
         $payment->shouldReceive('callback')
         ->andReturn($callbackResult);
 
-        $container->instance(Payment::class, $payment);
+        $container->instance(PaymentService::class, $payment);
 
         $res = $this->post('/callback/withdraw/ShineUPay', []);
 
@@ -216,13 +216,13 @@ class PaymentTest extends TestCase
         $callbackResult->shouldReceive('getNotifyMessage')->andReturn('unit test msg');
         $callbackResult->shouldReceive('getMsg')->andReturn('success');
 
-        $payment = Mockery::mock(Payment::class)->makePartial();
+        $payment = Mockery::mock(PaymentService::class)->makePartial();
         $payment->shouldReceive('callbackNotifyToQueue')
         ->andReturn('');
         $payment->shouldReceive('callback')
         ->andReturn($callbackResult);
 
-        $container->instance(Payment::class, $payment);
+        $container->instance(PaymentService::class, $payment);
 
         $res = $this->post('/callback/withdraw/ShineUPay', []);
 

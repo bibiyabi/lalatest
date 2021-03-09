@@ -3,21 +3,17 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Mockery;
 use App\Models\Setting;
 use App\Constants\Payments\Status;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Merchant;
-use App\Models\Gateway;
 use Database\Factories\WithdrawOrderFactory;
 use App\Models\WithdrawOrder;
 use App\Services\Payments\WithdrawGateways\Binance;
 use Illuminate\Container\container;
-use App\Payment\Curl;
-use App\Jobs\Payment\Withdraw\Notify;
 use App\Jobs\Payment\Withdraw\CryptoCurrencySearch;
-use App\Payment\CryptCallbackResult;
 use App\Constants\Payments\CryptoCurrencyStatus;
+use App\Services\Payments\Withdraw\CryptCallbackResult;
 
 class CryptoCurrencySearchQueueTest extends TestCase
 {
