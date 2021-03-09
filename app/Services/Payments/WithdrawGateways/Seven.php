@@ -73,7 +73,7 @@ class Seven extends AbstractWithdrawGateway
         $array = [];
         $array['orderid']        = $input['order_id'];
         $array['userid']        = $settings['merchant_number'];
-        $array['amount']         = $input['amount'];
+        $array['amount']         = (float)$input['amount'];
         $array['type']         =  'bank';
         #$array['notifyUrl']      = 'http://admin02.6122028.com/callback/withdraw/Seven';
         $array['notifyUrl']      = $this->callbackUrl;
