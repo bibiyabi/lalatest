@@ -1,6 +1,6 @@
 <?php
 
-use App\Logging\NewStyleFormatter;
+use App\Lib\Log\NewStyleFormatter;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
