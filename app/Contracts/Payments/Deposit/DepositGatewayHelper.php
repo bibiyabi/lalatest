@@ -11,6 +11,7 @@ use App\Constants\Payments\Status;
 use App\Contracts\Payments\OrderParam;
 use App\Contracts\Payments\SettingParam;
 use App\Exceptions\StatusLockedException;
+use App\Exceptions\TpartyException;
 
 trait DepositGatewayHelper
 {
@@ -74,8 +75,13 @@ trait DepositGatewayHelper
 
     public function depositCallback(Request $request): CallbackResult
     {
-        $order = Order::where('order_id', $this->getOrderId($request))->firstOr(function () {
-            throw new NotFoundResourceException("Order not found.");
+        $orderId = $this->getOrderId($request);
+        if ($orderId === null) {
+            throw new TpartyException("Key " . $this->keyOrderId . " not found.");
+        }
+
+        $order = Order::where('order_id', $orderId)->firstOr(function () {
+            throw new TpartyException("Order not found.");
         });
 
         if (in_array($order->status, [
@@ -88,7 +94,7 @@ trait DepositGatewayHelper
 
         $settingParam = SettingParam::createFromJson($order->key->settings);
         if (empty($settingParam)) {
-            throw new NotFoundResourceException("Order not found.");
+            throw new TpartyException("Order not found.");
         }
 
         if (
@@ -105,12 +111,12 @@ trait DepositGatewayHelper
         return new CallbackResult(true, $this->getSuccessReturn(), $order, $this->getAmount($request));
     }
 
-    protected function createCallbackSign($param, SettingParam $key): string
+    protected function createCallbackSign($request, SettingParam $key): string
     {
-        return $this->createSign($param, $key); // 預設同下單簽名
+        return $this->createSign($request->all(), $key); // 預設同下單簽名
     }
 
-    protected function getOrderId(Request $request): string {
+    protected function getOrderId(Request $request) {
         return $request->header($this->keyOrderId, $request->input($this->keyOrderId));
     }
 

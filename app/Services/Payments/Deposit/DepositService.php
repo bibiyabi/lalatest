@@ -10,6 +10,7 @@ use App\Contracts\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
 use App\Exceptions\StatusLockedException;
+use App\Exceptions\TpartyException;
 use App\Jobs\Payment\Deposit\Notify;
 use App\Repositories\GatewayRepository;
 use App\Repositories\Orders\DepositRepository;
@@ -80,7 +81,7 @@ class DepositService
         # if failed return false
         try {
             $result = $gateway->depositCallback($request);
-        } catch (NotFoundResourceException $e) {
+        } catch (TpartyException $e) {
             return new CallbackResult(false, $e->getMessage());
         } catch (StatusLockedException $e) {
             return new CallbackResult(true, $e->getMessage());
