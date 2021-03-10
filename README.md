@@ -2,7 +2,7 @@
 
 ## 命名
 
-### 關鍵字命名
+### 物件命名
 
 介面 e.g. Psr\Foo\BarInterface.
 
@@ -14,6 +14,7 @@ Traits e.g. Psr\Foo\BarTrait.
 
 前端輸入、前端輸出、資料庫，一律以 snake_case 命名
 程式中一律以 camelCase 命名
+如：`$firstName = $request->post('first_name');`
 
 ## 大小寫
 
@@ -38,11 +39,9 @@ PHP 檔名
 
 1. /Collections/ laravel collection 相關
 1. /Constants/ 常數 用class宣告
-1. /Constracts/ 介面, Interface 主要, abstract次要 , class不要在這裡
+1. /Contracts/ 介面, Interface 主要, abstract次要 , class不要在這裡
 1. /Helpers/ 寫法參考 https://vocus.cc/@vic612/5fa9fa6cfd89780001283ee1
 1. /Services/ 商業邏輯部分 ex: PaymentService
 1. /Repository/ ex: OrderRepo 輔助 model，處理資料庫邏輯，然後注入到 service。
 1. /Service/ ex: OrderService 輔助 controller，處理商業邏輯，然後注入到 controller
-2. /Lib/ 確定可以共用的class
-   
-
+1. /Lib/ 確定可以共用的class

@@ -119,11 +119,7 @@ class Pay777 implements DepositGatewayInterface
     {
         switch ($type) {
             case Type::WALLET:
-                $transactionType = ['upi', 'razorpay', 'instamojo'];
-                break;
-
-            case Type::BANK_CARD:
-                $transactionType = ['sbi', 'icici'];
+                $transactionType = ['upi'];
                 break;
 
             default:
@@ -153,10 +149,6 @@ class Pay777 implements DepositGatewayInterface
     public function getRequireInfo($type): DepositRequireInfo
     {
          switch ($type) {
-            case Type::BANK_CARD:
-                $column = [C::AMOUNT];
-                break;
-
             case Type::WALLET:
                 $column = [C::AMOUNT];
                 break;
@@ -166,16 +158,7 @@ class Pay777 implements DepositGatewayInterface
                 break;
         }
 
-        $bank = [
-            [
-                'id' => 'icici',
-                'name'=>'IciciBank'
-                ],
-            [
-                'id' => 'sbi',
-                'name'=>'SbiBank'
-            ]
-        ];
+        $bank = [];
 
         return new DepositRequireInfo($type, $column, $bank);
     }
