@@ -154,7 +154,10 @@ class Pay777 implements DepositGatewayInterface
     {
          switch ($type) {
             case Type::BANK_CARD:
-                $column = [C::AMOUNT];
+                $column = [
+                    C::AMOUNT,
+                    C::BANK,
+                ];
                 break;
 
             case Type::WALLET:
