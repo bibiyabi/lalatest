@@ -38,12 +38,16 @@ class DepositController extends Controller
 
     public function callback(Request $request, $gatewayName)
     {
-        Log::info('Deposit-callback '. $gatewayName, $request->all());
+        Log::info('Deposit-callback '. $gatewayName, [
+            'Content-Type' => $request->headers->get('Content-Type'),
+            'all' => $request->all(),
+        ]);
 
-        $service = App::make(DepositService::class);
-        $rs = App::call([$service, 'callback'], compact('gatewayName', 'request'));
+        $msg = $this->service->callback($request, $gatewayName)->getMsg();
 
-        return $rs->getMsg();
+        Log::info('Deposit-callback-result ' . $msg);
+
+        return $msg;
     }
 
     public function reset(Request $request)
