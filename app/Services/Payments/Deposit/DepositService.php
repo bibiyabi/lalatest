@@ -82,8 +82,10 @@ class DepositService
         try {
             $result = $gateway->depositCallback($request);
         } catch (TpartyException $e) {
+            Log::info('Tparty-exception ' . $e->getMessage());
             return new CallbackResult(false, $e->getMessage());
         } catch (StatusLockedException $e) {
+            Log::info('Order already locked.');
             return new CallbackResult(true, $e->getMessage());
         }
 
@@ -102,6 +104,7 @@ class DepositService
 
         # push to queue
         if ($order->no_notify === false) {
+            Log::info('Deposit-callback-dispatch ' . $order->order_id);
             Notify::dispatch($order)->onQueue('notify');
         }
 
