@@ -15,7 +15,9 @@ class Notify implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    // public $tries = 10;
+    public $tries = 10;
+
+    public $backoff = 180;
 
     private $order;
 
