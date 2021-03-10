@@ -3,7 +3,7 @@ namespace App\Services;
 
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
-use App\Payment\Curl;
+use App\Lib\Curl\Curl;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;

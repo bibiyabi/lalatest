@@ -1,5 +1,5 @@
 <?php
-namespace  App\Payment;
+namespace  App\Lib\Curl;
 use Illuminate\Support\Facades\Log;
 class Curl
 {

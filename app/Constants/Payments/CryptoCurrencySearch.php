@@ -2,7 +2,7 @@
 
 namespace App\Constants\Payments;
 
-use App\Payment\CryptCallbackResult;
+use App\Services\Payments\Withdraw\CryptCallbackResult;
 
 interface CryptoCurrencySearch
 {

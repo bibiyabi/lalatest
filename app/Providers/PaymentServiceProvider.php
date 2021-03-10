@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 
 
 use App\Contracts\Payments\PaymentInterface;
-use App\Payment\Withdraw\Payment;
+use App\Services\Payments\Withdraw\PaymentService;
 use App\Services\Payments\Deposit\DepositService;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Services\Payments\Gateways\Inrusdt;
@@ -25,7 +25,7 @@ class PaymentServiceProvider extends ServiceProvider implements DeferrableProvid
     {
         $this->app->bind(
             PaymentInterface::class,
-            Payment::class
+            PaymentService::class
         );
     }
 

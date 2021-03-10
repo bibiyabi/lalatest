@@ -4,6 +4,10 @@ namespace App\Contracts\Payments;
 
 class OrderParam
 {
+    public const AMOUNT_FLOAT = 1;
+    public const AMOUNT_CENT = 2;
+    public const AMOUNT_INT = 3;
+
     private $orderId;
     private $amount;
     private $bankName;
@@ -128,9 +132,30 @@ class OrderParam
     /**
      * Get the value of amount
      */
-    public function getAmount()
+    public function getAmount($returnType = null)
     {
-        return $this->amount;
+        switch ($returnType) {
+            case self::AMOUNT_FLOAT:
+                $amount = floor($this->amount * 100) / 100;
+                $amount = sprintf('%.2f', $amount);
+                break;
+
+            case self::AMOUNT_CENT:
+                $amount = floor($this->amount * 100);
+                break;
+
+            case self::AMOUNT_INT:
+                $num = floor($this->amount * 10) % 10;
+                $amount = floor($this->amount);
+                $num == 9 AND $amount ++;
+                break;
+
+            default:
+                $amount = $this->amount;
+                break;
+        }
+
+        return $amount;
     }
 
     /**
