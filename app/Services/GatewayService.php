@@ -7,9 +7,7 @@ use App\Constants\Payments\ResponseCode as CODE;
 use App\Constants\Payments\Type;
 use App\Lib\Payments\Deposit\DepositGatewayFactory;
 use App\Lib\Payments\Withdraw\WithdrawGatewayFactory;
-use App\Exceptions\UnsupportedTypeException;
 use App\Repositories\GatewayTypeRepository;
-use App\Contracts\Payments\ServiceResult;
 use Illuminate\Support\Facades\Log;
 
 class GatewayService
