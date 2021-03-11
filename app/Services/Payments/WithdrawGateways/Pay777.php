@@ -13,7 +13,7 @@ use App\Models\WithdrawOrder;
 use App\Exceptions\InputException;
 use App\Constants\Payments\Status;
 
-class Seven extends AbstractWithdrawGateway
+class Pay777 extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================
     // 下單domain
@@ -51,12 +51,8 @@ class Seven extends AbstractWithdrawGateway
     protected function validationCreateInput() {
         return [
             'order_id'         => 'required',
-            'withdraw_address' => 'required',
-            'first_name'       => 'required',
-            'last_name'        => 'required',
-            'bank_name'        => 'required',
-            'ifsc'             => 'required',
-            'amount'           => 'required',
+            'upi_id'         => 'required',
+
         ];
     }
 
@@ -74,17 +70,13 @@ class Seven extends AbstractWithdrawGateway
         $array['orderid']        = $input['order_id'];
         $array['userid']        = $settings['merchant_number'];
         $array['amount']         = $input['amount'];
-        $array['type']         =  'bank';
+        $array['type']         =  'upi';
         #$array['notifyUrl']      = 'http://admin02.6122028.com/callback/withdraw/Seven';
         $array['notifyUrl']      = $this->callbackUrl;
         $array['ordertype']      = 2;
         $array['returnurl']      = '';
         $payload = [];
-        $payload['cardname'] = $input['first_name'] . $input['last_name'];
-        $payload['cardno'] = $input['withdraw_address'];
-        $payload['bankid'] = 10000;
-        $payload['bankname'] = $input['bank_name'];
-        $payload['ifsc'] = $input['ifsc'];
+
         $array['payload'] =  json_encode($payload);
         return $array;
     }
@@ -143,8 +135,28 @@ class Seven extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type,'','Please input MerchantID', '', '', 'Please input MD5 Key','',
-        '',);
+        switch ($type) {
+
+            case Type::WALLET:
+                $transactionType = ['upi'];
+                break;
+
+            default:
+                $transactionType = [];
+                break;
+        }
+
+        return new Placeholder(
+            $type,
+            '',
+            'Please input MerchantID',
+            '',
+            '',
+            'Please input MD5 Key',
+            '',
+            '',
+            $transactionType,
+        );
     }
 
 
@@ -152,15 +164,12 @@ class Seven extends AbstractWithdrawGateway
     {
         # 該支付有支援的渠道  指定前台欄位
         switch ($type) {
-            case Type::BANK_CARD:
+
+            case Type::WALLET:
                 $column = [
                     C::AMOUNT,
-                    C::IFSC,
-                    C::BANK_ACCOUNT,
-                    C::FIRST_NAME,
-                    C::LAST_NAME,
-                    C::FUND_PASSWORD,
-                    C::BANK_NAME,
+                    C::UPI_ID,
+                    C::FUND_PASSWORD
                 ];
                 break;
 
