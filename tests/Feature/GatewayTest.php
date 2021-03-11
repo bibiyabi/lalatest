@@ -12,7 +12,7 @@ use App\Providers\GatewayServiceProvider;
 use App\Services\Payments\WithdrawGateways\ShineUPay;
 
 use Illuminate\Container\container;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 

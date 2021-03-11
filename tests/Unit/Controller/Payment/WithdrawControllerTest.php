@@ -6,7 +6,7 @@ use App\Constants\Payments\Status;
 use App\Exceptions\WithdrawException;
 use App\Http\Controllers\Payment\WithdrawController;
 use App\Services\Payments\Withdraw\PaymentService;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use App\Services\Payments\DepositGateways\ShineUPay;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

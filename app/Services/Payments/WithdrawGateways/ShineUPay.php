@@ -6,7 +6,7 @@ use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
 use App\Exceptions\UnsupportedTypeException;
 use App\Exceptions\WithdrawException;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use App\Lib\Curl\Curl;
 use http\Exception\UnexpectedValueException;
 use Illuminate\Http\Request;
@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
 use App\Constants\Payments\Status;
+
 class ShineUPay extends AbstractWithdrawGateway
 {
     // ================ 下單參數 ==================

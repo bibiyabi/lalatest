@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Constants\Payments\ResponseCode;
 use App\Exceptions\InputException;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use App\Jobs\Payment\Withdraw\Notify;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
