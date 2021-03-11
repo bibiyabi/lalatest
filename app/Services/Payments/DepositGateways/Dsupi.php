@@ -116,8 +116,8 @@ class Dsupi implements DepositGatewayInterface
             '',
             '',
             $transactionType,
-            null,
-            null,
+            [],
+            [],
             '',
             '',
             'Please input Domain'
