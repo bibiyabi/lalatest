@@ -1,14 +1,14 @@
 <?php
-namespace App\Services\Payments;
+namespace App\Services\Payments\Withdraw;
 
 
 use App\Lib\Curl\Curl;
 
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
-use App\Services\Signature;
+use App\Lib\Hash\Signature;
 
-class PlatformNotify
+class WithdrawNotify
 {
     private $curl;
     private $order;
@@ -63,7 +63,7 @@ class PlatformNotify
             ->setPost($postData)
             ->exec();
 
-        Log::channel('withdraw')->info(new \App\Contracts\LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
+        Log::channel('withdraw')->info(new \App\Lib\Log\LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
 
         $this->checkSuccess($this->curlRes['data']);
     }

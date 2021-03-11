@@ -1,5 +1,5 @@
 <?php
-namespace  App\Lib\Result;
+namespace  App\Services\Payments\Withdraw;
 
 class ResultMsg
 {

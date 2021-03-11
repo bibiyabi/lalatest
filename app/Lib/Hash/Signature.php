@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Lib\Hash;
 
 class Signature
 {

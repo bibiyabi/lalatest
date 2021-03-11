@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Payments\Deposit;
+namespace App\Services\Payments\Deposit;
 
 use App\Constants\Payments\DepositInfo as C;
 

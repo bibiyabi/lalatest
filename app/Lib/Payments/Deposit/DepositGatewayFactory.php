@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Payments\Deposit;
+namespace App\Lib\Payments\Deposit;
 
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Exceptions\GatewayNotFountException;

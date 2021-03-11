@@ -4,10 +4,10 @@ namespace App\Services\Payments\Deposit;
 
 use App\Contracts\Payments\CallbackResult;
 use App\Contracts\Payments\OrderResult;
+use App\Lib\Payments\Deposit\DepositGatewayFactory;
 use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
-use App\Contracts\Payments\Deposit\DepositGatewayFactory;
-use App\Contracts\Payments\Results\ResultFactory;
+use App\Lib\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
 use App\Exceptions\StatusLockedException;
 use App\Exceptions\TpartyException;

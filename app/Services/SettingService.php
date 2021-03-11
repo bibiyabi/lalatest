@@ -1,11 +1,10 @@
 <?php
 
 
-namespace App\Services\Payments;
+namespace App\Services;
 
 
 use App\Constants\Payments\ResponseCode as CODE;
-use App\Contracts\Payments\ServiceResult;
 use App\Repositories\SettingRepository;
 use Illuminate\Support\Facades\Log;
 

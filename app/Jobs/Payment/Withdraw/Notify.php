@@ -12,10 +12,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Throwable;
 use App\Repositories\Orders\WithdrawRepository;
-use App\Services\Payments\PlatformNotify;
+use App\Services\Payments\Withdraw\WithdrawNotify;
 use App\Constants\Payments\Status;
 use Illuminate\Support\Facades\Log;
-use App\Contracts\LogLine;
+use App\Lib\Log\LogLine;
 
 class Notify implements ShouldQueue
 {
@@ -36,7 +36,7 @@ class Notify implements ShouldQueue
         $this->message = $message;
     }
 
-    public function handle(PlatformNotify $platformNotify)
+    public function handle(WithdrawNotify $WithdrawNotify)
     {
         $this->order = WithdrawOrder::where('order_id', $this->order->order_id)->first();
         try {
@@ -44,13 +44,13 @@ class Notify implements ShouldQueue
                 Status::CALLBACK_FAILED,
                 Status::ORDER_FAILED
             ]) && !$this->isResetedOrder() ) {
-                $platformNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawFailed();
+                $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawFailed();
             }
 
             if (in_array($this->order->status, [
                 Status::CALLBACK_SUCCESS,
             ]) &&  !$this->isResetedOrder()) {
-                $platformNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawSuccess();
+                $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawSuccess();
             }
         } catch (WithdrawException $e) {
             Log::channel('withdraw')->info(new LogLine($e));

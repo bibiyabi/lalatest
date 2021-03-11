@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Contracts\Payments;
+namespace App\Services;
 
 
 class ServiceResult

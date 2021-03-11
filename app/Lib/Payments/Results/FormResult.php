@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Contracts\Payments\Results;
+namespace App\Lib\Payments\Results;
 
 use App\Contracts\Payments\HttpParam;
+use App\Contracts\Payments\Results\ResultFactoryInterface;
 
 class FormResult implements ResultFactoryInterface
 {

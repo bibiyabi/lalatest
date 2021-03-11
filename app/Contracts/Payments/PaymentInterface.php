@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Contracts\Payments;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Http\Request;
 
 interface PaymentInterface

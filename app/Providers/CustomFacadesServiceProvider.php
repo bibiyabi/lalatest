@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-use App\Contracts\Logline;
+use App\Lib\Log\Logline;
 
 use Illuminate\Support\ServiceProvider;
 

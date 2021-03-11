@@ -2,7 +2,7 @@
 
 namespace App\Contracts\Payments\Deposit;
 
-use App\Contracts\Payments\Deposit\DepositRequireInfo;
+use App\Services\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Models\Order;
 use App\Contracts\Payments\HttpParam;
@@ -39,14 +39,14 @@ interface DepositGatewayInterface
      * @param Request $order
      * @return CallbackResult
      */
-    public function depositCallback(Request $order) : CallbackResult;
+    public function depositCallback(Request $order): CallbackResult;
 
     /**
      * 提示字
      * @param $type
      * @return Placeholder
      */
-    public function getPlaceholder($type):Placeholder;
+    public function getPlaceholder($type): Placeholder;
 
-    public function getRequireInfo($type):DepositRequireInfo;
+    public function getRequireInfo($type): DepositRequireInfo;
 }

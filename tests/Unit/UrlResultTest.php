@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Contracts\Payments\HttpParam;
-use App\Contracts\Payments\Results\UrlResult;
+use App\Lib\Payments\Results\UrlResult;
 use App\Exceptions\TpartyException;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
