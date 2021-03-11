@@ -110,12 +110,18 @@ return [
             'days' => 14,
             'permission' => 0666,
         ],
-
         'queue' => [
             'driver' => 'daily',
             'path' => storage_path('logs/queue.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
+            'permission' => 0666,
+        ],
+        'access' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/access.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 7,
             'permission' => 0666,
         ],
     ],
