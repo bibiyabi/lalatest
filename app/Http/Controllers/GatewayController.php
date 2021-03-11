@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\Payments\ResponseCode as CODE;
-use App\Services\Payments\GatewayService;
+use App\Services\GatewayService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
