@@ -14,7 +14,6 @@ use App\Repositories\Orders\WithdrawRepository;
 use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
 use App\Models\WithdrawOrder;
-use App\Contracts\LogLine;
 use App\Contracts\Payments\CallbackResult;
 use Exception;
 use App\Constants\Payments\Status;

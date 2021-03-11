@@ -10,7 +10,7 @@ use App\Services\AbstractWithdrawGateway;
 use App\Lib\Curl\Curl;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
-use App\Contracts\LogLine;
+use App\Lib\Log\LogLine;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;
