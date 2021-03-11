@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Contracts\Payments\Results;
+namespace App\Lib\Payments\Results;
 
 use App\Contracts\Payments\HttpParam;
+use App\Lib\Payments\Results\Result;
+use App\Contracts\Payments\Results\ResultFactoryInterface;
 use App\Exceptions\TpartyException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

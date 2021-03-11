@@ -10,11 +10,11 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Merchant;
 use App\Models\Gateway;
 use App\Models\WithdrawOrder;
-use App\Services\Payments\WithdrawGateways\Seven;
+use App\Services\Payments\WithdrawGateways\Pay777;
 use Database\Factories\WithdrawOrderFactory;
 use Illuminate\Http\Request;
 
-class SevenTest extends TestCase
+class Pay777Test extends TestCase
 {
     use DatabaseTransactions;
 
@@ -43,8 +43,8 @@ class SevenTest extends TestCase
         $this->withoutMiddleware();
 
         $gateway = Gateway::factory([
-            'name' => 'Seven',
-            'real_name' => 'Seven',
+            'name' => 'Pay777',
+            'real_name' => 'Pay777',
         ])->create();
 
         $setting = Setting::factory([
@@ -57,16 +57,11 @@ class SevenTest extends TestCase
         $orderId = 'unittest'. uniqid();
 
         $res = $this->post('/api/withdraw/create', [
-            'type'     => 'bank_card',
+            'type'     => 'e_wallet',
             'order_id'         =>  $orderId,
             'pk'               =>  $setting->user_pk,
             'amount'           => 100,
-            'fund_passwd'      => '1',
-            'withdraw_address' => '1',
-            'first_name'       => 'efefe',
-            'last_name'       => 'efefe',
-            'ifsc'           => '1232312',
-            'bank_name' => 'aaa'
+            'upi_id' =>     'efefe'
         ]);
 
         $res->assertStatus(200);
@@ -96,13 +91,13 @@ class SevenTest extends TestCase
 
         $payload = '{"payamount":0.0,"mark":"IFSC代码错误","ordertype":2,"iscancel":1,"ticket":"a48f0aeb-6546-4a06-9d2a-b6c54e03e913","userid":"fz2146","orderid":"unittest6041d7a23c1c8","type":"bank","sign":"c5e47cbf9d73d399320c8620d633d685","pageurl":"https://form.zf77777.org/api/paypage?ticket=a48f0aeb-6546-4a06-9d2a-b6c54e03e913","amount":100,"bmount":"100.00","serialno":null,"upi":null,"qrcode":null,"note":null,"success":1,"message":null}';
 
-        $request = Request::create('/callback/withdraw/Seven', 'POST', json_decode($payload, true), [], [],  [
+        $request = Request::create('/callback/withdraw/Pay777', 'POST', json_decode($payload, true), [], [],  [
             'HTTP_CONTENT_LENGTH' => strlen($payload),
             'CONTENT_TYPE' => 'application/json',
             'HTTP_ACCEPT' => 'application/json',
         ], $payload);
 
-        $pay = Mockery::mock(Seven::class)->makePartial();
+        $pay = Mockery::mock(Pay777::class)->makePartial();
         $pay->shouldReceive('getCallBackInput')
         ->andReturn($payload);
 
