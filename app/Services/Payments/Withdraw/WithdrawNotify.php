@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\Payments;
+namespace App\Services\Payments\Withdraw;
 
 
 use App\Lib\Curl\Curl;
@@ -8,7 +8,7 @@ use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
 use App\Services\Signature;
 
-class PlatformNotify
+class WithdrawNotify
 {
     private $curl;
     private $order;
