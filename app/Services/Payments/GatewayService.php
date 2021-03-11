@@ -5,8 +5,8 @@ namespace App\Services\Payments;
 
 use App\Constants\Payments\ResponseCode as CODE;
 use App\Constants\Payments\Type;
-use App\Services\Payments\Deposit\DepositGatewayFactory;
-use App\Contracts\Payments\Withdraw\WithdrawGatewayFactory;
+use App\Lib\Payments\Deposit\DepositGatewayFactory;
+use App\Lib\Payments\Withdraw\WithdrawGatewayFactory;
 use App\Exceptions\UnsupportedTypeException;
 use App\Repositories\GatewayTypeRepository;
 use App\Contracts\Payments\ServiceResult;
