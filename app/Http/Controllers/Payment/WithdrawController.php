@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Contracts\Payments\PaymentInterface;
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use App\Lib\Log\LogLine;
 use Throwable;

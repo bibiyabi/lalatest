@@ -2,14 +2,8 @@
 
 namespace App\Providers;
 
-use App\Repositories\GatewayRepository;
-use App\Exceptions\WithdrawException;
-use App\Repositories\SettingRepository;
 use App\Services\Payments\Withdraw\WithdrawNotify;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Orders\WithdrawRepository;
-use App\Services\AbstractWithdrawGateway;
-use Exception;
 
 class WithdrawNotifyQueueServiceProvider extends ServiceProvider
 {
@@ -20,7 +14,6 @@ class WithdrawNotifyQueueServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
 
     }
 

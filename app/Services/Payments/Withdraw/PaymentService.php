@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Support\Facades\Validator;
 use App\Jobs\Payment\Withdraw\Notify;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use App\Repositories\Orders\WithdrawRepository;
 use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;

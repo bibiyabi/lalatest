@@ -1,5 +1,5 @@
 <?php
-namespace App\Services;
+namespace App\Services\Payments\Withdraw;
 
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
