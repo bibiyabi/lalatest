@@ -1,5 +1,5 @@
 <?php
-namespace App\Contracts;
+namespace App\Lib\Log;
 
 use App\Exceptions\WithdrawException;
 use Exception;

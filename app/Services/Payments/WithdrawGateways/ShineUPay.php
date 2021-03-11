@@ -11,7 +11,6 @@ use App\Lib\Curl\Curl;
 use http\Exception\UnexpectedValueException;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;
-use App\Contracts\LogLine;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Log;
 use App\Constants\Payments\ResponseCode;

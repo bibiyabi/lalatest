@@ -15,7 +15,7 @@ use App\Repositories\Orders\WithdrawRepository;
 use App\Services\Payments\Withdraw\WithdrawNotify;
 use App\Constants\Payments\Status;
 use Illuminate\Support\Facades\Log;
-use App\Contracts\LogLine;
+use App\Lib\Log\LogLine;
 
 class Notify implements ShouldQueue
 {

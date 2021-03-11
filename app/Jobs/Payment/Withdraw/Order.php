@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
 use App\Exceptions\WithdrawException;
 use Illuminate\Http\Request;
 use App\Constants\Payments\Status;
-use App\Contracts\LogLine;
+use App\Lib\Log\LogLine;
 use App\Constants\Payments\Type;
 use App\Jobs\Payment\Withdraw\CryptoCurrencySearch;
 use Throwable;
