@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Services\Signature;
+use App\Lib\Hash\Signature;
 use Tests\TestCase;
 
 class SignTest extends TestCase

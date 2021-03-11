@@ -6,7 +6,7 @@ use App\Lib\Curl\Curl;
 
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\Facades\Log;
-use App\Services\Signature;
+use App\Lib\Hash\Signature;
 
 class WithdrawNotify
 {
