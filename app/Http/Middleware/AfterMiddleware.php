@@ -10,7 +10,7 @@ class AfterMiddleware
     {
         // Perform action
         $response = $next($request);
-        Log::channel('access')->debug('response', ['response' => $response]);
+        Log::channel('access')->debug('response', ['response' => $response->content()]);
 
         return $response;
     }
