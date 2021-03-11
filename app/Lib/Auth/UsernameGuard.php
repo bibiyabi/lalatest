@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contracts\Auth;
+namespace App\Lib\Auth;
 
 use Illuminate\Auth\TokenGuard;
 
