@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Contracts\Payments\Withdraw;
+namespace App\Lib\Payments\Withdraw;
 
 use App\Exceptions\GatewayNotFountException;
 use App\Lib\Curl\Curl;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
 
 class WithdrawGatewayFactory

@@ -3,27 +3,13 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Mockery;
-use Illuminate\Container\container;
 use App\Models\Setting;
-use Illuminate\Http\Request;
 use App\Services\Payments\WithdrawGateways\ShineUPay;
-use App\Lib\Curl\Curl;
 use App\Constants\Payments\Status;
-use App\Jobs\Payment\Deposit\Notify;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use App\Models\Merchant;
-use App\Models\Gateway;
-use Illuminate\Support\Facades\Bus;
 use App\Models\WithdrawOrder;
-use App\Contracts\Payments\CallbackResult;
 use App\Exceptions\DecodeException;
-use App\Http\Controllers\Payment\WithdrawController;
-use App\Services\Payments\Withdraw\PaymentService;
-use App\Providers\GatewayServiceProvider;
-use App\Services\AbstractWithdrawGateway;
 use Database\Factories\WithdrawOrderFactory;
-use Illuminate\Support\Facades\Queue;
 use Mockery\MockInterface;
 use App\Exceptions\WithdrawException;
 use App\Exceptions\InputException;

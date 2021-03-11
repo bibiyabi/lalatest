@@ -2,9 +2,9 @@
 
 namespace App\Services\Payments\DepositGateways;
 
-use App\Contracts\Payments\Deposit\DepositGatewayHelper;
+use App\Services\Payments\Deposit\DepositGatewayHelper;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
-use App\Contracts\Payments\Deposit\DepositRequireInfo;
+use App\Services\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
 use App\Constants\Payments\DepositInfo as C;
 use App\Contracts\Payments\OrderParam;
@@ -131,7 +131,7 @@ class ShineUPay implements DepositGatewayInterface
      * 前台設定應輸入欄位
      *
      * @param string $type
-     * @return DepositRequireInfo
+     * @return \App\Services\Payments\Deposit\DepositRequireInfo
      */
     public function getRequireInfo($type): DepositRequireInfo
     {

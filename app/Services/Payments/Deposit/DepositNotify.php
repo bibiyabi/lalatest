@@ -8,7 +8,7 @@ use App\Constants\Payments\Status;
 use App\Exceptions\NotifyException;
 use Illuminate\Support\Facades\Http;
 use App\Repositories\MerchantRepository;
-use App\Services\Signature;
+use App\Lib\Hash\Signature;
 use Illuminate\Support\Facades\Log;
 
 class DepositNotify

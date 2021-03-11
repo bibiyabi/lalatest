@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Exceptions\WithdrawException;
 use Illuminate\Support\ServiceProvider;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Contracts\Support\DeferrableProvider;
 class GatewayServiceProvider extends ServiceProvider implements DeferrableProvider
 {

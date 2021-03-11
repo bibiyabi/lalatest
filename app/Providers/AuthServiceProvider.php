@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\Auth\CacheUserProvider;
-use Auth;
-use App\Contracts\Auth\UsernameGuard;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Lib\Auth\CacheUserProvider;
+use App\Lib\Auth\UsernameGuard;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {

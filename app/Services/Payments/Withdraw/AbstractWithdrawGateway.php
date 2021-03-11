@@ -1,5 +1,5 @@
 <?php
-namespace App\Services;
+namespace App\Services\Payments\Withdraw;
 
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
@@ -7,7 +7,7 @@ use App\Lib\Curl\Curl;
 use App\Models\WithdrawOrder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
-use App\Contracts\LogLine;
+use App\Lib\Log\LogLine;
 use App\Exceptions\WithdrawException;
 use App\Exceptions\InputException;
 use App\Exceptions\DecodeException;

@@ -2,14 +2,8 @@
 
 namespace App\Providers;
 
-use App\Repositories\GatewayRepository;
-use App\Exceptions\WithdrawException;
-use App\Repositories\SettingRepository;
-use App\Services\Payments\PlatformNotify;
+use App\Services\Payments\Withdraw\WithdrawNotify;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Orders\WithdrawRepository;
-use App\Services\AbstractWithdrawGateway;
-use Exception;
 
 class WithdrawNotifyQueueServiceProvider extends ServiceProvider
 {
@@ -21,7 +15,6 @@ class WithdrawNotifyQueueServiceProvider extends ServiceProvider
     public function register()
     {
 
-
     }
 
     /**
@@ -29,11 +22,11 @@ class WithdrawNotifyQueueServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(PlatformNotify $platformNotify)
+    public function boot(WithdrawNotify $WithdrawNotify)
     {
         $this->app->bindMethod([Notify::class, 'handle'], function ($job, $app)
-        use ($platformNotify) {
-            return $job->handle($app->make(Notify::class), $platformNotify);
+        use ($WithdrawNotify) {
+            return $job->handle($app->make(Notify::class), $WithdrawNotify);
         });
     }
 }

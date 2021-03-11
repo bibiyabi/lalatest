@@ -7,7 +7,7 @@ use App\Exceptions\NotifyException;
 use App\Models\Order;
 use App\Models\WithdrawOrder;
 use App\Services\Payments\Deposit\DepositNotify;
-use App\Services\Payments\PlatformNotify;
+use App\Services\Payments\Withdraw\WithdrawNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Throwable;
@@ -16,7 +16,7 @@ class FakeWithdrawController extends Controller
 {
     private $service;
 
-    public function __construct(PlatformNotify $service) {
+    public function __construct(WithdrawNotify $service) {
         $this->service = $service;
     }
 
@@ -42,8 +42,8 @@ class FakeWithdrawController extends Controller
         ]);
 
         $status = $validated['success']
-            ? PlatformNotify::SUCCESS
-            : PlatformNotify::FAIL;
+            ? WithdrawNotify::SUCCESS
+            : WithdrawNotify::FAIL;
 
         try {
             $this->service->notify($status);

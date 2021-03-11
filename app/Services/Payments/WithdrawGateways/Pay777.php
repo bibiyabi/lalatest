@@ -5,7 +5,7 @@ use App\Constants\Payments\Type;
 use App\Contracts\Payments\Placeholder;
 use App\Contracts\Payments\Withdraw\WithdrawRequireInfo;
 use App\Exceptions\UnsupportedTypeException;
-use App\Services\AbstractWithdrawGateway;
+use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use App\Lib\Curl\Curl;
 use Illuminate\Http\Request;
 use App\Constants\Payments\WithdrawInfo as C;

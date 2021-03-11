@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Contracts\Payments\Deposit\DepositGatewayFactory;
+use App\Lib\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Exceptions\GatewayNotFountException;
 use Tests\TestCase;
