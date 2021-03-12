@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Payment\DepositController;
 use App\Http\Controllers\Payment\WithdrawController;
 use App\Http\Controllers\tools\Fpm;
+use App\Facades\Curl;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes

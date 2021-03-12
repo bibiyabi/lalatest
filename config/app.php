@@ -179,6 +179,7 @@ return [
         App\Providers\PaymentServiceProvider::class,
         App\Providers\WithdrawOrderQueueServiceProvider::class,
         App\Providers\QueueLogServiceProvider::class,
+        App\Providers\CurlFacadesServiceProvider::class,
     ],
 
     /*
@@ -230,6 +231,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Curl' => App\Providers\CurlFacadesServiceProvider::class,
     ],
 
     /*
