@@ -39,7 +39,10 @@ class WithdrawNotifyTest extends TestCase
         $factory = new WithdrawOrderFactory();
         $order = (object)$factory->definition();
         $notify->setOrder($order);
-        $notify->notify(1);
+        $res = $notify->notify(1);
+        $this->assertTrue($res);
+
+
 
     }
 
