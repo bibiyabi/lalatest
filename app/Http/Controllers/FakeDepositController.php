@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Constants\Payments\Status;
 use App\Exceptions\NotifyException;
 use App\Models\Order;
-use App\Services\Payments\Deposit\DepositNotify;
+use App\Services\Payments\Deposit\DepositNotifyService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -13,7 +13,7 @@ class FakeDepositController extends Controller
 {
     private $service;
 
-    public function __construct(DepositNotify $service) {
+    public function __construct(DepositNotifyService $service) {
         $this->service = $service;
     }
 
