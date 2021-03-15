@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class DepositNotifyTest extends TestCase
+class NotifyTest extends TestCase
 {
     use DatabaseTransactions;
 
