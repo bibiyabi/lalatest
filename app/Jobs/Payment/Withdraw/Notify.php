@@ -75,9 +75,8 @@ class Notify implements ShouldQueue
     public function failed(Throwable $e)
     {
         // Send user notification of failure, etc...
-        echo $e->getMessage();
+        # echo $e->getMessage();
         Log::channel('withdraw')->info(new LogLine($e));
-
     }
 
 
