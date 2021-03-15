@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Auth;
 
 use Tests\TestCase;
 use App\Lib\Auth\CacheUserProvider;
 use App\Models\Merchant;
 use Illuminate\Support\Facades\Cache;
 
-class AuthTest extends TestCase
+class CacheProviderTest extends TestCase
 {
     /** @var CacheUserProvider */
     public $provider;
