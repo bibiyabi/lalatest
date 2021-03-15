@@ -8,8 +8,8 @@ use App\Models\Order;
 use App\Models\Setting;
 use Tests\TestCase;
 use App\Constants\Payments\Status;
-use App\Jobs\Payment\Deposit\Notify;
-use Bus;
+use App\Events\DepositCallback;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class DepositTest extends TestCase
@@ -86,7 +86,7 @@ class DepositTest extends TestCase
     {
         $this->withoutMiddleware();
 
-        Bus::fake();
+        Event::fake();
 
         $gateway = Gateway::factory([
             'name' => 'Inrusdt',
@@ -104,7 +104,6 @@ class DepositTest extends TestCase
             'key_id'=>$setting->id,
             'status'=>Status::ORDER_SUCCESS,
             'gateway_id'=>$gateway->id,
-            'no_notify'=>0,
         ])->create();
 
         $response = $this->post('callback/deposit/Inrusdt', [
@@ -114,7 +113,7 @@ class DepositTest extends TestCase
         ]);
 
         $response->assertSeeText('success');
-        Bus::assertDispatched(Notify::class);
         $this->assertDatabaseHas('orders', ['order_id'=>$order->order_id, 'status'=>Status::CALLBACK_SUCCESS]);
+        Event::assertDispatched(DepositCallback::class);
     }
 }
