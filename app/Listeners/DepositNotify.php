@@ -31,4 +31,9 @@ class DepositNotify implements ShouldQueue
     {
         return $event->order->no_notify == false;
     }
+
+    public function failed(\Throwable $e)
+    {
+        Log::warning('Deposit-notify-failed ' . $e->getMessage());
+    }
 }
