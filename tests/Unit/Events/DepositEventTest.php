@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Events;
 
 use App\Events\DepositCallback;
 use App\Listeners\DepositNotify;
@@ -9,7 +9,7 @@ use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
-class EventTest extends TestCase
+class DepositEventTest extends TestCase
 {
     /**
      * A basic unit test example.
