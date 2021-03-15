@@ -13,7 +13,7 @@ use App\Contracts\Payments\SettingParam;
 use App\Exceptions\StatusLockedException;
 use App\Exceptions\TpartyException;
 
-trait DepositGatewayHelper
+trait DepositGatewayTrait
 {
     public function getDepositHttpMethod(): string
     {

@@ -2,7 +2,7 @@
 
 namespace App\Services\Payments\DepositGateways;
 
-use App\Services\Payments\Deposit\DepositGatewayHelper;
+use App\Services\Payments\Deposit\DepositGatewayTrait;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Services\Payments\Deposit\DepositRequireInfo;
 use App\Contracts\Payments\Placeholder;
@@ -15,7 +15,7 @@ use App\Exceptions\TpartyException;
 
 class Dsupi implements DepositGatewayInterface
 {
-    use DepositGatewayHelper;
+    use DepositGatewayTrait;
 
     private $method = 'post';
 
