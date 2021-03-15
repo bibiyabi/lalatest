@@ -39,23 +39,19 @@ class Notify implements ShouldQueue
     public function handle(WithdrawNotify $WithdrawNotify)
     {
         $this->order = WithdrawOrder::where('order_id', $this->order->order_id)->first();
-        try {
-            if (in_array($this->order->status, [
-                Status::CALLBACK_FAILED,
-                Status::ORDER_FAILED
-            ]) && !$this->isResetedOrder() ) {
-                $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawFailed();
-            }
 
-            if (in_array($this->order->status, [
-                Status::CALLBACK_SUCCESS,
-            ]) &&  !$this->isResetedOrder()) {
-                $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawSuccess();
-            }
-        } catch (WithdrawException $e) {
-            Log::channel('withdraw')->info(new LogLine($e));
+        if (in_array($this->order->status, [
+            Status::CALLBACK_FAILED,
+            Status::ORDER_FAILED
+        ]) && !$this->isResetedOrder() ) {
+            $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawFailed();
         }
 
+        if (in_array($this->order->status, [
+            Status::CALLBACK_SUCCESS,
+        ]) &&  !$this->isResetedOrder()) {
+            $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawSuccess();
+        }
     }
 
     /**
@@ -76,10 +72,12 @@ class Notify implements ShouldQueue
      * @param  \Throwable  $exception
      * @return void
      */
-    public function failed(Throwable $exception)
+    public function failed(Throwable $e)
     {
         // Send user notification of failure, etc...
-        echo $exception->getMessage();
+        echo $e->getMessage();
+        Log::channel('withdraw')->info(new LogLine($e));
+
     }
 
 
