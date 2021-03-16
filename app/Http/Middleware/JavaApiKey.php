@@ -39,6 +39,7 @@ class JavaApiKey
         $sign = $this->signService->makeSign($input, $key);
 
         if ($sign !== $userSign && config('app.is_check_sign') !== false) {
+
             return RB::error(ResponseCode::ERROR_SIGN);
         }
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Payments\Deposit;
 
 use App\Lib\Payments\Deposit\DepositGatewayFactory;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Exceptions\GatewayNotFountException;
 use Tests\TestCase;
 
-class GatewayFactoryTest extends TestCase
+class DepositGatewayFactoryTest extends TestCase
 {
     /**
      * @dataProvider get_correct_gateway_name

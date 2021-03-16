@@ -6,7 +6,6 @@ use App\Constants\Payments\Status;
 use App\Exceptions\NotifyException;
 use App\Models\Order;
 use App\Models\WithdrawOrder;
-use App\Services\Payments\Deposit\DepositNotify;
 use App\Services\Payments\Withdraw\WithdrawNotify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;

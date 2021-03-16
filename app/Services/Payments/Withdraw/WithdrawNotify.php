@@ -60,7 +60,7 @@ class WithdrawNotify
 
         Log::channel('withdraw')->info(new \App\Lib\Log\LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
 
-        $this->checkSuccess($this->curlRes['data']);
+        return $this->checkSuccess($this->curlRes['data']);
     }
 
     public function checkSuccess($res) {
@@ -68,6 +68,7 @@ class WithdrawNotify
         if (!isset($javaRes['status']) || $javaRes['status'] !== '200') {
             throw new WithdrawException('java res failed');
         }
+        return true;
     }
 
 }
