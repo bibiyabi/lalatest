@@ -86,7 +86,7 @@ class GlobalPay implements DepositGatewayInterface
     {
         ksort($param);
         $md5str = urldecode(http_build_query($param)) . '&key=' . $key->getMd5Key();
-        return $md5str;
+        return md5($md5str);
     }
 
     /**
