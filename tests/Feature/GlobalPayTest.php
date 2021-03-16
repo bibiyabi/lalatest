@@ -94,7 +94,7 @@ class GlobalPayTest extends TestCase
         $orderArray['key_id'] = $key->id;
         WithdrawOrder::create($orderArray);
 
-        $payload = '{"order_no":"202103160000000426661123130942","mer_no":"gm761100000067975","create_time":"2021-03-16 12:31:30","err_msg":null,"order_amount":"111.00","sign":"fb3773b6d1d8fd67f463b2444c0728c0","err_code":null,"ccy_no":"INR","mer_order_no":"W210316053128176860637","pay_time":null,"status":"SUCCESS"}';
+        $payload = '{"order_no":"202103160000000426661123130942","mer_no":"gm761100000067975","create_time":"2021-03-16 12:31:30","err_msg":null,"order_amount":"111.00","sign":"fb3773b6d1d8fd67f463b2444c0728c0","err_code":null,"ccy_no":"INR","mer_order_no":"202103160000000426661123130942","pay_time":null,"status":"SUCCESS"}';
 
         $request = Request::create('/callback/withdraw/GlobalPay', 'POST', json_decode($payload, true), [], [], [
             'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
