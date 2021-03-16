@@ -101,7 +101,7 @@ trait DepositGatewayTrait
             config('app.is_check_sign') !== false
             && $this->getSign($request) !== $this->createCallbackSign($request, $settingParam)
         ) {
-            throw new NotFoundResourceException("Sign error.");
+            throw new TpartyException("Sign error.");
         }
 
         if ($this->getStatus($request) != $this->getStatusSuccess()) {
