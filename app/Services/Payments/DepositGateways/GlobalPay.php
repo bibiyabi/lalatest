@@ -99,11 +99,11 @@ class GlobalPay implements DepositGatewayInterface
     {
         $data = json_decode($unprocessed, true);
 
-        if (isset($data['pageurl']) === false) {
+        if (isset($data['order_data']) === false) {
             throw new TpartyException($data['err_msg'] ?? "tparty error.");
         }
 
-        return $data['pageurl'];
+        return $data['order_data'];
     }
 
     /**
