@@ -32,7 +32,7 @@ class GlobalPay extends AbstractWithdrawGateway
     // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'SUCCESS';
     // 回調的orderId位置
-    protected $callbackOrderIdPosition = 'body.orderId';
+    protected $callbackOrderIdPosition = 'order_no';
     // 回調的狀態位置
     protected $callbackOrderStatusPosition = 'status';
     protected $callbackOrderAmountPosition = 'order_amount';
@@ -127,7 +127,7 @@ class GlobalPay extends AbstractWithdrawGateway
     }
 
     protected function checkCreateOrderIsSuccess($res) {
-        return isset($res['body']['platformOrderId']) && $res['status'] == 0;
+        return isset($res['status']) && $res['status'] == 'SUCCESS';
     }
 
     // ===========================callback start===============================
