@@ -2,20 +2,8 @@
 
 namespace Tests\Unit\Jobs\Payment\Withdraw;
 
-use App\Constants\Payments\Status;
-use App\Jobs\Payment\Withdraw\Notify;
-use App\Models\Merchant;
-use App\Models\WithdrawOrder;
 use App\Providers\GatewayServiceProvider;
-use App\Services\Payments\Withdraw\WithdrawNotify;
-use Database\Factories\WithdrawOrderFactory;
-use Exception;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Container\Container as ContainerContainer;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Mockery\MockInterface;
 use Tests\TestCase;
