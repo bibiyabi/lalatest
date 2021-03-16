@@ -101,7 +101,7 @@ trait DepositGatewayTrait
             config('app.is_check_sign') !== false
             && $this->getSign($request) !== $this->createCallbackSign($request, $settingParam)
         ) {
-            throw new NotFoundResourceException("Sign error.");
+            throw new TpartyException("Sign error.");
         }
 
         if ($this->getStatus($request) != $this->getStatusSuccess()) {
@@ -113,7 +113,9 @@ trait DepositGatewayTrait
 
     protected function createCallbackSign($request, SettingParam $key): string
     {
-        return $this->createSign($request->all(), $key); // 預設同下單簽名
+        $param = $request->all();
+        unset($param[$this->getSignKey()]);
+        return $this->createSign($param, $key); // 預設同下單簽名
     }
 
     protected function getOrderId(Request $request) {
