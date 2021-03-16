@@ -80,7 +80,7 @@ class GlobalPayTest extends TestCase
 
 
     public function test_callback() {
-        $this->markTestSkipped('skip');
+        //$this->markTestSkipped('skip');
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -90,24 +90,22 @@ class GlobalPayTest extends TestCase
 
         $factory = new WithdrawOrderFactory();
         $orderArray = $factory->definition();
-        $orderArray['order_id'] = 'unittest6041d7a23c1c8';
+        $orderArray['order_id'] = '202103160000000426661123130942';
         $orderArray['key_id'] = $key->id;
         WithdrawOrder::create($orderArray);
 
-        $payload = '{"payamount":0.0,"mark":"IFSC代码错误","ordertype":2,"iscancel":1,"ticket":"a48f0aeb-6546-4a06-9d2a-b6c54e03e913","userid":"fz2146","orderid":"unittest6041d7a23c1c8","type":"bank","sign":"c5e47cbf9d73d399320c8620d633d685","pageurl":"https://form.zf77777.org/api/paypage?ticket=a48f0aeb-6546-4a06-9d2a-b6c54e03e913","amount":100,"bmount":"100.00","serialno":null,"upi":null,"qrcode":null,"note":null,"success":1,"message":null}';
+        $payload = '{"order_no":"202103160000000426661123130942","mer_no":"gm761100000067975","create_time":"2021-03-16 12:31:30","err_msg":null,"order_amount":"111.00","sign":"fb3773b6d1d8fd67f463b2444c0728c0","err_code":null,"ccy_no":"INR","mer_order_no":"W210316053128176860637","pay_time":null,"status":"SUCCESS"}';
 
-        $request = Request::create('/callback/withdraw/GlobalPay', 'POST', json_decode($payload, true), [], [],  [
-            'HTTP_CONTENT_LENGTH' => strlen($payload),
-            'CONTENT_TYPE' => 'application/json',
-            'HTTP_ACCEPT' => 'application/json',
-        ], $payload);
+        $request = Request::create('/callback/withdraw/GlobalPay', 'POST', json_decode($payload, true), [], [], [
+            'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
+        ]);
 
         $pay = Mockery::mock(GlobalPay::class)->makePartial();
         $pay->shouldReceive('getCallBackInput')
         ->andReturn($payload);
 
         $res = $pay->callback($request);
-        $this->assertEquals('success', $res->getMsg());
+        $this->assertEquals('SUCCESS', $res->getMsg());
     }
 
 }

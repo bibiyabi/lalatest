@@ -133,18 +133,25 @@ class GlobalPay extends AbstractWithdrawGateway
     // ===========================callback start===============================
 
     protected function getCallbackSign(Request $request) {
-        return $request->header('api-sign');
+        $post = $request->post();
+        return $post['sign'];
+    }
+
+    protected function genCallbackSign($postJson, $settings) {
+        $post = $this->decode($postJson);
+        return $this->genSign($post, $settings);
     }
 
     public function  getCallBackInput(Request $request) {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
-        return  file_get_contents("php://input");
+        return  json_encode($request->post());
     }
 
     protected function getCallbackValidateColumns() {
         return [
-            'body.orderId' => 'required',
-            'body.status' => 'required',
+            'order_no' => 'required',
+            'sign'     => 'required',
+            'status'   => 'required',
         ];
     }
 
