@@ -18,7 +18,7 @@ class GlobalPay implements DepositGatewayInterface
     use DepositGatewayTrait;
 
     # 下單方式 get post
-    private $method = 'form';
+    private $method = 'post';
 
     # 第三方域名
     private $url = 'http://zvfdh.orfeyt.com';
@@ -70,7 +70,7 @@ class GlobalPay implements DepositGatewayInterface
             'ccy_no'        => 'INR',
             'busi_code'     => $settings->getTransactionType(),
             'goods'         => 'goods',
-            'notifyurl'     => config('app.url') . '/callback/deposit/GlobalPay',
+            'notifyUrl'     => config('app.url') . '/callback/deposit/GlobalPay',
             'pageUrl'       => $settings->getReturnUrl(),
         ];
     }
@@ -116,7 +116,7 @@ class GlobalPay implements DepositGatewayInterface
     {
         switch ($type) {
             case Type::WALLET:
-                $transactionType = ['upi', 'Paytm'];
+                $transactionType = ['UPI', 'Paytm'];
                 break;
 
             default:
@@ -132,7 +132,7 @@ class GlobalPay implements DepositGatewayInterface
             '',
             'Please input token',
             '',
-            '',
+            'Please input pageUrl',
             $transactionType
         );
     }
