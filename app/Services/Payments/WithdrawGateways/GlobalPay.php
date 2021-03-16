@@ -106,6 +106,7 @@ class GlobalPay extends AbstractWithdrawGateway
             $str .= $key . '=' . $value . '&';
         }
         $str.='key=' . $settings['md5_key'];
+
         return md5($str);
     }
 
@@ -139,6 +140,7 @@ class GlobalPay extends AbstractWithdrawGateway
 
     protected function genCallbackSign($postJson, $settings) {
         $post = $this->decode($postJson);
+        unset($post['sign']);
         return $this->genSign($post, $settings);
     }
 
