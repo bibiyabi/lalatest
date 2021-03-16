@@ -11,6 +11,11 @@ class Gateway extends Model
 
     protected $table = 'gateways';
 
+    protected $fillable = [
+        'name',
+        'real_name',
+    ];
+
     public function gatewayTypes()
     {
         return $this->hasMany(GatewayType::class, 'gateways_id', 'id');
