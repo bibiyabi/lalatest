@@ -247,5 +247,5 @@ return [
     'sign_key' => env('SIGN_KEY'),                      // 驗簽用的金鑰
     'is_check_sign' => env('APP_VALIDATE_SIGN', false), // 是否驗簽
     'proxy_ip' => env('APP_PROXY_IP', '47.52.40.40'),   // 代理伺服器 ip
-
+    'debug_query' => env('APP_DEBUG_QUERY', false),     // log 所有 SQL
 ];
