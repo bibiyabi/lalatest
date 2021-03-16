@@ -6,6 +6,10 @@ use App\Exceptions\WithdrawException;
 use Illuminate\Support\ServiceProvider;
 use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+
+
 class GatewayServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
@@ -24,16 +28,22 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
      *
      * @return void
      */
-    public function boot()
+    public function boot(Request $request)
     {
-        if ($this->isSegmentMatch()) {
-            $gatewayName = $this->app->request->segment(3);
+        if ($this->isSegmentMatch($request)) {
+            $gatewayName = $this->getSegmentN($request, 3);
             $this->createGateway($gatewayName);
         }
     }
 
-    public function isSegmentMatch() {
-        return strtolower($this->app->request->segment(2)) == 'withdraw' && strtolower($this->app->request->segment(1)) == 'callback';
+    public function getSegmentN(Request $request, $n) {
+
+        return $request->segment($n);
+    }
+
+    public function isSegmentMatch(Request $request) {
+
+        return strtolower($request->segment(2)) == 'withdraw' && strtolower($request->segment(1)) == 'callback';
     }
 
     public function createGateway($gatewayName) {
@@ -47,13 +57,10 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
             throw new WithdrawException($gatewayName . 'gateway not found', 22);
         }
 
-        $this->app->bind(AbstractWithdrawGateway::class, function ($app) use ($gatewayName){
+        App::bind(AbstractWithdrawGateway::class, function ($app) use ($gatewayName){
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
             return $app->make($className);
         });
-
-
-
     }
 
     public function provides()
