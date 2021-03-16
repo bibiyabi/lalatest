@@ -32,7 +32,7 @@ class GlobalPay extends AbstractWithdrawGateway
     // 停止callback回應的訊息
     protected $callbackSuccessReturnString = 'SUCCESS';
     // 回調的orderId位置
-    protected $callbackOrderIdPosition = 'order_no';
+    protected $callbackOrderIdPosition = 'mer_order_no';
     // 回調的狀態位置
     protected $callbackOrderStatusPosition = 'status';
     protected $callbackOrderAmountPosition = 'order_amount';
