@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 use App\Constants\Payments\ResponseCode;
 use App\Lib\Payments\Results\ResultFactory;
 use App\Constants\Payments\Status;
+use App\Events\DepositCallback;
 use App\Exceptions\StatusLockedException;
 use App\Exceptions\TpartyException;
-use App\Jobs\Payment\Deposit\Notify;
 use App\Repositories\GatewayRepository;
 use App\Repositories\Orders\DepositRepository;
 use App\Repositories\SettingRepository;
@@ -102,11 +102,8 @@ class DepositService
             ]);
         }
 
-        # push to queue
-        if ($order->no_notify === false) {
-            Log::info('Deposit-callback-dispatch ' . $order->order_id);
-            Notify::dispatch($order)->onQueue('notify');
-        }
+        # trigger event
+        DepositCallback::dispatch($order);
 
         return $result;
     }

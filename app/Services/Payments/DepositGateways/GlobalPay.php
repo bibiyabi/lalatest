@@ -13,42 +13,42 @@ use App\Constants\Payments\Type;
 use App\Exceptions\TpartyException;
 use App\Exceptions\UnsupportedTypeException;
 
-class Jinfaguoji implements DepositGatewayInterface
+class GlobalPay implements DepositGatewayInterface
 {
     use DepositGatewayTrait;
 
     # 下單方式 get post
-    private $method = 'post';
+    private $method = 'form';
 
     # 第三方域名
-    private $url = 'http://pay.gzmnsy.com:8089';
+    private $url = 'http://zvfdh.orfeyt.com';
 
     # 充值 uri
-    private $orderUri = '/createOrder';
+    private $orderUri = '/ty/orderPay';
 
     # 下單方式 form url
     private $returnType = 'url';
 
     # 下單欄位名稱-簽章 null or string
-    private $orderKeySign = null;
+    private $orderKeySign = 'sign';
 
     # 回調欄位名稱-狀態
     private $keyStatus = 'status';
 
     # 回調欄位成功狀態值
-    private $keyStatusSuccess = '00';
+    private $keyStatusSuccess = 'SUCCESS';
 
     # 回調欄位名稱-訂單編號
-    private $keyOrderId = 'order_no';
+    private $keyOrderId = 'mer_order_no';
 
     # 回調欄位名稱-簽章
-    private $keySign = 'Api-Sign';
+    private $keySign = 'sign';
 
     # 回調欄位名稱-金額
-    private $keyAmount = 'price';
+    private $keyAmount = 'pay_amount';
 
     # 回調成功回應值
-    private $successReturn = 'success';
+    private $successReturn = 'SUCCESS';
 
     /**
      * 建立下單參數
@@ -59,23 +59,19 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
-		// int	金额，元为单位
-		$num = floor($param->getAmount() * 10) % 10;
-		$price = floor($param->getAmount());
-		$num == 9 AND $price ++;
-
         return [
-            'mer_no'   		=> $settings->getMerchant(),
-            'order_no' 		=> $param->getOrderId(),
-			'pname'    		=>  $param->getLastName().$param->getFirstName(),
-			'pemail'   		=>  $param->getEmail(),
-			'phone'    		=>  $param->getMobile(),
-			'price' 		=>  $price,
-			'country_code' 	=>  'IND',
-            'pay_type' =>empty($settings->getTransactionType()) ? 'YDBANK': $settings->getTransactionType(),
-            'notify_url'    => config('app.url') . '/callback/deposit/Jinfaguoji',
-			'bankno'        => '000000',
-			'bankcode'      => '000000',
+            'mer_no'        => $settings->getMerchant(),
+            'mer_order_no'  => $param->getOrderId(),
+            'pname'         => $param->getFirstName() . ' ' . $param->getLastName(),
+            'pemail'        => $param->getEmail(),
+            'phone'         => $param->getMobile(),
+            'order_amount'  => $param->getAmount($param::AMOUNT_FLOAT),
+            'countryCode'   => 'IND',
+            'ccy_no'        => 'INR',
+            'busi_code'     => $settings->getTransactionType(),
+            'goods'         => 'goods',
+            'notifyurl'     => config('app.url') . '/callback/deposit/GlobalPay',
+            'pageUrl'       => $settings->getReturnUrl(),
         ];
     }
 
@@ -89,14 +85,8 @@ class Jinfaguoji implements DepositGatewayInterface
     protected function createSign(array $param, SettingParam $key): string
     {
         ksort($param);
-        $string_a = http_build_query($param);
-        $string_a = urldecode($string_a);
-        $string_sign_temp = $string_a . "&key=" . $key->getMd5Key();
-
-        $sign = md5($string_sign_temp);
-        $result = strtoupper($sign);
-
-        return $result;
+        $md5str = urldecode(http_build_query($param)) . '&key=' . $key->getMd5Key();
+        return $md5str;
     }
 
     /**
@@ -109,11 +99,11 @@ class Jinfaguoji implements DepositGatewayInterface
     {
         $data = json_decode($unprocessed, true);
 
-        if (isset($data['data']['qrcode_url']) === false) {
-            throw new TpartyException($data['message'] ?? "tparty error.");
+        if (isset($data['pageurl']) === false) {
+            throw new TpartyException($data['err_msg'] ?? "tparty error.");
         }
 
-        return $data['data']['qrcode_url'];
+        return $data['pageurl'];
     }
 
     /**
@@ -124,13 +114,9 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     public function getPlaceholder($type): Placeholder
     {
-		switch ($type) {
+        switch ($type) {
             case Type::WALLET:
-                $transactionType = ['UPI'];
-                break;
-
-			case Type::BANK_CARD:
-                $transactionType = [];
+                $transactionType = ['upi', 'Paytm'];
                 break;
 
             default:
@@ -141,13 +127,13 @@ class Jinfaguoji implements DepositGatewayInterface
         return new Placeholder(
             $type,
             '',
-            'Please input MerchantID',
+            'Please input userid',
             '',
             '',
-            'Please input MD5 Key',
+            'Please input token',
             '',
             '',
-			$transactionType
+            $transactionType
         );
     }
 
@@ -159,19 +145,15 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     public function getRequireInfo($type): DepositRequireInfo
     {
-		 switch ($type) {
-            case Type::BANK_CARD:
+         switch ($type) {
+            case Type::WALLET:
                 $column = [
-						C::AMOUNT,
-						C::LAST_NAME,
-						C::FIRST_NAME,
-						C::EMAIL,
-						C::MOBILE_NUMBER,
-					];
-                break;
-
-			case Type::WALLET:
-                $column = [C::AMOUNT];
+                    C::AMOUNT,
+                    C::FIRST_NAME,
+                    C::LAST_NAME,
+                    C::MOBILE_NUMBER,
+                    C::EMAIL,
+                ];
                 break;
 
             default:
@@ -179,6 +161,8 @@ class Jinfaguoji implements DepositGatewayInterface
                 break;
         }
 
-        return new DepositRequireInfo($type, $column, []);
+        $bank = [];
+
+        return new DepositRequireInfo($type, $column, $bank);
     }
 }

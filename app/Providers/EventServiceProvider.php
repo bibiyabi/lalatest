@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\DepositCallback;
+use App\Listeners\DepositNotify;
 use App\Models\Merchant;
 use App\Observers\MerchantObserver;
 use Illuminate\Auth\Events\Registered;
@@ -17,9 +19,12 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
+        // Registered::class => [
+        //     SendEmailVerificationNotification::class,
+        // ],
+        DepositCallback::class => [
+            DepositNotify::class,
+        ]
     ];
 
     /**

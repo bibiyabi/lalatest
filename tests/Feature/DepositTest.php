@@ -2,19 +2,22 @@
 
 namespace Tests\Feature;
 
+use App\Constants\Payments\ResponseCode;
 use App\Models\Gateway;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Models\Setting;
 use Tests\TestCase;
 use App\Constants\Payments\Status;
-use App\Jobs\Payment\Deposit\Notify;
-use Bus;
+use App\Events\DepositCallback;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class DepositTest extends TestCase
 {
-    use DatabaseTransactions;
+    use DatabaseTransactions, WithFaker;
 
     private $user;
 
@@ -31,7 +34,7 @@ class DepositTest extends TestCase
         $this->actingAs($user);
     }
 
-    public function test_can_create_order()
+    public function test_can_create_form_order()
     {
         $this->withoutMiddleware();
 
@@ -60,6 +63,82 @@ class DepositTest extends TestCase
         $this->assertDatabaseHas('orders', ['order_id'=>$orderId]);
     }
 
+    public function test_can_create_url_order()
+    {
+        $this->withoutMiddleware();
+
+        Http::fake([
+            '*' => Http::response([
+                'data' => [
+                    'qrcode_url' => 'google.com'
+                ],
+            ])
+        ]);
+
+        $gateway = Gateway::factory([
+            'name' => 'Jinfaguoji',
+            'real_name' => '金發',
+        ])->create();
+
+        $setting = Setting::factory([
+            'user_id' => $this->user->id,
+            'gateway_id' => $gateway->id,
+            'user_pk' => 123,
+            'settings' => '{"public_key":"brianHalfBank","info_title":"brianHalfBank","return_url":"http://商戶後台/recharge/notify","private_key":"brianHalfBank","notify_url":"brianHalfBank","merchant_number":"brianHalfBank","md5_key":"請填上md5密鑰","account":"brianHalfBank"}',
+
+        ])->create();
+
+        $orderId = 'D210121020135606534342';
+        $response = $this->post('api/deposit/create', [
+            'order_id' => $orderId,
+            'pk' => $setting->user_pk,
+            'type' => 'e_wallet',
+            'amount' => 123,
+        ]);
+
+        $response->assertJsonFragment(['success'=>true, 'content'=>'google.com']);
+        $this->assertDatabaseHas('orders', ['order_id'=>$orderId]);
+    }
+
+    public function test_create_order_when_have_no_setting()
+    {
+        $this->withoutMiddleware();
+
+        $orderId = 'D210121020135606534342';
+        $response = $this->post('api/deposit/create', [
+            'order_id' => $orderId,
+            'pk' => $this->faker()->numberBetween(999999, 999999999),
+            'type' => 'e_wallet',
+            'amount' => 123,
+        ]);
+
+        $response->assertJsonFragment(['code'=>ResponseCode::RESOURCE_NOT_FOUND]);
+        $this->assertDatabaseMissing('orders', ['order_id'=>$orderId]);
+    }
+
+    public function test_create_order_when_have_no_gateway()
+    {
+        $this->withoutMiddleware();
+
+        $setting = Setting::factory([
+            'user_id' => $this->user->id,
+            'gateway_id' => $this->faker()->numberBetween(999999, 999999999),
+            'user_pk' => 123,
+            'settings' => '{"public_key":"brianHalfBank","info_title":"brianHalfBank","return_url":"http://商戶後台/recharge/notify","private_key":"brianHalfBank","notify_url":"brianHalfBank","merchant_number":"brianHalfBank","md5_key":"請填上md5密鑰","account":"brianHalfBank"}',
+        ])->create();
+
+        $orderId = 'D210121020135606534342';
+        $response = $this->post('api/deposit/create', [
+            'order_id' => $orderId,
+            'pk' => $setting->user_pk,
+            'type' => 'e_wallet',
+            'amount' => 123,
+        ]);
+
+        $response->assertJsonFragment(['code'=>ResponseCode::RESOURCE_NOT_FOUND]);
+        $this->assertDatabaseMissing('orders', ['order_id'=>$orderId]);
+    }
+
     public function test_can_reset_order()
     {
         $this->withoutMiddleware();
@@ -86,7 +165,7 @@ class DepositTest extends TestCase
     {
         $this->withoutMiddleware();
 
-        Bus::fake();
+        Event::fake();
 
         $gateway = Gateway::factory([
             'name' => 'Inrusdt',
@@ -104,7 +183,6 @@ class DepositTest extends TestCase
             'key_id'=>$setting->id,
             'status'=>Status::ORDER_SUCCESS,
             'gateway_id'=>$gateway->id,
-            'no_notify'=>0,
         ])->create();
 
         $response = $this->post('callback/deposit/Inrusdt', [
@@ -114,7 +192,7 @@ class DepositTest extends TestCase
         ]);
 
         $response->assertSeeText('success');
-        Bus::assertDispatched(Notify::class);
         $this->assertDatabaseHas('orders', ['order_id'=>$order->order_id, 'status'=>Status::CALLBACK_SUCCESS]);
+        Event::assertDispatched(DepositCallback::class);
     }
 }

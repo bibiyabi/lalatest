@@ -11,7 +11,7 @@ use App\Repositories\MerchantRepository;
 use App\Lib\Hash\Signature;
 use Illuminate\Support\Facades\Log;
 
-class DepositNotify
+class DepositNotifyService
 {
     private $repo;
 

@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Providers;
-use App\Lib\Log\Logline;
 
 use Illuminate\Support\ServiceProvider;
 
-class CustomFacadesServiceProvider extends ServiceProvider
+class CurlFacadesServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -24,8 +23,8 @@ class CustomFacadesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind('logline', function() {
-            return new Logline();
-        });
+        $this->app->bind('curl',function() {
+            return new \App\Lib\Curl\Curl;
+         });
     }
 }

@@ -1,10 +1,8 @@
 <?php
 namespace App\Services\Payments\Withdraw;
-
-
-use App\Lib\Curl\Curl;
-
 use App\Exceptions\WithdrawException;
+use App\Facades\Curl;
+
 use Illuminate\Support\Facades\Log;
 use App\Lib\Hash\Signature;
 
@@ -19,9 +17,7 @@ class WithdrawNotify
     const SUCCESS = '000';
     const FAIL = '001';
 
-    public function __construct(Curl $curl) {
-        $this->curl = $curl;
-
+    public function __construct() {
     }
 
     public function setMessage($message) {
@@ -58,14 +54,13 @@ class WithdrawNotify
         $signArray = $postData;
         unset($signArray['message']);
         $postData['signature'] = Signature::makeSign($signArray, $this->javaKey);
-
-        $this->curlRes = $this->curl->setUrl($url)
+        $this->curlRes = Curl::setUrl($url)
             ->setPost($postData)
             ->exec();
 
         Log::channel('withdraw')->info(new \App\Lib\Log\LogLine('通知JAVA'), ['url' => $url, 'post' => $postData, 'res' => $this->curlRes]);
 
-        $this->checkSuccess($this->curlRes['data']);
+        return $this->checkSuccess($this->curlRes['data']);
     }
 
     public function checkSuccess($res) {
@@ -73,6 +68,7 @@ class WithdrawNotify
         if (!isset($javaRes['status']) || $javaRes['status'] !== '200') {
             throw new WithdrawException('java res failed');
         }
+        return true;
     }
 
 }

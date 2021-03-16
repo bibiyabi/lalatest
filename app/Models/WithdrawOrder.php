@@ -18,6 +18,7 @@ class WithdrawOrder extends Model
         'gateway_id',
         'status',
         'order_param',
+        'no_notify'
     ];
 
     public function key()

@@ -6,7 +6,7 @@ use App\Exceptions\NotifyException;
 use App\Models\Merchant;
 use App\Models\Order;
 use App\Repositories\MerchantRepository;
-use App\Services\Payments\Deposit\DepositNotify;
+use App\Services\Payments\Deposit\DepositNotifyService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -14,6 +14,15 @@ use Tests\TestCase;
 class DepositNotifyTest extends TestCase
 {
     use DatabaseTransactions;
+
+    public $service;
+
+    public function setup(): void
+    {
+        parent::setUp();
+
+        $this->service = $this->app->make(DepositNotifyService::class);
+    }
 
     /**
      * Test deposit order notify success.
@@ -29,9 +38,7 @@ class DepositNotifyTest extends TestCase
             ])
         ]);
 
-        $merchant = Merchant::factory()->create();
-        $service = new DepositNotify(new MerchantRepository());
-        $result = $service->notify(Order::factory(['user_id'=>$merchant->id])->create());
+        $result = $this->service->notify(Order::factory()->make());
 
         $this->assertTrue($result);
     }
@@ -47,8 +54,6 @@ class DepositNotifyTest extends TestCase
 
         $this->expectException(NotifyException::class);
 
-        $merchant = Merchant::factory()->create();
-        $service = new DepositNotify(new MerchantRepository());
-        $service->notify(Order::factory(['user_id'=>$merchant->id])->create());
+        $this->service->notify(Order::factory()->make());
     }
 }
