@@ -26,13 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (config('app.env') == 'local'){
-
-
-
-
+        if (config('app.debug_query') == true){
             DB::listen(function($query){
-
                 $i = 0;
                 $bindings = $query->bindings;
                 $rawSql = preg_replace_callback('/\?/', function ($matches) use ($bindings, &$i) {
