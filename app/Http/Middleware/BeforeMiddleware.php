@@ -11,7 +11,9 @@ class BeforeMiddleware
     {
         // Perform action
         Log::channel('access')->debug('request', [
+
             'request' => $request->all(),
+            'url' => $request->$request->fullUrl(),
             'content-type' => $request->header('content-type')
         ]);
         return $next($request);
