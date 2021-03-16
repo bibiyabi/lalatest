@@ -113,7 +113,9 @@ trait DepositGatewayTrait
 
     protected function createCallbackSign($request, SettingParam $key): string
     {
-        return $this->createSign($request->all(), $key); // 預設同下單簽名
+        $param = $request->all();
+        unset($param[$this->getSignKey()]);
+        return $this->createSign($param, $key); // 預設同下單簽名
     }
 
     protected function getOrderId(Request $request) {
