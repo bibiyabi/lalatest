@@ -196,23 +196,23 @@ class GlobalPay extends AbstractWithdrawGateway
             case Type::BANK_CARD:
                 $column = [
                     C::AMOUNT,
+                    C::BANK,
                     C::IFSC,
                     C::BANK_ACCOUNT,
                     C::FIRST_NAME,
                     C::LAST_NAME,
-                    C::FUND_PASSWORD,
-                    C::BANK
+                    C::FUND_PASSWORD
                 ];
                 break;
 
             case Type::WALLET:
                     $column = [
                         C::AMOUNT,
+                        C::UPI_ID,
                         C::BANK_ACCOUNT,
                         C::FIRST_NAME,
                         C::LAST_NAME,
-                        C::FUND_PASSWORD,
-                        C::UPI_ID,
+                        C::FUND_PASSWORD
                     ];
                     break;
             default:
