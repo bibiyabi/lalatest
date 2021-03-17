@@ -1,7 +1,7 @@
 <?php
 namespace App\Services\Payments\Withdraw;
 use App\Exceptions\WithdrawException;
-use App\Lib\Curl\Curl;
+use App\Facades\Curl;
 use Illuminate\Support\Facades\Log;
 use App\Lib\Hash\Signature;
 
@@ -53,8 +53,8 @@ class WithdrawNotify
         $signArray = $postData;
         unset($signArray['message']);
         $postData['signature'] = Signature::makeSign($signArray, $this->javaKey);
-        $curl = new Curl();
-        $this->curlRes = $curl->setUrl($url)
+
+        $this->curlRes = Curl::setUrl($url)
             ->setPost($postData)
             ->exec();
 

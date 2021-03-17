@@ -7,7 +7,7 @@ class Curl
     const TIMEOUT = 2;
     const FAILED = 4;
 
-    private $ch;
+    private $ch = null;
     private $second;
     private $errorMsg = '';
     private $header;
@@ -17,12 +17,16 @@ class Curl
         $this->basic();
     }
 
-    public function setUrl($url) {
-        if (!$this->ch) {
+    private function setOpt($option, $param) {
+        if ($this->ch == null) {
             $this->ch = curl_init();
             $this->basic();
         }
-        curl_setopt($this->ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, $option, $param);
+    }
+
+    public function setUrl($url) {
+        $this->setOpt(CURLOPT_URL, $url);
         return $this;
     }
 
@@ -33,27 +37,26 @@ class Curl
 
     public function setHeader($array) {
         $this->header = $array;
-        curl_setopt($this->ch, CURLOPT_HTTPHEADER, $array);
+        $this->setOpt(CURLOPT_HTTPHEADER, $array);
         return $this;
     }
 
     public function followLocation() {
-
-        curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, true);
+        $this->setOpt(CURLOPT_FOLLOWLOCATION, true);
         return $this;
     }
 
     public function setPost($post) {
-        curl_setopt($this->ch, CURLOPT_POST, 1);
-        curl_setopt($this->ch, CURLOPT_POSTFIELDS, $post);
+        $this->setOpt(CURLOPT_POST, 1);
+        $this->setOpt(CURLOPT_POSTFIELDS, $post);
         return $this;
     }
 
     public function basic() {
         $this->setTimeoutSecond(10);
-        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->ch, CURLOPT_TIMEOUT, $this->second);
-        curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, $this->second);
+        $this->setOpt(CURLOPT_RETURNTRANSFER, true);
+        $this->setOpt(CURLOPT_TIMEOUT, $this->second);
+        $this->setOpt(CURLOPT_CONNECTTIMEOUT, $this->second);
 
         return $this;
     }
@@ -64,8 +67,8 @@ class Curl
     }
 
     public function ssl($bollean = false){
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $bollean ? 2 : $bollean );
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, $bollean);
+        $this->setOpt(CURLOPT_SSL_VERIFYHOST, $bollean ? 2 : $bollean);
+        $this->setOpt(CURLOPT_SSL_VERIFYPEER, $bollean);
         return $this;
     }
 
@@ -76,6 +79,7 @@ class Curl
         $errorNo = curl_errno($this->ch);
         $errorMsg = curl_error($this->ch);
         curl_close($this->ch);
+        $this->ch  = null;
 
         if ($errorNo) {
             if ($errorNo === 28) {
