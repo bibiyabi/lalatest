@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Order;
 use App\Repositories\Orders\DepositRepository;
 use App\Repositories\Orders\WithdrawRepository;
 use Carbon\Carbon;
@@ -45,5 +44,6 @@ class DeleteOutdatedOrders extends Command
         $date = Carbon::now()->subDays($days);
         $depositRepo->before($date)->delete();
         $withdrawRepo->before($date)->delete();
+        $this->info('The command was successful!');
     }
 }
