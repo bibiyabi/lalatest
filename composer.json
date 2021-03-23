@@ -28,6 +28,7 @@
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3",
+        "stechstudio/laravel-php-cs-fixer": "^2.2",
         "timacdonald/log-fake": "^1.8"
     },
     "config": {
