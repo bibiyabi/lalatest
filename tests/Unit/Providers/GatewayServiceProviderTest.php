@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Jobs\Payment\Withdraw;
+namespace Tests\Unit\Providers;
 
 use App\Providers\GatewayServiceProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
