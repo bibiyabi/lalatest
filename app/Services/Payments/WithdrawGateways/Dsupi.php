@@ -40,17 +40,20 @@ class Dsupi extends AbstractWithdrawGateway
     // 回調確認失敗狀態
     protected $callbackFailedStatus = [2];
 
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl)
+    {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) : void {
+    public function setRequest($post = [], WithdrawOrder $order) : void
+    {
         $this->setBaseRequest($order, $post);
     }
 
 
 
-    protected function validationCreateInput() {
+    protected function validationCreateInput()
+    {
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
@@ -60,12 +63,14 @@ class Dsupi extends AbstractWithdrawGateway
     }
 
 
-    protected function setCreateSign($post, $settings) {
-        $signParams = $this->getNeedGenSignArray($post,  $settings);
+    protected function setCreateSign($post, $settings)
+    {
+        $signParams = $this->getNeedGenSignArray($post, $settings);
         $this->createSign =  $this->genSign($signParams, $settings);
     }
 
-    private function getNeedGenSignArray($input, $settings) {
+    private function getNeedGenSignArray($input, $settings)
+    {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number'])) {
             throw new InputException('merchant_username or private key not found', ResponseCode::ERROR_PARAMETERS);
@@ -73,7 +78,7 @@ class Dsupi extends AbstractWithdrawGateway
         $array = [];
         $array['appid']        = $settings['merchant_number'];
         $array['account']      = $settings['account'];
-        $array['money']        = sprintf("%.2f",$input['amount']);
+        $array['money']        = sprintf("%.2f", $input['amount']);
         $array['name']         = $input['first_name'] . $input['last_name'];
         $array['bank_type']    = '1';
         $array['bank_id']      = $settings['transaction_type'];
@@ -84,7 +89,8 @@ class Dsupi extends AbstractWithdrawGateway
         return $array;
     }
 
-    protected function genSign($data, $settings) {
+    protected function genSign($data, $settings)
+    {
         $data = array_filter($data);
         ksort($data);
         $string_a = http_build_query($data);
@@ -98,39 +104,46 @@ class Dsupi extends AbstractWithdrawGateway
 
 
 
-    protected function setCreatePostData($input, $settings) {
+    protected function setCreatePostData($input, $settings)
+    {
         $array = $this->getNeedGenSignArray($input, $settings);
         $array['sign']         = $this->createSign;
         $this->createPostData = json_encode($array);
     }
 
-    protected function isHttps() {
+    protected function isHttps()
+    {
         return true;
     }
 
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [
             'Content-Type: application/json',
             "HOST: ". $this->domain,
         ];
     }
 
-    protected function checkCreateOrderIsSuccess($res) {
+    protected function checkCreateOrderIsSuccess($res)
+    {
         return isset($res['code']) && $res['code'] == 1;
     }
 
     // ===========================callback start===============================
 
-    protected function getCallbackSign(Request $request) {
+    protected function getCallbackSign(Request $request)
+    {
         return $request->header('api-sign');
     }
 
-    public function  getCallBackInput(Request $request) {
+    public function getCallBackInput(Request $request)
+    {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  file_get_contents("php://input");
     }
 
-    protected function getCallbackValidateColumns() {
+    protected function getCallbackValidateColumns()
+    {
         return [
             'code' => 'required',
             'msg' => 'required',
@@ -138,7 +151,8 @@ class Dsupi extends AbstractWithdrawGateway
         ];
     }
 
-    protected function getCallbackOrderStatus($post) {
+    protected function getCallbackOrderStatus($post)
+    {
         return data_get($post, $this->callbackOrderStatusPosition);
     }
 
@@ -158,21 +172,21 @@ class Dsupi extends AbstractWithdrawGateway
         }
 
         return new Placeholder(
-                $type,
-                'Please input Account',
-                'please input MerchantID',
-                '',
-                '',
-                'Please input MD5 Key',
-                '',
-                '',
-                $transactionType,
-                [],
-                [],
-                '',
-                '',
-                'Please input Domain'
-            );
+            $type,
+            'Please input Account',
+            'please input MerchantID',
+            '',
+            '',
+            'Please input MD5 Key',
+            '',
+            '',
+            $transactionType,
+            [],
+            [],
+            '',
+            '',
+            'Please input Domain'
+        );
     }
 
 

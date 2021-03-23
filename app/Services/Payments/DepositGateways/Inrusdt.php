@@ -82,7 +82,9 @@ class Inrusdt implements DepositGatewayInterface
         ksort($param);
         $md5str = '';
         foreach ($param as $k => $value) {
-            if ($k == 'sign') continue;
+            if ($k == 'sign') {
+                continue;
+            }
             $md5str .= $k . '=' . $value . '&';
         }
         $md5str .= 'key=' . $key->getMd5Key();

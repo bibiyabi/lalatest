@@ -42,17 +42,19 @@ abstract class AbstractWithdrawGateway
 
 
 
-    public function __construct($curl) {
+    public function __construct($curl)
+    {
         $this->curl = $curl;
     }
 
-    public function logRequest($order, $post) {
+    public function logRequest($order, $post)
+    {
         Log::channel('withdraw')->info(new LogLine('第三方參數 post ' . json_encode($post)));
         Log::channel('withdraw')->info(new LogLine('第三方參數 settings ' . $order->key->settings));
     }
 
-    protected function setBaseRequest($order, $post):void {
-
+    protected function setBaseRequest($order, $post):void
+    {
         $this->logRequest($order, $post);
         # 設定model
         $this->setOrder($order);
@@ -66,28 +68,32 @@ abstract class AbstractWithdrawGateway
         # 設定商戶domain
         $this->setDoamin($settings);
         # set create order post data
-        $this->setCreatePostData($post,  $settings);
+        $this->setCreatePostData($post, $settings);
     }
 
 
     # 設定回調網址
-    protected function setCallBackUrl($class) {
+    protected function setCallBackUrl($class)
+    {
         $this->callbackUrl = config('app.url') . '/callback/withdraw/'. class_basename($class);
     }
     # 設定request
-    abstract  public function setRequest($post = [], WithdrawOrder $order);
+    abstract public function setRequest($post = [], WithdrawOrder $order);
     # 檢查input
-    protected function validationCreateInput() {
+    protected function validationCreateInput()
+    {
         return [];
     }
     # 設定發送sign
-    protected function setCreateSign($post, $settings) {
+    protected function setCreateSign($post, $settings)
+    {
         $this->createSign = '';
     }
     # 設定送單array
     abstract protected function setCreatePostData($post, $settings);
     # 設定header
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [];
     }
     # 是否用https 有ture 沒有false
@@ -102,7 +108,8 @@ abstract class AbstractWithdrawGateway
 
 
     # 確認訂單參數
-    protected function validateOrderInput($data) {
+    protected function validateOrderInput($data)
+    {
         $validator = Validator::make($data, $this->validationCreateInput());
         if ($validator->fails()) {
             throw new InputException($validator->errors(), Status::ORDER_FAILED);
@@ -110,8 +117,8 @@ abstract class AbstractWithdrawGateway
     }
 
     # 取得建單狀態
-    protected function getSendReturn($curlRes) {
-
+    protected function getSendReturn($curlRes)
+    {
         switch ($curlRes['code']) {
             case Curl::STATUS_SUCCESS:
                 return $this->returnCreateRes($this->getCreateOrderRes($curlRes));
@@ -120,16 +127,18 @@ abstract class AbstractWithdrawGateway
             case Curl::TIMEOUT:
                 return $this->resCreateError('curl timeout', ['order_id' => $this->order->order_id]);
             default:
-                throw new WithdrawException("curl rescode default " , Status::ORDER_FAILED);
+                throw new WithdrawException("curl rescode default ", Status::ORDER_FAILED);
         }
     }
 
-    protected function getCreateOrderRes($curlRes) {
+    protected function getCreateOrderRes($curlRes)
+    {
         return $this->decode($curlRes['data'], true);
     }
 
     # curl 取得建單狀態
-    protected function returnCreateRes($createRes) {
+    protected function returnCreateRes($createRes)
+    {
         if ($this->checkCreateOrderIsSuccess($createRes)) {
             return $this->resCreateSuccess('success', ['order_id' => $this->order->order_id]);
         } else {
@@ -139,27 +148,32 @@ abstract class AbstractWithdrawGateway
     }
 
     # set order object
-    private function setOrder($order) {
+    private function setOrder($order)
+    {
         if (empty($order)) {
             throw new WithdrawException('setting empty ', Status::ORDER_FAILED);
         }
         $this->order = $order;
     }
 
-    protected function getCreateSign() {
+    protected function getCreateSign()
+    {
         return $this->createSign;
     }
 
-    protected function getCreateUrl() {
+    protected function getCreateUrl()
+    {
         if ($this->isCurlProxy) {
-            return 'http://' . $this->getProxyIp($this->isHttps()) . $this->createSegments;;
+            return 'http://' . $this->getProxyIp($this->isHttps()) . $this->createSegments;
+            ;
         }
 
         $http = ($this->isHttps()) ? 'https://' : 'http://';
         return  $http . $this->domain. $this->createSegments;
     }
 
-    public function setDoamin($settings) {
+    public function setDoamin($settings)
+    {
         if ($this->isDomainDynamic) {
             if (empty($settings['note1'])) {
                 throw new WithdrawException(' empty dynamic domain in settings note1 ', Status::ORDER_FAILED);
@@ -168,8 +182,8 @@ abstract class AbstractWithdrawGateway
         }
     }
 
-    public function send() {
-
+    public function send()
+    {
         if (empty($this->getCreatePostData())) {
             throw new WithdrawException('createPostData empty ', Status::ORDER_FAILED);
         }
@@ -192,26 +206,30 @@ abstract class AbstractWithdrawGateway
         return $this->getSendReturn($curlRes);
     }
 
-    protected function getCreateOrderMsg($result) {
+    protected function getCreateOrderMsg($result)
+    {
         return data_get($result, $this->createResultMessagePosition, '');
     }
 
-    protected function getCreatePostData() {
+    protected function getCreatePostData()
+    {
         return $this->createPostData;
     }
 
-    public function getSettings($order) {
+    public function getSettings($order)
+    {
         $key = $order->key;
 
         if (empty($key)) {
-            throw new WithdrawException("key not found." , Status::ORDER_FAILED);
+            throw new WithdrawException("key not found.", Status::ORDER_FAILED);
         }
 
         return $this->decode($key->settings, true);
     }
 
     # for decode
-    protected function decode($data) {
+    protected function decode($data)
+    {
         $decode =  json_decode($data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new DecodeException(json_last_error() . 'decode error @'. json_encode($data) . '@', Status::ORDER_ERROR);
@@ -220,8 +238,8 @@ abstract class AbstractWithdrawGateway
     }
 
     // for test
-    public function setCurl() {
+    public function setCurl()
+    {
         $this->curl = new Curl();
     }
-
 }

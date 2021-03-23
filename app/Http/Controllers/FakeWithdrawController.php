@@ -15,7 +15,8 @@ class FakeWithdrawController extends Controller
 {
     private $service;
 
-    public function __construct(WithdrawNotify $service) {
+    public function __construct(WithdrawNotify $service)
+    {
         $this->service = $service;
     }
 
@@ -24,7 +25,7 @@ class FakeWithdrawController extends Controller
         $minDate = Carbon::now()->subDays(5);
         $orders = WithdrawOrder::where('created_at', '>=', $minDate)->get();
         $url = '/callback/fake_withdraw/orders/';
-        return view('fake_tparty.order_notify', compact('orders','url'));
+        return view('fake_tparty.order_notify', compact('orders', 'url'));
     }
 
     public function sendNotify(WithdrawOrder $order, Request $request)

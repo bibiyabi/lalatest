@@ -3,14 +3,14 @@
 
 namespace App\Services;
 
-
 class ServiceResult
 {
     private $success;
     private $errorCode;
     private $result;
 
-    public function __construct(bool $success, int $errorCode = 0, $result = null) {
+    public function __construct(bool $success, int $errorCode = 0, $result = null)
+    {
         $this->success = $success;
         $this->errorCode = $errorCode;
         $this->result = $result;
@@ -30,5 +30,4 @@ class ServiceResult
     {
         return $this->result;
     }
-
 }

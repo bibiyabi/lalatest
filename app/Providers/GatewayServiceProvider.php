@@ -9,7 +9,6 @@ use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
-
 class GatewayServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
@@ -36,18 +35,18 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
         }
     }
 
-    public function getSegmentN(Request $request, $n) {
-
+    public function getSegmentN(Request $request, $n)
+    {
         return $request->segment($n);
     }
 
-    public function isSegmentMatch(Request $request) {
-
+    public function isSegmentMatch(Request $request)
+    {
         return strtolower($request->segment(2)) == 'withdraw' && strtolower($request->segment(1)) == 'callback';
     }
 
-    public function createGateway($gatewayName) {
-
+    public function createGateway($gatewayName)
+    {
         if (empty($gatewayName)) {
             throw new WithdrawException(__LINE__ . 'gateway name not found s', 22);
         }
@@ -57,7 +56,7 @@ class GatewayServiceProvider extends ServiceProvider implements DeferrableProvid
             throw new WithdrawException($gatewayName . 'gateway not found', 22);
         }
 
-        App::bind(AbstractWithdrawGateway::class, function ($app) use ($gatewayName){
+        App::bind(AbstractWithdrawGateway::class, function ($app) use ($gatewayName) {
             $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
             return $app->make($className);
         });

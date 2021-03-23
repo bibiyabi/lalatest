@@ -29,7 +29,8 @@ class ShineUpayTest extends TestCase
         parent::setUp();
     }
 
-    public function test_setRequest() {
+    public function test_setRequest()
+    {
         Log::shouldReceive('channel')->andReturnSelf();
         Log::shouldReceive('info')->andReturnSelf();
 
@@ -55,10 +56,5 @@ class ShineUpayTest extends TestCase
 
         $mock = $this->partialMock(ShineUPay::class);
         $mock->setRequest([], $order);
-
-
-
     }
-
-
 }

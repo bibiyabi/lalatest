@@ -1,5 +1,6 @@
 <?php
 namespace App\Services\Payments\Withdraw;
+
 use App\Exceptions\WithdrawException;
 use App\Facades\Curl;
 use Illuminate\Support\Facades\Log;
@@ -16,15 +17,18 @@ class WithdrawNotify
     const SUCCESS = '000';
     const FAIL = '001';
 
-    public function __construct() {
+    public function __construct()
+    {
     }
 
-    public function setMessage($message) {
+    public function setMessage($message)
+    {
         $this->message = $message;
         return $this;
     }
 
-    public function setOrder($order){
+    public function setOrder($order)
+    {
         $this->order = $order;
         $this->javaKey = config('app.sign_key');
         $this->javaUrl = config('app.java_domain');
@@ -32,16 +36,18 @@ class WithdrawNotify
         return $this;
     }
 
-    public function notifyWithdrawSuccess() {
+    public function notifyWithdrawSuccess()
+    {
         $this->notify(self::SUCCESS);
     }
 
-    public function notifyWithdrawFailed() {
+    public function notifyWithdrawFailed()
+    {
         $this->notify(self::FAIL);
     }
 
-    public function notify ($status) {
-
+    public function notify($status)
+    {
         $url = $this->javaUrl . '/withdraw/result';
 
         $postData = [];
@@ -63,12 +69,12 @@ class WithdrawNotify
         return $this->checkSuccess($this->curlRes['data']);
     }
 
-    public function checkSuccess($res) {
+    public function checkSuccess($res)
+    {
         $javaRes = json_decode($res, true);
         if (!isset($javaRes['status']) || $javaRes['status'] !== '200') {
             throw new WithdrawException('java res failed');
         }
         return true;
     }
-
 }

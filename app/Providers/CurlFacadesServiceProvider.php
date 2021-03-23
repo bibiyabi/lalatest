@@ -23,8 +23,8 @@ class CurlFacadesServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bind('curl',function() {
+        $this->app->bind('curl', function () {
             return new \App\Lib\Curl\Curl;
-         });
+        });
     }
 }

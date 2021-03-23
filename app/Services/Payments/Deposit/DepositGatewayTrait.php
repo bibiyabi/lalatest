@@ -118,19 +118,23 @@ trait DepositGatewayTrait
         return $this->createSign($param, $key); // 預設同下單簽名
     }
 
-    protected function getOrderId(Request $request) {
+    protected function getOrderId(Request $request)
+    {
         return $request->header($this->keyOrderId, $request->input($this->keyOrderId));
     }
 
-    protected function getStatus(Request $request) {
+    protected function getStatus(Request $request)
+    {
         return $request->header($this->keyStatus, $request->input($this->keyStatus));
     }
 
-    protected function getSign(Request $request): string {
+    protected function getSign(Request $request): string
+    {
         return $request->header($this->keySign, $request->input($this->keySign));
     }
 
-    protected function getAmount(Request $request) {
+    protected function getAmount(Request $request)
+    {
         return $request->header($this->keyAmount, $request->input($this->keyAmount));
     }
 

@@ -23,12 +23,11 @@ class GatewayTypeRepository
         $list = $this->gatewayType
                      ->with('gateway')
                      ->where('types_id', $type)
-                     ->where($support,1)
+                     ->where($support, 1)
                      ->get();
 
         $result = [];
-        foreach ($list as $key => $value)
-        {
+        foreach ($list as $key => $value) {
             $result[$key]['id'] = $value->gateway->id;
             $result[$key]['name'] = $value->gateway->name;
         }

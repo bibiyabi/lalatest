@@ -15,10 +15,8 @@ use Illuminate\Container\container;
 use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-
 class GatewayTest extends TestCase
 {
-
     public function setUp():void
     {
         parent::setUp();
@@ -51,10 +49,10 @@ class GatewayTest extends TestCase
         $className = "App\Services\Payments\WithdrawGateways\\$gatewayName";
         $this->assertInstanceOf(ShineUPay::class, $container->make($className));
         $gateway->delete();
-
     }
 
-    public function test_service_provider_create_gateway_instance() {
+    public function test_service_provider_create_gateway_instance()
+    {
         $container = Container::getInstance();
         $this->service_provider = new GatewayServiceProvider($container);
         $this->assertInstanceOf(GatewayServiceProvider::class, $this->service_provider);
@@ -65,8 +63,8 @@ class GatewayTest extends TestCase
         $this->assertInstanceOf(ShineUPay::class, $gateway);
     }
 
-    public function test_gateway_not_found_return_withdraw_exception() {
-
+    public function test_gateway_not_found_return_withdraw_exception()
+    {
         $this->expectException(WithdrawException::class);
 
         $container = Container::getInstance();
@@ -75,7 +73,5 @@ class GatewayTest extends TestCase
 
         $unusedGateway = 'ABCDEFG';
         $this->service_provider->createGateway($unusedGateway);
-
-
     }
 }

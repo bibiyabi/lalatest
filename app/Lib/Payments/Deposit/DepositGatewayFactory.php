@@ -15,13 +15,11 @@ class DepositGatewayFactory
         $class = self::$namespace.$gatewayName;
         try {
             $gateway = new $class();
-        }catch(\Error $e){
+        } catch (\Error $e) {
             Log::info(__NAMESPACE__.'     '. $e->getMessage());
             throw new GatewayNotFountException($gatewayName. ' Deposit gateway not found.');
         }
 
         return $gateway;
     }
-
-
 }

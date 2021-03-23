@@ -22,17 +22,16 @@ class CryptoCurrencySearchQueueTest extends TestCase
     {
         parent::setUp();
 
-       $user = Merchant::factory([
+        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
 
-       $this->user = $user;
-       $this->actingAs($user);
+        $this->user = $user;
+        $this->actingAs($user);
     }
 
     public function test_handle_order_success_db_check()
     {
-
         $setting = Setting::create([
             'user_id' => 111,
             'gateway_id' => 2222,
@@ -68,12 +67,10 @@ class CryptoCurrencySearchQueueTest extends TestCase
             'order_id'    => $orderId,
             'status'      => Status::ORDER_FAILED,
         ]);
-
     }
 
     public function test_handle_order_failed_db_check()
     {
-
         $setting = Setting::create([
             'user_id' => 111,
             'gateway_id' => 2222,
@@ -106,10 +103,5 @@ class CryptoCurrencySearchQueueTest extends TestCase
             'order_id'    => $orderId,
             'status'      => Status::CALLBACK_SUCCESS,
         ]);
-
     }
-
-
-
-
 }

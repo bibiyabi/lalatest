@@ -13,7 +13,8 @@ class FakeDepositController extends Controller
 {
     private $service;
 
-    public function __construct(DepositNotifyService $service) {
+    public function __construct(DepositNotifyService $service)
+    {
         $this->service = $service;
     }
 

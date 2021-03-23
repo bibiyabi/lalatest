@@ -25,8 +25,8 @@ class WithdrawControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function test_create_catch_exception_than_1024_or_less_20_code() {
-
+    public function test_create_catch_exception_than_1024_or_less_20_code()
+    {
         $request = Request::create('/');
         $mockPayment = $this->mock(PaymentService::class, function (MockInterface $mock) {
             $mock->shouldReceive('checkInputSetDbSendOrderToQueue')->andThrow(new WithdrawException('input error', Status::ORDER_FAILED));
@@ -40,8 +40,8 @@ class WithdrawControllerTest extends TestCase
     }
 
 
-    public function test_callback_catch_exception() {
-
+    public function test_callback_catch_exception()
+    {
         $request = Request::create('/');
         $mockPayment = $this->mock(PaymentService::class, function (MockInterface $mock) {
             $mock->shouldReceive('callback')->andThrow(new WithdrawException('input error', Status::ORDER_FAILED));
@@ -57,8 +57,8 @@ class WithdrawControllerTest extends TestCase
     }
 
 
-    public function test_reset_catch_exception() {
-
+    public function test_reset_catch_exception()
+    {
         $request = Request::create('/');
         $mockPayment = $this->mock(PaymentService::class, function (MockInterface $mock) {
             $mock->shouldReceive('resetOrderStatus')->andThrow(new WithdrawException('input error', Status::ORDER_FAILED));
@@ -72,8 +72,8 @@ class WithdrawControllerTest extends TestCase
     }
 
 
-    public function test_response_other_exception() {
-
+    public function test_response_other_exception()
+    {
         $request = Request::create('/');
         $mockPayment = $this->mock(PaymentService::class, function (MockInterface $mock) {
             $mock->shouldReceive('resetOrderStatus')->andThrow(new Exception('input error', Status::ORDER_FAILED));
@@ -85,5 +85,4 @@ class WithdrawControllerTest extends TestCase
         $this->assertSame($res->original['code'], 1024);
         $this->assertSame($res->original['success'], false);
     }
-
 }

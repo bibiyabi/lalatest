@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\Payment\Withdraw\Order;
+
 class WithdrawOrderQueueServiceProvider extends ServiceProvider
 {
     /**
@@ -18,7 +19,6 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
     public function register()
     {
         //
-
     }
 
     /**
@@ -28,8 +28,7 @@ class WithdrawOrderQueueServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->bindMethod([Order::class, 'handle'], function ($job, $app)
-        {
+        $this->app->bindMethod([Order::class, 'handle'], function ($job, $app) {
             $order = $job->getInputOrder();
             $gateway = $order->key->gateway;
 

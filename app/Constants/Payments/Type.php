@@ -1,7 +1,6 @@
 <?php
 namespace App\Constants\Payments;
 
-
 class Type
 {
     public const CREDIT_CARD        = 'credit_card';
@@ -22,5 +21,4 @@ class Type
         3 => self::CRYPTO_CURRENCY,
         4 => self::CREDIT_CARD,
     ];
-
 }

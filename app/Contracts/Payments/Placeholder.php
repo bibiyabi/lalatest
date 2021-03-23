@@ -39,8 +39,7 @@ class Placeholder
         string $apiKey = "",
         string $note1 = "",
         string $note2 = ""
-    )
-    {
+    ) {
         $this->type = $type;
         $this->account = $account;
         $this->merchantNumber = $merchantNumber;
@@ -63,7 +62,7 @@ class Placeholder
     {
         $type = $this->type;
         $result = [];
-        if ($type == Type::CRYPTO_CURRENCY){
+        if ($type == Type::CRYPTO_CURRENCY) {
             $result = [
                 'transactionType'       => $this->transactionType,
                 'coin'                  => $this->coin,
@@ -71,19 +70,19 @@ class Placeholder
                 'apiKey'                => $this->apiKey,
                 'cryptoAddress'         => $this->cryptoAddress,
             ];
-        }elseif($type == Type::CREDIT_CARD){
+        } elseif ($type == Type::CREDIT_CARD) {
             $result = [
                 'account'               => $this->account,
                 'merchantNumber'        => $this->merchantNumber,
                 'transactionType'       => $this->transactionType,
             ];
-        }elseif($type == Type::WALLET){
+        } elseif ($type == Type::WALLET) {
             $result = [
                 'account'               => $this->account,
                 'merchantNumber'        => $this->merchantNumber,
                 'transactionType'       => $this->transactionType,
             ];
-        }elseif ($type == Type::BANK_CARD){
+        } elseif ($type == Type::BANK_CARD) {
             $result = [
                 'account'               => $this->account,
                 'merchantNumber'        => $this->merchantNumber,
@@ -102,5 +101,4 @@ class Placeholder
 
         return $result;
     }
-
 }

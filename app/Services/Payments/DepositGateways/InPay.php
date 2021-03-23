@@ -29,8 +29,8 @@ class InPay implements DepositGatewayInterface
     # 下單方式 form url
     private $returnType = 'url';
 
-	# 下單欄位名稱-簽章 null or string
-	private $orderKeySign = 'sign';
+    # 下單欄位名稱-簽章 null or string
+    private $orderKeySign = 'sign';
 
     # 回調欄位名稱-狀態
     private $keyStatus = 'state';
@@ -86,7 +86,7 @@ class InPay implements DepositGatewayInterface
         $keys = ['merchantNum', 'orderNo', 'amount', 'notifyUrl'];
         $md5str = '';
         foreach ($keys as $k) {
-			$md5str .= $param[$k];
+            $md5str .= $param[$k];
         }
         $md5str .= $key->getMd5Key();
 
@@ -110,17 +110,17 @@ class InPay implements DepositGatewayInterface
         return $data['data']['payUrl'];
     }
 
-     /**
-      * 建立回調簽名
-      *
-      * @param array $param request()->all
-      * @param SettingParam $key
-      * @return string
-      */
+    /**
+     * 建立回調簽名
+     *
+     * @param array $param request()->all
+     * @param SettingParam $key
+     * @return string
+     */
     protected function createCallbackSign($param, SettingParam $key): string
     {
         $data = [
-		    'state'       => $param['state'],
+            'state'       => $param['state'],
             'merchantNum' => $param['merchantNum'],
             'orderNo'     => $param['orderNo'],
             'amount'      => $param['amount'],
@@ -147,7 +147,7 @@ class InPay implements DepositGatewayInterface
                 $transactionType = ['upi'];
                 break;
 
-			case Type::BANK_CARD:
+            case Type::BANK_CARD:
                 $transactionType = ['bankCard'];
                 break;
 

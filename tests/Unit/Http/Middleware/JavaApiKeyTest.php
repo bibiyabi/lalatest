@@ -22,7 +22,8 @@ class JavaApiKeyTest extends TestCase
         parent::setUp();
     }
 
-    public function test_handle_same_sign() {
+    public function test_handle_same_sign()
+    {
         $user = Merchant::factory([
             'name' => 'java',
         ])->create();
@@ -43,15 +44,16 @@ class JavaApiKeyTest extends TestCase
 
         $middleware = new JavaApiKey($mockMerchantRepo, $mockSignature);
 
-        $response = $middleware->handle($request, function () {return 'next';});
+        $response = $middleware->handle($request, function () {
+            return 'next';
+        });
 
         $this->assertEquals($response, 'next');
-
-
     }
 
 
-    public function test_handle_different_sign() {
+    public function test_handle_different_sign()
+    {
         $user = Merchant::factory([
             'name' => 'java',
         ])->create();
@@ -72,13 +74,15 @@ class JavaApiKeyTest extends TestCase
 
         $middleware = new JavaApiKey($mockMerchantRepo, $mockSignature);
 
-        $response = $middleware->handle($request, function () {return 'next';});
+        $response = $middleware->handle($request, function () {
+            return 'next';
+        });
         $this->assertEquals($response->original['code'], 159);
-
     }
 
 
-    public function test_handle_success_when_is_check_sign_config_is_false() {
+    public function test_handle_success_when_is_check_sign_config_is_false()
+    {
         $user = Merchant::factory([
             'name' => 'java',
         ])->create();
@@ -99,10 +103,9 @@ class JavaApiKeyTest extends TestCase
 
         $middleware = new JavaApiKey($mockMerchantRepo, $mockSignature);
 
-        $response = $middleware->handle($request, function () {return 'next';});
+        $response = $middleware->handle($request, function () {
+            return 'next';
+        });
         $this->assertEquals($response, 'next');
-
     }
-
-
 }

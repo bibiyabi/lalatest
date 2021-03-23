@@ -35,5 +35,4 @@ class WithdrawOrder extends Model
     {
         return $this->belongsTo(Gateway::class);
     }
-
 }

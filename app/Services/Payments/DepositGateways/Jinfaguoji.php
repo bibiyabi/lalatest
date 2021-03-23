@@ -59,23 +59,23 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
-		// int	金额，元为单位
-		$num = floor($param->getAmount() * 10) % 10;
-		$price = floor($param->getAmount());
-		$num == 9 AND $price ++;
+        // int	金额，元为单位
+        $num = floor($param->getAmount() * 10) % 10;
+        $price = floor($param->getAmount());
+        $num == 9 and $price ++;
 
         return [
             'mer_no'   		=> $settings->getMerchant(),
             'order_no' 		=> $param->getOrderId(),
-			'pname'    		=>  $param->getLastName().$param->getFirstName(),
-			'pemail'   		=>  $param->getEmail(),
-			'phone'    		=>  $param->getMobile(),
-			'price' 		=>  $price,
-			'country_code' 	=>  'IND',
+            'pname'    		=>  $param->getLastName().$param->getFirstName(),
+            'pemail'   		=>  $param->getEmail(),
+            'phone'    		=>  $param->getMobile(),
+            'price' 		=>  $price,
+            'country_code' 	=>  'IND',
             'pay_type' =>empty($settings->getTransactionType()) ? 'YDBANK': $settings->getTransactionType(),
             'notify_url'    => config('app.url') . '/callback/deposit/Jinfaguoji',
-			'bankno'        => '000000',
-			'bankcode'      => '000000',
+            'bankno'        => '000000',
+            'bankcode'      => '000000',
         ];
     }
 
@@ -124,12 +124,12 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     public function getPlaceholder($type): Placeholder
     {
-		switch ($type) {
+        switch ($type) {
             case Type::WALLET:
                 $transactionType = ['UPI'];
                 break;
 
-			case Type::BANK_CARD:
+            case Type::BANK_CARD:
                 $transactionType = [];
                 break;
 
@@ -147,7 +147,7 @@ class Jinfaguoji implements DepositGatewayInterface
             'Please input MD5 Key',
             '',
             '',
-			$transactionType
+            $transactionType
         );
     }
 
@@ -159,18 +159,18 @@ class Jinfaguoji implements DepositGatewayInterface
      */
     public function getRequireInfo($type): DepositRequireInfo
     {
-		 switch ($type) {
+        switch ($type) {
             case Type::BANK_CARD:
                 $column = [
-						C::AMOUNT,
-						C::LAST_NAME,
-						C::FIRST_NAME,
-						C::EMAIL,
-						C::MOBILE_NUMBER,
-					];
+                        C::AMOUNT,
+                        C::LAST_NAME,
+                        C::FIRST_NAME,
+                        C::EMAIL,
+                        C::MOBILE_NUMBER,
+                    ];
                 break;
 
-			case Type::WALLET:
+            case Type::WALLET:
                 $column = [C::AMOUNT];
                 break;
 

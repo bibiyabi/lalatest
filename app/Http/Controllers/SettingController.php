@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use App\Constants\Payments\ResponseCode as CODE;
 
-
 class SettingController extends Controller
 {
     protected $service;
@@ -21,7 +20,7 @@ class SettingController extends Controller
 
     public function store(Request $request)
     {
-        if (empty($request->all())|| empty($request->input('data'))){
+        if (empty($request->all())|| empty($request->input('data'))) {
             Log::info('INPUT PARAMS IS EMPTY.  '.self::class, $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
@@ -51,7 +50,7 @@ class SettingController extends Controller
             "note2"               => "nullable|string",
         ];
         $validator = Validator::make($data, $rules);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             Log::info(json_encode($validator->errors()->all()), $data);
             return RB::error(CODE::ERROR_PARAMETERS);
         }
@@ -66,11 +65,11 @@ class SettingController extends Controller
     {
         $rules = ['id' => 'required|integer'];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
-        $result = $this->service->deleteSetting($request->user()->id,$request);
+        $result = $this->service->deleteSetting($request->user()->id, $request);
 
         return $result->getSuccess()
             ? RB::success($result->getResult(), $result->getErrorCode())

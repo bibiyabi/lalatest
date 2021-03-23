@@ -16,7 +16,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
     }
 
     /**
@@ -26,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (config('app.debug_query') == true){
-            DB::listen(function($query){
+        if (config('app.debug_query') == true) {
+            DB::listen(function ($query) {
                 $i = 0;
                 $bindings = $query->bindings;
                 $rawSql = preg_replace_callback('/\?/', function ($matches) use ($bindings, &$i) {
@@ -43,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
             });
         }
 
-        if ($this->app->request->get('debuglog')){
+        if ($this->app->request->get('debuglog')) {
             Log::info(
                 $this->app->request->header(),
                 $this->app->request->all()

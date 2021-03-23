@@ -26,22 +26,20 @@ use Mockery\MockInterface;
 
 class PaymentTest extends TestCase
 {
-   // protected $mock;
+    // protected $mock;
 
     use DatabaseTransactions;
     public function setUp():void
     {
         parent::setUp();
 
-       $user = Merchant::factory([
+        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
 
-       $this->user = $user;
+        $this->user = $user;
 
-       $this->actingAs($user);
-
-
+        $this->actingAs($user);
     }
     private function initMock($class)
     {
@@ -62,7 +60,8 @@ class PaymentTest extends TestCase
     }
 
 
-    public function test_create_order() {
+    public function test_create_order()
+    {
         $this->withoutMiddleware();
         Queue::fake();
 
@@ -111,7 +110,6 @@ class PaymentTest extends TestCase
         ]);
         Queue::assertNotPushed(Order::class);
         Queue::assertNotPushed(Notify::class);
-
     }
 
     /**
@@ -120,8 +118,8 @@ class PaymentTest extends TestCase
      *
      * @return void
      */
-    public function test_shineUpay_callback() {
-
+    public function test_shineUpay_callback()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -137,7 +135,7 @@ class PaymentTest extends TestCase
 
         $payload = '{"body":{"platformOrderId":"20210115A989GVUBYXA84485","orderId":"123456600131627297f","status":1,"amount":10.0000},"status":0,"merchant_number":"A5LB093F045C2322","timestamp":"1610691875552"}';
 
-        $request = Request::create('/callback/withdraw/ShineUPay', 'POST', json_decode($payload, true), [], [],  [
+        $request = Request::create('/callback/withdraw/ShineUPay', 'POST', json_decode($payload, true), [], [], [
             'HTTP_Api-Sign' => '07b967e5ae415a121ee8d49bc959fc56',
             'HTTP_CONTENT_LENGTH' => strlen($payload),
             'CONTENT_TYPE' => 'application/json',
@@ -154,8 +152,8 @@ class PaymentTest extends TestCase
     }
 
 
-    public function test_contoller_callback_payment_always_success() {
-
+    public function test_contoller_callback_payment_always_success()
+    {
         $orderId = 'unittest'. uniqid();
 
         $order = WithdrawOrder::factory([
@@ -190,12 +188,11 @@ class PaymentTest extends TestCase
             'status'      => Status::CALLBACK_SUCCESS,
             'real_amount' => 10
         ]);
-
     }
 
 
-    public function test_contoller_callback_payment_always_failed() {
-
+    public function test_contoller_callback_payment_always_failed()
+    {
         $orderId = 'unittest'. uniqid();
 
         $order = WithdrawOrder::factory([
@@ -229,7 +226,6 @@ class PaymentTest extends TestCase
             'order_id'    => $orderId,
             'status'      => Status::CALLBACK_FAILED,
         ]);
-
     }
 
 
@@ -254,9 +250,8 @@ class PaymentTest extends TestCase
         $response->assertJsonFragment(['success'=>true]);
     }
 
-    public function test_curl_return_json_exception() {
-
-
+    public function test_curl_return_json_exception()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -272,7 +267,6 @@ class PaymentTest extends TestCase
 
 
         $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
-
             $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => 'json error format', 'errorMsg' => '']);
         });
 
@@ -296,9 +290,8 @@ class PaymentTest extends TestCase
     }
 
 
-    public function test_order_fail_if_curl_success_but_json_is_wrong() {
-
-
+    public function test_order_fail_if_curl_success_but_json_is_wrong()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -314,7 +307,6 @@ class PaymentTest extends TestCase
 
 
         $mockCurl = $this->partialMock(Curl::class, function (MockInterface $mock) {
-
             $mock->shouldReceive('exec')->andReturn(['code' => Curl::STATUS_SUCCESS, 'data' => json_encode(['order_id']), 'errorMsg' => '']);
         });
 
@@ -336,14 +328,12 @@ class PaymentTest extends TestCase
         $result = $shineUpay->send();
 
         $this->assertEquals(Status::ORDER_FAILED, $result['code']);
-
     }
 
 
 
-    public function test_order_success_if_curl_success_and_json_is_correct() {
-
-
+    public function test_order_success_if_curl_success_and_json_is_correct()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -384,11 +374,10 @@ class PaymentTest extends TestCase
         $result = $shineUpay->send();
 
         $this->assertEquals(Status::ORDER_SUCCESS, $result['code']);
-
     }
 
-    public function test_order_failed_is_curl_is_fail() {
-
+    public function test_order_failed_is_curl_is_fail()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -426,12 +415,11 @@ class PaymentTest extends TestCase
 
         $this->assertEquals(Status::ORDER_FAILED, $result['code']);
         $this->assertEquals('curl fail', $result['msg']);
-
     }
 
 
-    public function test_order_error_is_curl_timeout() {
-
+    public function test_order_error_is_curl_timeout()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -469,11 +457,10 @@ class PaymentTest extends TestCase
 
         $this->assertEquals(Status::ORDER_ERROR, $result['code']);
         $this->assertEquals('curl timeout', $result['msg']);
-
     }
 
-    public function test_order_return_error_msg() {
-
+    public function test_order_return_error_msg()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -510,6 +497,4 @@ class PaymentTest extends TestCase
         $result = $shineUpay->send();
         $this->assertEquals('Invalid amount', $result['msg']);
     }
-
-
 }

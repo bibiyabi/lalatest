@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Log;
+
 class AfterMiddleware
 {
     public function handle($request, Closure $next)

@@ -45,7 +45,7 @@ class CryptoCurrencySearch implements ShouldQueue
         $result = $this->getGatewayResult($this->gateway);
         Log::info('CryptoCurrencySearch orderId:' . $this->order['order_id']. ' ,result code: ' . $result->getCode());
 
-        switch($result->getCode()) {
+        switch ($result->getCode()) {
             case CryptoCurrencyStatus::ORDER_NOT_FOUND:
             case CryptoCurrencyStatus::API_FAIL:
                 $this->release(60);
@@ -67,7 +67,8 @@ class CryptoCurrencySearch implements ShouldQueue
         }
     }
 
-    public function getGatewayResult($gateway) {
+    public function getGatewayResult($gateway)
+    {
         return $gateway->search($this->order);
     }
 }

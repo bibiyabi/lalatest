@@ -15,7 +15,8 @@ class JavaApiKey
 
     private $signService;
 
-    public function __construct(MerchantRepository $repo, Signature $signService) {
+    public function __construct(MerchantRepository $repo, Signature $signService)
+    {
         $this->repo = $repo;
         $this->signService = $signService;
     }
@@ -39,7 +40,6 @@ class JavaApiKey
         $sign = $this->signService->makeSign($input, $key);
 
         if ($sign !== $userSign && config('app.is_check_sign') !== false) {
-
             return RB::error(ResponseCode::ERROR_SIGN);
         }
 

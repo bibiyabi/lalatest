@@ -21,7 +21,7 @@ class DepositRequireInfo
     {
         $result['column'] = $this->column;
 
-        if (in_array(C::BANK, $result['column'])){
+        if (in_array(C::BANK, $result['column'])) {
             $result['select'] = [C::BANK => $this->bank];
         }
 

@@ -14,7 +14,8 @@ class HttpParam
 
     private $orderConfig;
 
-    public function __construct(string $url, string $method, array $header, array $body, array $orderConfig) {
+    public function __construct(string $url, string $method, array $header, array $body, array $orderConfig)
+    {
         $this->url = $url;
         $this->method = $method;
         $this->header = $header;

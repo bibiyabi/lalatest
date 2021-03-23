@@ -145,7 +145,7 @@ class GlobalPay implements DepositGatewayInterface
      */
     public function getRequireInfo($type): DepositRequireInfo
     {
-         switch ($type) {
+        switch ($type) {
             case Type::WALLET:
                 $column = [
                     C::AMOUNT,

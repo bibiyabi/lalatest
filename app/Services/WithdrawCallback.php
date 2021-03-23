@@ -10,7 +10,7 @@ use App\Contracts\Payments\CallbackResult;
 use App\Exceptions\InputException;
 use App\Constants\Payments\Status;
 
-Trait WithdrawCallback
+trait WithdrawCallback
 {
 
     // 停止callback回應的訊息
@@ -28,11 +28,13 @@ Trait WithdrawCallback
 
 
     # callback 驗證變數
-    protected function getCallbackValidateColumns() {
+    protected function getCallbackValidateColumns()
+    {
         return [];
     }
 
-    public function callback(Request $request) {
+    public function callback(Request $request)
+    {
         # 這個取價格小數點才不會有差 10.0000 依然是10.0000 request->post會消掉0
         $postJson = $this->getCallBackInput($request);
         $post = $this->decode($postJson);
@@ -45,16 +47,19 @@ Trait WithdrawCallback
         return $this->returnCallbackResult($post, $checkSign, $postSign, $order);
     }
 
-    protected function getCallbackSign(Request $request) {
+    protected function getCallbackSign(Request $request)
+    {
         return '';
     }
 
-    public function  getCallBackInput(Request $request) {
+    public function getCallBackInput(Request $request)
+    {
         return  file_get_contents("php://input");
     }
 
     # 檢查回調input
-    protected function validateCallbackInput($post) {
+    protected function validateCallbackInput($post)
+    {
         $validator = Validator::make($post, $this->getCallbackValidateColumns());
         if ($validator->fails()) {
             throw new InputException('callback input check error'. json_encode($validator->errors()), ResponseCode::EXCEPTION);
@@ -62,28 +67,30 @@ Trait WithdrawCallback
     }
 
 
-    protected function getOrderFromCallback($post) {
+    protected function getOrderFromCallback($post)
+    {
         $order = WithdrawOrder::where('order_id', $this->getCallbackOrderId($post))->first();
 
         if (empty($order)) {
-            throw new WithdrawException("Order not found." , ResponseCode::EXCEPTION);
+            throw new WithdrawException("Order not found.", ResponseCode::EXCEPTION);
         }
         return $order;
-
     }
 
-    protected function getCallbackOrderId($post) {
+    protected function getCallbackOrderId($post)
+    {
         $orderId =  data_get($post, $this->callbackOrderIdPosition);
 
         if (empty($orderId)) {
-            throw new WithdrawException("OrderId not found." , ResponseCode::EXCEPTION);
+            throw new WithdrawException("OrderId not found.", ResponseCode::EXCEPTION);
         }
         return $orderId;
     }
 
-    protected function returnCallbackResult($callbackPost, $checkSign, $callBackSign, $order) {
+    protected function returnCallbackResult($callbackPost, $checkSign, $callBackSign, $order)
+    {
         if (config('app.is_check_sign') && $checkSign !== $callBackSign) {
-            throw new WithdrawException("check sign error checkSign " . $checkSign . ' callbackSign ' . $callBackSign  , ResponseCode::EXCEPTION);
+            throw new WithdrawException("check sign error checkSign " . $checkSign . ' callbackSign ' . $callBackSign, ResponseCode::EXCEPTION);
         }
 
         # callback 訂單成功
@@ -108,18 +115,21 @@ Trait WithdrawCallback
             );
         }
 
-        throw new WithdrawException("callback result error" . json_encode($callbackPost) , ResponseCode::EXCEPTION);
+        throw new WithdrawException("callback result error" . json_encode($callbackPost), ResponseCode::EXCEPTION);
     }
 
-    protected function getCallbackOrderStatus($post) {
+    protected function getCallbackOrderStatus($post)
+    {
         return data_get($post, $this->callbackOrderStatusPosition);
     }
 
-    protected function genCallbackSign($postJson, $settings) {
+    protected function genCallbackSign($postJson, $settings)
+    {
         return $this->genSign($postJson, $settings);
     }
 
-    protected function getCallbackAmount($order, $callbackPost) {
+    protected function getCallbackAmount($order, $callbackPost)
+    {
         if (empty($this->callbackOrderAmountPosition)) {
             return $order->amount;
         }
@@ -127,7 +137,8 @@ Trait WithdrawCallback
         return data_get($callbackPost, $this->callbackOrderAmountPosition);
     }
 
-    protected function getCallbackMessage($callbackPost) {
+    protected function getCallbackMessage($callbackPost)
+    {
         return data_get($callbackPost, $this->callbackOrderMessagePosition);
     }
 }

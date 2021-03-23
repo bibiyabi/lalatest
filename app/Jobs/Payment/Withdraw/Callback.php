@@ -13,7 +13,6 @@ use App\Repositories\Orders\WithdrawRepository;
 use App\Services\Payments\Withdraw\AbstractWithdrawGateway;
 use Illuminate\Support\Facades\Log;
 
-
 class Callback implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -44,10 +43,9 @@ class Callback implements ShouldQueue
         # gateway load database load config
 
         $gatewayConfigs = json_decode($setting->get('settings'), true);
-
     }
 
-    private function checkSign() {
-
+    private function checkSign()
+    {
     }
 }

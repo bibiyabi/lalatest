@@ -38,17 +38,20 @@ class Pay777 extends AbstractWithdrawGateway
     // 回調確認失敗狀態
     protected $callbackFailedStatus = [1];
 
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl)
+    {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) : void {
+    public function setRequest($post = [], WithdrawOrder $order) : void
+    {
         $this->setBaseRequest($order, $post);
     }
 
 
 
-    protected function validationCreateInput() {
+    protected function validationCreateInput()
+    {
         return [
             'order_id'         => 'required',
             'upi_id'         => 'required',
@@ -57,11 +60,13 @@ class Pay777 extends AbstractWithdrawGateway
     }
 
 
-    protected function setCreateSign($post, $settings) {
+    protected function setCreateSign($post, $settings)
+    {
         $this->createSign =  $this->genSign($post, $settings);
     }
 
-    private function getNeedGenSignArray($input, $settings) {
+    private function getNeedGenSignArray($input, $settings)
+    {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number'])) {
             throw new InputException('merchant_username or private key not found', Status::ORDER_FAILED);
@@ -81,51 +86,60 @@ class Pay777 extends AbstractWithdrawGateway
         return $array;
     }
 
-    protected function genSign($postData, $settings) {
+    protected function genSign($postData, $settings)
+    {
         return strtolower(md5($settings['md5_key'] . $postData['order_id']. $postData['amount']));
     }
 
-    protected function setCreatePostData($post, $settings) {
+    protected function setCreatePostData($post, $settings)
+    {
         $param = $this->getNeedGenSignArray($post, $settings);
         $param['sign'] = $this->createSign;
         $this->createPostData = json_encode($param);
     }
 
-    protected function isHttps() {
+    protected function isHttps()
+    {
         return true;
     }
 
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [
             'Content-Type: application/json',
             "HOST: ". $this->domain
         ];
     }
 
-    protected function checkCreateOrderIsSuccess($res) {
+    protected function checkCreateOrderIsSuccess($res)
+    {
         return isset($res['success']) && $res['success'] == 1;
     }
 
     // ===========================callback start===============================
 
-    protected function getCallbackSign(Request $request) {
+    protected function getCallbackSign(Request $request)
+    {
         $post = $this->decode($this->getCallBackInput($request));
         return $post['sign'];
     }
 
-    public function  getCallBackInput(Request $request) {
+    public function getCallBackInput(Request $request)
+    {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  file_get_contents("php://input");
     }
 
-    protected function getCallbackValidateColumns() {
+    protected function getCallbackValidateColumns()
+    {
         return [
             'success' => 'required',
             'orderid' => 'required',
         ];
     }
 
-    protected function genCallbackSign($postJson, $settings) {
+    protected function genCallbackSign($postJson, $settings)
+    {
         $post = $this->decode($postJson);
         $post['order_id'] = $post['orderid'];
         return $this->genSign($post, $settings);

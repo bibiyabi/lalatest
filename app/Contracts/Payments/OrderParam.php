@@ -147,7 +147,7 @@ class OrderParam
             case self::AMOUNT_INT:
                 $num = floor($this->amount * 10) % 10;
                 $amount = floor($this->amount);
-                $num == 9 AND $amount ++;
+                $num == 9 and $amount ++;
                 break;
 
             default:

@@ -37,8 +37,7 @@ class SettingParam
         string $apiKey = null,
         string $note1 = null,
         string $note2 = null
-    )
-    {
+    ) {
         $this->infoTitle = $infoTitle;
         $this->account = $account;
         $this->merchant = $merchant;

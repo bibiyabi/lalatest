@@ -7,9 +7,9 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use App\Constants\Payments\Status;
 use DateTime;
+
 class WithdrawRepository
 {
-
     private $order;
 
     public function __construct()
@@ -19,7 +19,6 @@ class WithdrawRepository
 
     public function first()
     {
-
         return $this->order->first();
     }
 
@@ -28,16 +27,19 @@ class WithdrawRepository
         return $this->order->get();
     }
 
-    public function filterOrderId($id) {
+    public function filterOrderId($id)
+    {
         $this->order->where('order_id', '=', $id);
         return $this;
     }
 
-    public function update($data = []) {
+    public function update($data = [])
+    {
         $this->order->update($data);
     }
 
-    public function create(Request $request, Setting $setting) {
+    public function create(Request $request, Setting $setting)
+    {
         return WithdrawOrder::create([
             'order_id'    => $request->order_id,
             'user_id'     => $request->user()->id,
@@ -59,5 +61,4 @@ class WithdrawRepository
     {
         return $this->order->delete();
     }
-
 }

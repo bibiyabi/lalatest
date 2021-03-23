@@ -9,7 +9,6 @@ use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Queue;
 
-
 class QueueLogServiceProvider extends ServiceProvider
 {
     /**
@@ -19,8 +18,6 @@ class QueueLogServiceProvider extends ServiceProvider
      */
     public function register()
     {
-
-
     }
 
     /**
@@ -35,8 +32,8 @@ class QueueLogServiceProvider extends ServiceProvider
         *
         * Job dispatched & processing
         */
-        Queue::before(function ( JobProcessing $event ) {
-            Log::channel('queue')->info($event->job->uuid() . 'Job ready: ' . $event->job->resolveName() . 'Job payload: ' , $event->job->payload());
+        Queue::before(function (JobProcessing $event) {
+            Log::channel('queue')->info($event->job->uuid() . 'Job ready: ' . $event->job->resolveName() . 'Job payload: ', $event->job->payload());
         });
 
         /**
@@ -44,7 +41,7 @@ class QueueLogServiceProvider extends ServiceProvider
         *
         * Job processed
         */
-        Queue::after(function ( JobProcessed $event ) {
+        Queue::after(function (JobProcessed $event) {
             Log::channel('queue')->notice($event->job->uuid() .'Job done: ' . $event->job->resolveName());
         });
 
@@ -53,7 +50,7 @@ class QueueLogServiceProvider extends ServiceProvider
         *
         * Job failed
         */
-        Queue::failing(function ( JobFailed $event ) {
+        Queue::failing(function (JobFailed $event) {
             Log::channel('queue')->error($event->job->uuid() .'Job failed: ' . $event->job->resolveName() . '(' . $event->exception->getMessage() . ')');
         });
     }

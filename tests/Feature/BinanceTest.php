@@ -33,12 +33,12 @@ class BinanceTest extends TestCase
     {
         parent::setUp();
 
-       $user = Merchant::factory([
+        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
 
-       $this->user = $user;
-       $this->actingAs($user);
+        $this->user = $user;
+        $this->actingAs($user);
     }
 
 
@@ -103,7 +103,7 @@ class BinanceTest extends TestCase
 
     public function test_search()
     {
-       // $this->markTestSkipped('skip.');
+        // $this->markTestSkipped('skip.');
         # test api  fail
         $this->test_search_status(false, 3, CryptoCurrencyStatus::API_FAIL);
         # test order status is fail
@@ -112,7 +112,8 @@ class BinanceTest extends TestCase
         $this->test_search_status(true, 6, CryptoCurrencyStatus::ORDER_SUCCESS);
     }
 
-    private function  test_search_status($resSuccess, $status, $assertStatus) {
+    private function test_search_status($resSuccess, $status, $assertStatus)
+    {
         $setting = Setting::create([
             'user_id' => rand(),
             'gateway_id' => rand(),
@@ -153,9 +154,4 @@ class BinanceTest extends TestCase
 
         $this->assertEquals($assertStatus, $res->getCode());
     }
-
-
-
-
-
 }

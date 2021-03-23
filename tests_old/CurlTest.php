@@ -44,7 +44,6 @@ class CurlTest extends TestCase
 
     public function test_static_curl_timeout()
     {
-
         $res = FacadesCurl::setUrl('http://10.255.255.1')->exec();
 
         $this->assertEquals(Curl::TIMEOUT, $res['code']);
@@ -64,5 +63,4 @@ class CurlTest extends TestCase
 
         $this->assertEquals(Curl::STATUS_SUCCESS, $res['code']);
     }
-
 }

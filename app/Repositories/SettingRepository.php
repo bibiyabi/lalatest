@@ -44,7 +44,8 @@ class SettingRepository
         return $this;
     }
 
-    public function filterCombinePk($userId, $userPk) {
+    public function filterCombinePk($userId, $userPk)
+    {
         $this->filterByUserPk($userPk);
         $this->filterByUserId($userId);
         return $this;
@@ -77,5 +78,4 @@ class SettingRepository
                     ->where('id', $id)
                     ->delete();
     }
-
 }

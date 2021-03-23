@@ -3,8 +3,8 @@ namespace App\Lib\Log;
 
 use Monolog\Formatter\LineFormatter;
 
-class NewStyleFormatter {
-
+class NewStyleFormatter
+{
     public function __invoke($logger)
     {
         $uniqid = uniqid();
@@ -18,5 +18,3 @@ class NewStyleFormatter {
         }
     }
 }
-
-

@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Merchant;
 use App\Models\Gateway;
 
-
 class DsupiPayTest extends TestCase
 {
     use DatabaseTransactions;
@@ -19,12 +18,12 @@ class DsupiPayTest extends TestCase
     {
         parent::setUp();
 
-       $user = Merchant::factory([
+        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
 
-       $this->user = $user;
-       $this->actingAs($user);
+        $this->user = $user;
+        $this->actingAs($user);
     }
 
 
@@ -71,6 +70,5 @@ class DsupiPayTest extends TestCase
             'order_id' => $orderId,
             'status' => Status::PENDING
         ]);
-
     }
 }

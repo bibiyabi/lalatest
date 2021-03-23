@@ -42,17 +42,20 @@ class ShineUPay extends AbstractWithdrawGateway
     // 回調確認失敗狀態
     protected $callbackFailedStatus = [2];
 
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl)
+    {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) : void {
+    public function setRequest($post = [], WithdrawOrder $order) : void
+    {
         $this->setBaseRequest($order, $post);
     }
 
 
 
-    protected function validationCreateInput() {
+    protected function validationCreateInput()
+    {
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
@@ -67,12 +70,14 @@ class ShineUPay extends AbstractWithdrawGateway
     }
 
 
-    protected function setCreateSign($post, $settings) {
-        $signParams = $this->getNeedGenSignArray($post,  $settings);
+    protected function setCreateSign($post, $settings)
+    {
+        $signParams = $this->getNeedGenSignArray($post, $settings);
         $this->createSign =  $this->genSign(json_encode($signParams), $settings);
     }
 
-    private function getNeedGenSignArray($input, $settings) {
+    private function getNeedGenSignArray($input, $settings)
+    {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number']) || empty($settings['private_key'])) {
             throw new InputException('merchant_username or private key not found', Status::ORDER_FAILED);
@@ -94,22 +99,25 @@ class ShineUPay extends AbstractWithdrawGateway
         $array['body']['notifyUrl']      = $this->callbackUrl;
 
         return $array;
-
     }
 
-    protected function genSign($postData, $settings) {
+    protected function genSign($postData, $settings)
+    {
         return md5($postData . '|'. $settings['md5_key']);
     }
 
-    protected function setCreatePostData($post, $settings) {
-        $this->createPostData = json_encode($this->getNeedGenSignArray($post,  $settings));
+    protected function setCreatePostData($post, $settings)
+    {
+        $this->createPostData = json_encode($this->getNeedGenSignArray($post, $settings));
     }
 
-    protected function isHttps() {
+    protected function isHttps()
+    {
         return true;
     }
 
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [
             'Content-Type: application/json',
             'Api-Sign: '. $this->getCreateSign(),
@@ -117,22 +125,26 @@ class ShineUPay extends AbstractWithdrawGateway
         ];
     }
 
-    protected function checkCreateOrderIsSuccess($res) {
+    protected function checkCreateOrderIsSuccess($res)
+    {
         return isset($res['body']['platformOrderId']) && $res['status'] == 0;
     }
 
     // ===========================callback start===============================
 
-    protected function getCallbackSign(Request $request) {
+    protected function getCallbackSign(Request $request)
+    {
         return $request->header('api-sign');
     }
 
-    public function  getCallBackInput(Request $request) {
+    public function getCallBackInput(Request $request)
+    {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  file_get_contents("php://input");
     }
 
-    protected function getCallbackValidateColumns() {
+    protected function getCallbackValidateColumns()
+    {
         return [
             'body.orderId' => 'required',
             'body.status' => 'required',
@@ -143,8 +155,16 @@ class ShineUPay extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-        return new Placeholder($type,'','Please input MerchantID', '', 'Please input Private Key', 'Please input MD5 Key','',
-        '',);
+        return new Placeholder(
+            $type,
+            '',
+            'Please input MerchantID',
+            '',
+            'Please input Private Key',
+            'Please input MD5 Key',
+            '',
+            '',
+        );
     }
 
 

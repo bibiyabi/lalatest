@@ -34,16 +34,18 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
     protected $createSign;
     protected $isCurlProxy = true;
 
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl)
+    {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) : void {
+    public function setRequest($post = [], WithdrawOrder $order) : void
+    {
         $this->setBaseRequest($order, $post);
     }
 
-    protected function validationCreateInput() {
-
+    protected function validationCreateInput()
+    {
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
@@ -51,12 +53,14 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
         ];
     }
 
-    protected function setCreateSign($post, $settings) {
-        $signParams = $this->getNeedGenSignArray($post,  $settings);
+    protected function setCreateSign($post, $settings)
+    {
+        $signParams = $this->getNeedGenSignArray($post, $settings);
         $this->createSign =  $this->genSign($signParams, $settings);
     }
 
-    private function getNeedGenSignArray($input, $settings) {
+    private function getNeedGenSignArray($input, $settings)
+    {
         $this->setCallBackUrl(__CLASS__);
 
         $array = [
@@ -68,10 +72,10 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
             "timestamp"       => time() . '000',
         ];
         return $array;
-
     }
 
-    private function getNetwork($contract) {
+    private function getNetwork($contract)
+    {
         switch ($contract) {
             case 'TRC20':
                 return 'TRX';
@@ -80,32 +84,38 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
         }
     }
 
-    protected function genSign($postData, $settings) {
+    protected function genSign($postData, $settings)
+    {
         return hash_hmac('sha256', http_build_query($postData, '', '&'), $settings['private_key']);
     }
 
-    protected function setCreatePostData($post, $settings) {
+    protected function setCreatePostData($post, $settings)
+    {
         $this->api_key = $settings['api_key'];
 
         $options = $this->getNeedGenSignArray($post, $settings);
 
         $options['signature'] = $this->createSign;
 
-        $this->createPostData =  http_build_query($options, '', '&');;
+        $this->createPostData =  http_build_query($options, '', '&');
+        ;
     }
 
-    public function isHttps() {
+    public function isHttps()
+    {
         return true;
     }
 
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [
             "HOST: ". $this->domain,
             'X-MBX-APIKEY: ' . $this->api_key,
         ];
     }
 
-    protected function checkCreateOrderIsSuccess($res) {
+    protected function checkCreateOrderIsSuccess($res)
+    {
         return isset($res['success']) && $res['success'] === true;
     }
 
@@ -180,7 +190,7 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
 
         $res = $this->getCrypSearchResult($url);
 
-        if (!isset($res['success']) || $res['success'] !== true ) {
+        if (!isset($res['success']) || $res['success'] !== true) {
             return new CryptCallbackResult(CryptoCurrencyStatus::API_FAIL, json_encode($res));
         }
 
@@ -190,7 +200,6 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
         }
 
         foreach ($res['withdrawList'] as $history) {
-
             if ($order['order_id'] !== $history['withdrawOrderId']) {
                 continue;
             }
@@ -211,11 +220,10 @@ class Binance extends AbstractWithdrawGateway implements CryptoCurrencySearch
         }
 
         return new CryptCallbackResult(CryptoCurrencyStatus::ORDER_NOT_FOUND, json_encode($res));
-
     }
 
-    public function getCrypSearchResult($url) {
-
+    public function getCrypSearchResult($url)
+    {
         $redisKey = RedisKeys::CRYPTOCURRENCY_BINANCE_SEARCH_CACHE . $this->api_secret;
         $cache = Cache::get($redisKey);
 

@@ -20,7 +20,8 @@ class CallbackResult
      * @param Order|WithdrawOrder $order
      * @param float $amount
      */
-    public function __construct(bool $success, string $msg='', $order=null, float $amount=0, $notifyMessage = '') {
+    public function __construct(bool $success, string $msg='', $order=null, float $amount=0, $notifyMessage = '')
+    {
         $this->success = $success;
         $this->order = $order;
         $this->amount = $amount;
@@ -61,7 +62,8 @@ class CallbackResult
     }
 
 
-    public function getNotifyMessage() {
+    public function getNotifyMessage()
+    {
         return $this->notifyMessage;
     }
 }

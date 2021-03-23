@@ -30,14 +30,14 @@ class PlaceholderTest extends TestCase
             'is_support_withdraw'   => 0
         ])->create();
 
-        $response = $this->call('get','api/vendor/list',[
+        $response = $this->call('get', 'api/vendor/list', [
             'is_deposit' => 1,
             'type'=> 'e_wallet'
         ]);
 
         $response->assertJsonFragment(['success'=> true]);
 
-        $this->assertDatabaseHas('gateway_types',[
+        $this->assertDatabaseHas('gateway_types', [
             'types_id' => Type::type['e_wallet'],
             'is_support_deposit' => 1
         ]);
@@ -47,7 +47,7 @@ class PlaceholderTest extends TestCase
     {
         $this->withoutMiddleware();
 
-        $response = $this->call('get','api/placeholder',[
+        $response = $this->call('get', 'api/placeholder', [
             'is_deposit' => 0,
             'type'=> 'bank_card',
             'gateway_name'=> 'ShineUPay'
@@ -60,7 +60,7 @@ class PlaceholderTest extends TestCase
     {
         $this->withoutMiddleware();
 
-        $response = $this->call('get','api/requirement',[
+        $response = $this->call('get', 'api/requirement', [
             'is_deposit' => 0,
             'type'=> 'bank_card',
             'gateway_name'=> 'ShineUPay'

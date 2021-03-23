@@ -23,16 +23,14 @@ class WithdrawRequireInfo
     public function toArray()
     {
         $result['column'] = $this->column;
-        if (in_array(C::BANK_CARD, $result['column'])){
+        if (in_array(C::BANK_CARD, $result['column'])) {
             $result['select'] = [C::BANK_CARD => $this->bankCard];
         }
 
-        if (in_array(C::BANK, $result['column'])){
+        if (in_array(C::BANK, $result['column'])) {
             $result['select'] = [C::BANK => $this->bank];
         }
 
         return $result;
     }
-
-
 }

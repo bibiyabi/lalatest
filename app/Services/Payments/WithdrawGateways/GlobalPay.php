@@ -42,15 +42,18 @@ class GlobalPay extends AbstractWithdrawGateway
     // 回調確認失敗狀態
     protected $callbackFailedStatus = ['FAIL'];
 
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl)
+    {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) : void {
+    public function setRequest($post = [], WithdrawOrder $order) : void
+    {
         $this->setBaseRequest($order, $post);
     }
 
-    protected function validationCreateInput() {
+    protected function validationCreateInput()
+    {
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
@@ -62,12 +65,14 @@ class GlobalPay extends AbstractWithdrawGateway
     }
 
 
-    protected function setCreateSign($post, $settings) {
-        $signParams = $this->getNeedGenSignArray($post,  $settings);
+    protected function setCreateSign($post, $settings)
+    {
+        $signParams = $this->getNeedGenSignArray($post, $settings);
         $this->createSign =  $this->genSign($signParams, $settings);
     }
 
-    private function getNeedGenSignArray($input, $settings) {
+    private function getNeedGenSignArray($input, $settings)
+    {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number']) || empty($settings['md5_key'])) {
             throw new InputException('merchant_username or md5_key key not found', Status::ORDER_FAILED);
@@ -85,10 +90,10 @@ class GlobalPay extends AbstractWithdrawGateway
         // $array['notifyUrl']    = 'http://admin02.6122028.com'. '/callback/withdraw/GlobalPay';
         $array['summary']      = 'aa';
         return $array;
-
     }
 
-    private function getBankCodeOrUpiCode($input, $settings) {
+    private function getBankCodeOrUpiCode($input, $settings)
+    {
         if ($input['type'] == Type::BANK_CARD) {
             return $input['transaction_type'];
         }
@@ -98,11 +103,14 @@ class GlobalPay extends AbstractWithdrawGateway
         }
     }
 
-    protected function genSign($postData, $settings) {
+    protected function genSign($postData, $settings)
+    {
         ksort($postData);
         $str = '';
-        foreach($postData as $key => $value) {
-            if ($value == '') {continue;}
+        foreach ($postData as $key => $value) {
+            if ($value == '') {
+                continue;
+            }
             $str .= $key . '=' . $value . '&';
         }
         $str.='key=' . $settings['md5_key'];
@@ -110,46 +118,54 @@ class GlobalPay extends AbstractWithdrawGateway
         return md5($str);
     }
 
-    protected function setCreatePostData($post, $settings) {
-        $array = $this->getNeedGenSignArray($post,  $settings);
+    protected function setCreatePostData($post, $settings)
+    {
+        $array = $this->getNeedGenSignArray($post, $settings);
         $array['sign'] = $this->createSign;
         $this->createPostData = json_encode($array);
     }
 
-    protected function isHttps() {
+    protected function isHttps()
+    {
         return false;
     }
 
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [
             'Content-Type: application/json',
             "HOST: ". $this->domain,
         ];
     }
 
-    protected function checkCreateOrderIsSuccess($res) {
+    protected function checkCreateOrderIsSuccess($res)
+    {
         return isset($res['status']) && $res['status'] == 'SUCCESS';
     }
 
     // ===========================callback start===============================
 
-    protected function getCallbackSign(Request $request) {
+    protected function getCallbackSign(Request $request)
+    {
         $post = $request->post();
         return $post['sign'];
     }
 
-    protected function genCallbackSign($postJson, $settings) {
+    protected function genCallbackSign($postJson, $settings)
+    {
         $post = $this->decode($postJson);
         unset($post['sign']);
         return $this->genSign($post, $settings);
     }
 
-    public function  getCallBackInput(Request $request) {
+    public function getCallBackInput(Request $request)
+    {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  json_encode($request->post());
     }
 
-    protected function getCallbackValidateColumns() {
+    protected function getCallbackValidateColumns()
+    {
         return [
             'order_no' => 'required',
             'sign'     => 'required',

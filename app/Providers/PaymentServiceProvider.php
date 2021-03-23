@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-
 use Illuminate\Support\ServiceProvider;
 
 
@@ -12,6 +11,7 @@ use App\Services\Payments\Deposit\DepositService;
 use App\Contracts\Payments\Deposit\DepositGatewayInterface;
 use App\Services\Payments\Gateways\Inrusdt;
 use Illuminate\Contracts\Support\DeferrableProvider;
+
 class PaymentServiceProvider extends ServiceProvider implements DeferrableProvider
 {
 
@@ -36,7 +36,6 @@ class PaymentServiceProvider extends ServiceProvider implements DeferrableProvid
      */
     public function boot()
     {
-
     }
 
     public function provides()

@@ -22,18 +22,15 @@ class NotifyTest extends TestCase
         parent::setUp();
     }
 
-    public function test_handle_if_order_failed() {
-
-
+    public function test_handle_if_order_failed()
+    {
         $withdrawNotify = $this->mock(WithdrawNotify::class, function (MockInterface $mock) {
             $mock->shouldReceive('setOrder')->once()->andReturnSelf();
             $mock->shouldReceive('setMessage')->once()->andReturnSelf();
             $mock->shouldReceive('notifyWithdrawFailed')->once()->andReturn('');
-
         });
 
         $notify = $this->partialMock(Notify::class, function (MockInterface $mock) {
-
         });
 
         $factory = new WithdrawOrderFactory();
@@ -50,18 +47,15 @@ class NotifyTest extends TestCase
     }
 
 
-    public function test_handle_if_order_success() {
-
-
+    public function test_handle_if_order_success()
+    {
         $withdrawNotify = $this->mock(WithdrawNotify::class, function (MockInterface $mock) {
             $mock->shouldReceive('setOrder')->once()->andReturnSelf();
             $mock->shouldReceive('setMessage')->once()->andReturnSelf();
             $mock->shouldReceive('notifyWithdrawSuccess')->once()->andReturn('');
-
         });
 
         $notify = $this->partialMock(Notify::class, function (MockInterface $mock) {
-
         });
 
         $factory = new WithdrawOrderFactory();
@@ -78,14 +72,13 @@ class NotifyTest extends TestCase
     }
 
 
-    public function test_no_notify_when_order_no_notify_is_true() {
-
+    public function test_no_notify_when_order_no_notify_is_true()
+    {
         $withdrawNotify = $this->mock(WithdrawNotify::class, function (MockInterface $mock) {
             $mock->shouldNotHaveReceived('setOrder');
         });
 
         $notify = $this->partialMock(Notify::class, function (MockInterface $mock) {
-
         });
 
         $factory = new WithdrawOrderFactory();
@@ -101,12 +94,11 @@ class NotifyTest extends TestCase
         $notify->handle($withdrawNotify);
     }
 
-    public function test_log_exception(){
-
+    public function test_log_exception()
+    {
         $notify = $this->partialMock(Notify::class);
         Log::shouldReceive('channel')->andReturnSelf();
         Log::shouldReceive('info')->andReturn('');
         $notify->failed(new Exception('aaa'));
     }
-
 }

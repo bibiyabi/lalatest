@@ -8,7 +8,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-
 class TestQueue implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -22,7 +21,6 @@ class TestQueue implements ShouldQueue
      */
     public function __construct()
     {
-
     }
 
     /**
@@ -32,11 +30,6 @@ class TestQueue implements ShouldQueue
      */
     public function handle()
     {
-
         $this->release(5);
-
-
     }
-
-
 }

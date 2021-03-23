@@ -13,23 +13,24 @@ trait ResultTrait
 
 
 
-    public function resCreateSuccess($msg ='', $data = []) {
+    public function resCreateSuccess($msg ='', $data = [])
+    {
         return collect(['code'=> $this->createSuccess, 'msg'=>$msg, 'data' => $data]);
     }
 
 
-    public function resCreateError($msg ='',$data = []) {
+    public function resCreateError($msg ='', $data = [])
+    {
         return collect(['code'=> $this->createTimeout, 'msg'=>$msg, 'data' => $data]);
     }
 
-    public function resCreateFailed($msg ='',$data = []) {
+    public function resCreateFailed($msg ='', $data = [])
+    {
         return collect(['code'=> $this->createFailed, 'msg'=>$msg,'data' => $data]);
     }
 
-    public function resCreateTimeout($msg ='',$data = []) {
+    public function resCreateTimeout($msg ='', $data = [])
+    {
         return collect(['code'=> $this->createRetry, 'msg'=>$msg,'data' => $data]);
     }
-
-
-
 }

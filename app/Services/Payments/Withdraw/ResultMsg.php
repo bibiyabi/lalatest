@@ -5,17 +5,18 @@ class ResultMsg
 {
     protected $msg;
 
-    public function __construct($msg = '') {
+    public function __construct($msg = '')
+    {
         $this->msg = $msg;
     }
 
-    public function getMsg() {
+    public function getMsg()
+    {
         return $this->msg;
     }
 
-    public function setMessage($msg) {
+    public function setMessage($msg)
+    {
         $this->msg = $msg;
     }
-
-
 }

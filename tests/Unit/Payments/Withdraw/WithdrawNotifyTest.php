@@ -18,7 +18,6 @@ use Database\Factories\WithdrawOrderFactory;
 
 class WithdrawNotifyTest extends TestCase
 {
-
     public function setUp():void
     {
         parent::setUp();
@@ -31,7 +30,6 @@ class WithdrawNotifyTest extends TestCase
      */
     public function test_notify()
     {
-
         $this->markTestSkipped('skip test');
         Curl::shouldReceive('setUrl')->andReturnSelf();
         Curl::shouldReceive('setPost')->andReturnSelf();
@@ -43,9 +41,5 @@ class WithdrawNotifyTest extends TestCase
         $notify->setOrder($order);
         $res = $notify->notify(1);
         $this->assertTrue($res);
-
-
-
     }
-
 }

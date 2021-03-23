@@ -39,17 +39,20 @@ class InPay extends AbstractWithdrawGateway
     // 回調確認失敗狀態
     protected $callbackFailedStatus = [2];
 
-    public function __construct(Curl $curl) {
+    public function __construct(Curl $curl)
+    {
         parent::__construct($curl);
     }
 
-    public function setRequest($post = [], WithdrawOrder $order) : void {
+    public function setRequest($post = [], WithdrawOrder $order) : void
+    {
         $this->setBaseRequest($order, $post);
     }
 
 
 
-    protected function validationCreateInput() {
+    protected function validationCreateInput()
+    {
         return [
             'order_id'         => 'required',
             'withdraw_address' => 'required',
@@ -59,12 +62,14 @@ class InPay extends AbstractWithdrawGateway
     }
 
 
-    protected function setCreateSign($post, $settings) {
-        $signParams = $this->getNeedGenSignArray($post,  $settings);
+    protected function setCreateSign($post, $settings)
+    {
+        $signParams = $this->getNeedGenSignArray($post, $settings);
         $this->createSign =  $this->genSign($signParams, $settings);
     }
 
-    private function getNeedGenSignArray($input, $settings) {
+    private function getNeedGenSignArray($input, $settings)
+    {
         $this->setCallBackUrl(__CLASS__);
         if (empty($settings['merchant_number'])) {
             throw new InputException('merchant_username or private key not found', ResponseCode::ERROR_PARAMETERS);
@@ -75,10 +80,10 @@ class InPay extends AbstractWithdrawGateway
         $array['amount']               = (float) $input['amount'];
         $array['notifyUrl']            = $this->callbackUrl;
         return $array;
-
     }
 
-    protected function genSign($postData, $settings) {
+    protected function genSign($postData, $settings)
+    {
         $str = '';
         foreach ($postData as $value) {
             $str .= $value;
@@ -87,7 +92,8 @@ class InPay extends AbstractWithdrawGateway
         return md5($str);
     }
 
-    protected function setCreatePostData($post, $settings) {
+    protected function setCreatePostData($post, $settings)
+    {
         $array = [];
         $array['merchantNum']          = $settings['merchant_number'];
 
@@ -104,7 +110,8 @@ class InPay extends AbstractWithdrawGateway
         $this->createPostData = $array;
     }
 
-    public function getChannelType($type) {
+    public function getChannelType($type)
+    {
         if ($type == Type::BANK_CARD) {
             return 'bankCard';
         }
@@ -114,39 +121,46 @@ class InPay extends AbstractWithdrawGateway
         return '';
     }
 
-    protected function isHttps() {
+    protected function isHttps()
+    {
         return false;
     }
 
-    protected function getCurlHeader() {
+    protected function getCurlHeader()
+    {
         return [
             "HOST: ". $this->domain,
         ];
     }
 
-    protected function checkCreateOrderIsSuccess($res) {
+    protected function checkCreateOrderIsSuccess($res)
+    {
         return isset($res['code']) && $res['code'] == 200;
     }
 
     // ===========================callback start===============================
 
-    protected function getCallbackSign(Request $request) {
+    protected function getCallbackSign(Request $request)
+    {
         return $request->header('api-sign');
     }
 
-    public function  getCallBackInput(Request $request) {
+    public function getCallBackInput(Request $request)
+    {
         # 用php://input amount 小數點不會被削掉, request->post()會 ex:10.0000 => 10
         return  file_get_contents("php://input");
     }
 
-    protected function getCallbackValidateColumns() {
+    protected function getCallbackValidateColumns()
+    {
         return [
             'body.orderId' => 'required',
             'body.status' => 'required',
         ];
     }
 
-    protected function getCallbackOrderStatus($post) {
+    protected function getCallbackOrderStatus($post)
+    {
         return data_get($post, $this->callbackOrderStatusPosition);
     }
 
@@ -154,7 +168,6 @@ class InPay extends AbstractWithdrawGateway
 
     public function getPlaceholder($type):Placeholder
     {
-
         switch ($type) {
             case Type::BANK_CARD:
                 $transactionType = ['bankCard'];

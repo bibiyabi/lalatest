@@ -26,7 +26,7 @@ class GatewayController extends Controller
             'type'          => 'required|string',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
@@ -46,7 +46,7 @@ class GatewayController extends Controller
             'gateway_name'  => 'required|string',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
@@ -67,7 +67,7 @@ class GatewayController extends Controller
             'gateway_name'  => 'required|string',
         ];
         $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()){
+        if ($validator->fails()) {
             Log::info(json_encode($validator->errors()->all()), $request->post());
             return RB::error(CODE::ERROR_PARAMETERS);
         }
@@ -77,5 +77,4 @@ class GatewayController extends Controller
             ? RB::success($result->getResult(), $result->getErrorCode())
             : RB::error($result->getErrorCode());
     }
-
 }

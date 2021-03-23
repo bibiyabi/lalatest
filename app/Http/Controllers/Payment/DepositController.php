@@ -15,7 +15,8 @@ class DepositController extends Controller
 {
     private $service;
 
-    public function __construct(DepositService $service, DepositRepository $depositRepo) {
+    public function __construct(DepositService $service, DepositRepository $depositRepo)
+    {
         $this->service = $service;
         $this->depositRepo = $depositRepo;
     }

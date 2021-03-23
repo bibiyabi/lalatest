@@ -28,11 +28,11 @@ class LogLine extends \Exception
         return $this->msg . " \r\n file=> " .$this->getFile()."\r\n line=> ".$this->getLine();
     }
 
-    private function createExceptionMsg(Throwable $e) {
+    private function createExceptionMsg(Throwable $e)
+    {
         return " message:" . $e->getMessage() .
         "\r\n code:" .  $e->getCode() .
         "\r\n file:" .  $e->getFile() .
         "\r\n line:" .  $e->getLine() . "\r\n";
     }
-
 }

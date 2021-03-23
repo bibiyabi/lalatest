@@ -23,9 +23,9 @@ class GatewayRepository
         return $this->gateway->get();
     }
 
-    public function filterGatewayId($id) {
+    public function filterGatewayId($id)
+    {
         $this->gateway->where('id', '=', $id);
         return $this;
     }
-
 }

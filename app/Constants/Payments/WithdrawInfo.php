@@ -3,7 +3,6 @@
 
 namespace App\Constants\Payments;
 
-
 class WithdrawInfo
 {
     public const AMOUNT         = 1;

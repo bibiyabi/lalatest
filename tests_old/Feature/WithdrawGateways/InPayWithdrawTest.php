@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Models\Merchant;
 use App\Models\Gateway;
 
-
 class InPayWithdrawTest extends TestCase
 {
     use DatabaseTransactions;
@@ -19,12 +18,12 @@ class InPayWithdrawTest extends TestCase
     {
         parent::setUp();
 
-       $user = Merchant::factory([
+        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
 
-       $this->user = $user;
-       $this->actingAs($user);
+        $this->user = $user;
+        $this->actingAs($user);
     }
 
 
@@ -73,6 +72,5 @@ class InPayWithdrawTest extends TestCase
             'order_id' => $orderId,
             'status' => Status::PENDING
         ]);
-
     }
 }

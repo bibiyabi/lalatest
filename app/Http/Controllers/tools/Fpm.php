@@ -4,17 +4,16 @@ namespace App\Http\Controllers\tools;
 
 use App\Http\Controllers\Controller;
 
-
 class Fpm extends Controller
 {
-    public function __construct() {
-
+    public function __construct()
+    {
     }
 
 
     public function index()
     {
-        if (config('app.env') !== 'local'){
+        if (config('app.env') !== 'local') {
             $file = file('/var/www/html/agent/fpm.log');
         } else {
             $file = file(dirname(__FILE__) . '/fpm.log');
@@ -33,8 +32,10 @@ class Fpm extends Controller
         $slowrequests = '';
         $hostname = '';
 
-        foreach( $file as $lineNum => $lineData ) {
-            if (empty($lineData)) continue;
+        foreach ($file as $lineNum => $lineData) {
+            if (empty($lineData)) {
+                continue;
+            }
             $data = json_decode($lineData, true);
             $hostname = $data['hostname'];
             $acceptedconn = $data['acceptedconn'];
@@ -50,30 +51,30 @@ class Fpm extends Controller
             $slowrequests .= '{x:"'.$data['time'].'", y:'.$data['slowrequests'].'},';
         }
 
-        $acceptedconn = substr( $acceptedconn, 0, -1);
-        $listenqueue = substr( $listenqueue, 0, -1);
-        $maxlistenqueue = substr( $maxlistenqueue, 0, -1);
-        $listenqueuelen = substr( $listenqueuelen, 0, -1);
-        $idleprocesses = substr( $idleprocesses, 0, -1);
-        $activeprocesses = substr( $activeprocesses, 0, -1);
-        $totalprocesses = substr( $totalprocesses, 0, -1);
-        $maxactiveprocesses = substr( $maxactiveprocesses, 0, -1);
-        $maxchildrenreached = substr( $maxchildrenreached, 0, -1);
-        $slowrequests = substr( $slowrequests, 0, -1);
+        $acceptedconn = substr($acceptedconn, 0, -1);
+        $listenqueue = substr($listenqueue, 0, -1);
+        $maxlistenqueue = substr($maxlistenqueue, 0, -1);
+        $listenqueuelen = substr($listenqueuelen, 0, -1);
+        $idleprocesses = substr($idleprocesses, 0, -1);
+        $activeprocesses = substr($activeprocesses, 0, -1);
+        $totalprocesses = substr($totalprocesses, 0, -1);
+        $maxactiveprocesses = substr($maxactiveprocesses, 0, -1);
+        $maxchildrenreached = substr($maxchildrenreached, 0, -1);
+        $slowrequests = substr($slowrequests, 0, -1);
 
-        return view('tools.fpm' ,compact('acceptedconn',
-        'listenqueue' ,
-        'maxlistenqueue',
-        'listenqueuelen',
-        'maxlistenqueue',
-        'totalprocesses',
-        'maxactiveprocesses',
-        'maxchildrenreached',
-        'slowrequests',
-        'hostname',
-        'idleprocesses',
-        'activeprocesses',
-
-    ));
+        return view('tools.fpm', compact(
+            'acceptedconn',
+            'listenqueue',
+            'maxlistenqueue',
+            'listenqueuelen',
+            'maxlistenqueue',
+            'totalprocesses',
+            'maxactiveprocesses',
+            'maxchildrenreached',
+            'slowrequests',
+            'hostname',
+            'idleprocesses',
+            'activeprocesses',
+        ));
     }
 }

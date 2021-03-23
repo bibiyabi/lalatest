@@ -43,7 +43,7 @@ class Notify implements ShouldQueue
         if (in_array($this->order->status, [
             Status::CALLBACK_FAILED,
             Status::ORDER_FAILED
-        ]) && !$this->isResetedOrder() ) {
+        ]) && !$this->isResetedOrder()) {
             $WithdrawNotify->setOrder($this->order)->setMessage($this->message)->notifyWithdrawFailed();
         }
 
@@ -59,7 +59,8 @@ class Notify implements ShouldQueue
      *
      * @return void
      */
-    private function isResetedOrder() {
+    private function isResetedOrder()
+    {
         if ($this->order->no_notify == 1) {
             return true;
         }
@@ -78,6 +79,4 @@ class Notify implements ShouldQueue
         # echo $e->getMessage();
         Log::channel('withdraw')->info(new LogLine($e));
     }
-
-
 }

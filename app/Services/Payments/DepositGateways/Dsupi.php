@@ -41,7 +41,6 @@ class Dsupi implements DepositGatewayInterface
 
     protected function createParam(OrderParam $param, SettingParam $settings): array
     {
-
         return [
             'appid' => $settings->getMerchant(),
             'out_trade_no' => $param->getOrderId(),

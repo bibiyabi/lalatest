@@ -20,14 +20,14 @@ class GlobalPayTest extends TestCase
 
     public function setUp():void
     {
-       parent::setUp();
+        parent::setUp();
 
-       $user = Merchant::factory([
+        $user = Merchant::factory([
            'name' => 'java',
        ])->create();
 
-       $this->user = $user;
-       $this->actingAs($user);
+        $this->user = $user;
+        $this->actingAs($user);
     }
 
 
@@ -75,11 +75,11 @@ class GlobalPayTest extends TestCase
             'order_id' => $orderId,
             'status' => Status::PENDING
         ]);
-
     }
 
 
-    public function test_callback() {
+    public function test_callback()
+    {
         //$this->markTestSkipped('skip');
         $key = Setting::create([
             'user_id' => 1,
@@ -107,5 +107,4 @@ class GlobalPayTest extends TestCase
         $res = $pay->callback($request);
         $this->assertEquals('SUCCESS', $res->getMsg());
     }
-
 }

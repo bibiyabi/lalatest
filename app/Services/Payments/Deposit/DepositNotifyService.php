@@ -15,7 +15,8 @@ class DepositNotifyService
 {
     private $repo;
 
-    public function __construct(MerchantRepository $repo) {
+    public function __construct(MerchantRepository $repo)
+    {
         $this->repo = $repo;
     }
 

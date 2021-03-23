@@ -8,7 +8,8 @@ class Result
 
     private $content;
 
-    public function __construct(string $type, string $content) {
+    public function __construct(string $type, string $content)
+    {
         $this->type = $type;
         $this->content = $content;
     }

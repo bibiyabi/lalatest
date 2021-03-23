@@ -14,7 +14,8 @@ use Throwable;
 
 class WithdrawController extends Controller
 {
-    public function create(Request $request, PaymentInterface $payment) {
+    public function create(Request $request, PaymentInterface $payment)
+    {
         try {
             Log::channel('withdraw')->info(new LogLine('代付前端參數'), $request->post());
             $payment->checkInputSetDbSendOrderToQueue($request);
@@ -23,10 +24,10 @@ class WithdrawController extends Controller
             Log::channel('withdraw')->info(new LogLine($e));
             return $this->response($e);
         }
-
     }
 
-    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway) {
+    public function callback(Request $request, PaymentInterface $payment, AbstractWithdrawGateway $gateway)
+    {
         try {
             Log::channel('withdraw')->info(new LogLine('代付回調前端參數 post '. print_r($request->post(), true)));
             Log::channel('withdraw')->info(new LogLine('代付回調前端參數 headers'), \Request::header());
@@ -42,7 +43,6 @@ class WithdrawController extends Controller
             $payment->setCallbackDbResult($res);
 
             return $res->getMsg();
-
         } catch (Throwable $e) {
             Log::channel('withdraw')->info(new LogLine($e));
             return $this->response($e);
@@ -50,7 +50,8 @@ class WithdrawController extends Controller
     }
 
 
-    public function reset(Request $request, PaymentInterface $payment) {
+    public function reset(Request $request, PaymentInterface $payment)
+    {
         try {
             Log::channel('withdraw')->info(new LogLine('重置訂單'), $request->post());
             $payment->resetOrderStatus($request);
@@ -61,13 +62,12 @@ class WithdrawController extends Controller
         }
     }
 
-    private function response($e){
+    private function response($e)
+    {
         $code = ($e->getCode() < 20 || $e->getCode() > 1024) ? 1024 : $e->getCode();
         if ($e instanceof WithdrawException) {
             return RB::asError($code)->withMessage($e->getMessage())->build();
         }
         return RB::error($code);
     }
-
-
 }

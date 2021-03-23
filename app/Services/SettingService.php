@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 use App\Constants\Payments\ResponseCode as CODE;
 use App\Repositories\SettingRepository;
 use Illuminate\Support\Facades\Log;
@@ -22,12 +21,12 @@ class SettingService
         $settingId = $this->repo->filterCombinePk($userId, $data['id'])->first();
 
         try {
-            if (empty($settingId)){ # create
+            if (empty($settingId)) { # create
                 $this->repo->insertSetting($userId, $data);
-            }else{ # update
+            } else { # update
                 $this->repo->updateSetting($settingId->id, $data);
             }
-        }catch (\PDOException $e){
+        } catch (\PDOException $e) {
             echo $e->getMessage().' PATH: '.__METHOD__;
             Log::info($e->getMessage()."\n".' PATH: '.__METHOD__);
             return new ServiceResult(false, CODE::FAIL);
@@ -37,13 +36,13 @@ class SettingService
 
     public function deleteSetting($userId, $request)
     {
-        try{
+        try {
             $settingId = $this->repo->filterCombinePk($userId, $request->input('id'))->first();
-            if (empty($settingId)){
+            if (empty($settingId)) {
                 return new ServiceResult(false, CODE::FAIL);
             }
             $this->repo->deleteSetting($settingId->id);
-        }catch (\PDOException $e){
+        } catch (\PDOException $e) {
             Log::info($e->getMessage().' PATH: '.__METHOD__, $request->post());
             return new ServiceResult(false, CODE::FAIL);
         }

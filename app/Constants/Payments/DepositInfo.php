@@ -3,7 +3,6 @@
 
 namespace App\Constants\Payments;
 
-
 class DepositInfo
 {
     public const BANK_NAME          = 1;
@@ -43,6 +42,4 @@ class DepositInfo
     public const BANK_CITY          = 35;
     public const BANK_ACCOUNT       = 36;
     public const UPI_ID             = 37;
-
-
 }

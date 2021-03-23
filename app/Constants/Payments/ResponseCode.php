@@ -3,7 +3,6 @@
 
 namespace App\Constants\Payments;
 
-
 class ResponseCode
 {
     public const SUCCESS                        = 100;
@@ -103,6 +102,4 @@ class ResponseCode
     "999": " 使用者尚未登录",
 },
  */
-
-
 }

@@ -23,4 +23,3 @@ Route::prefix('fake_tparty')->group(function () {
     Route::get('deposit', [FakeDepositController::class, 'index']);
     Route::get('withdraw', [FakeWithdrawController::class, 'index']);
 });
-

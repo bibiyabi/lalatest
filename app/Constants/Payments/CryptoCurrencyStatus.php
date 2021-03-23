@@ -11,5 +11,4 @@ interface CryptoCurrencyStatus
     public const API_FAIL = 3;
 
     public const ORDER_NOT_FOUND = 4;
-
 }

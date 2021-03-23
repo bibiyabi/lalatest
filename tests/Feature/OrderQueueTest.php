@@ -27,8 +27,8 @@ class OrderQueueTest extends TestCase
     }
 
 
-    public function test_order_success_when_gateway_success() {
-
+    public function test_order_success_when_gateway_success()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -43,7 +43,7 @@ class OrderQueueTest extends TestCase
         $orderArray['key_id'] = $key->id;
         $order = WithdrawOrder::create($orderArray);
 
-        $shineUpay = $this->partialMock(ShineUPay::class, function (MockInterface $mock) use($order) {
+        $shineUpay = $this->partialMock(ShineUPay::class, function (MockInterface $mock) use ($order) {
             $mock->shouldReceive('setRequest')->andReturn([]);
             $mock->shouldReceive('send')->andReturn(['code'=> Status::ORDER_SUCCESS, 'msg'=> 'msg test', 'data' => ['datatest']]);
         });
@@ -59,8 +59,8 @@ class OrderQueueTest extends TestCase
     }
 
 
-    public function test_order_fail_when_gateway_input_exception() {
-
+    public function test_order_fail_when_gateway_input_exception()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -91,8 +91,8 @@ class OrderQueueTest extends TestCase
     }
 
 
-    public function test_order_fail_when_gateway_decode_exception() {
-
+    public function test_order_fail_when_gateway_decode_exception()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -122,8 +122,8 @@ class OrderQueueTest extends TestCase
         ]);
     }
 
-    public function test_order_fail_when_gateway_withdraw_exception() {
-
+    public function test_order_fail_when_gateway_withdraw_exception()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -155,8 +155,8 @@ class OrderQueueTest extends TestCase
 
 
 
-    public function test_order_fail_when_gateway_unknown_exception() {
-
+    public function test_order_fail_when_gateway_unknown_exception()
+    {
         $key = Setting::create([
             'user_id' => 1,
             'gateway_id' => 1,
@@ -185,6 +185,4 @@ class OrderQueueTest extends TestCase
             'status' => Status::ORDER_ERROR
         ]);
     }
-
-
 }

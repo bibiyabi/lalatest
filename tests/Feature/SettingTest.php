@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-
 use App\Models\Gateway;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -46,7 +45,7 @@ class SettingTest extends TestCase
             'notify_url'=> 'http://google.con'
 
         ]);
-        $response = $this->post('api/key',[
+        $response = $this->post('api/key', [
             'data' => urlencode($data),
             'gateway_id'=> $gateway->id,
             'id'=> $userPk,
@@ -63,7 +62,7 @@ class SettingTest extends TestCase
             'notify_url'=> 'http://google.con'
 
         ]);
-        $response = $this->post('api/key',[
+        $response = $this->post('api/key', [
             'data' => urlencode($dataUpdate),
             'gateway_id'=> $gateway->id,
             'id'=> $userPk,
@@ -71,7 +70,7 @@ class SettingTest extends TestCase
 
         $response->assertJsonFragment(['success'=> true]);
 
-        $this->assertDatabaseHas('settings',[
+        $this->assertDatabaseHas('settings', [
             'user_pk' => $userPk,
             'gateway_id' => $gateway->id,
         ]);
@@ -92,12 +91,12 @@ class SettingTest extends TestCase
             'user_pk' => 888,
         ])->create();
 
-        $response = $this->delete('api/key',[
+        $response = $this->delete('api/key', [
            'id' => $setting->user_pk,
         ]);
 
         $response->assertJsonFragment(['success'=> true]);
-        $this->assertDatabaseMissing('settings',[
+        $this->assertDatabaseMissing('settings', [
             'user_pk' => $setting->user_pk,
         ]);
     }

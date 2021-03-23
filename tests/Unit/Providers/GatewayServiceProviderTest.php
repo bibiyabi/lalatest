@@ -15,37 +15,26 @@ class GatewayServiceProviderTest extends TestCase
     public function setUp():void
     {
         parent::setUp();
-
     }
 
-    public function test_boot() {
-
+    public function test_boot()
+    {
         $request = Request::create('/callback/withdraw/ShineUPay', 'POST');
 
         $provider = $this->partialMock(GatewayServiceProvider::class, function (MockInterface $mock) {
             $mock->shouldReceive('createGateway')->once()->andReturn('');
             $mock->shouldReceive('getSegmentN')->once()->andReturn('');
             $mock->shouldReceive('isSegmentMatch')->once()->andReturn(true);
-
         });
         $provider->boot($request);
     }
 
-    public function test_getSegmentN() {
-
-
+    public function test_getSegmentN()
+    {
         $request = Request::create('/callback/withdraw/ShineUPay', 'POST');
 
         $provider = $this->partialMock(GatewayServiceProvider::class);
 
         $this->assertEquals($provider->getSegmentN($request, 3), 'ShineUPay');
-
-
     }
-
-
-
-
-
-
 }

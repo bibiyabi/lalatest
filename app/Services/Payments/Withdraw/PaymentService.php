@@ -18,7 +18,6 @@ use App\Contracts\Payments\CallbackResult;
 use Exception;
 use App\Constants\Payments\Status;
 
-
 class PaymentService implements PaymentInterface
 {
     private $settingRepository;
@@ -31,26 +30,29 @@ class PaymentService implements PaymentInterface
         $this->settingRepository = $settingRepository;
     }
 
-    public function checkInputSetDbSendOrderToQueue(Request $request) {
+    public function checkInputSetDbSendOrderToQueue(Request $request)
+    {
         $this->checkInputData($request);
         $order = $this->setOrderToDb($request);
         $this->dispatchOrderQueue($request, $order);
     }
 
-    public function callbackNotifyToQueue($order, $message) {
+    public function callbackNotifyToQueue($order, $message)
+    {
         try {
             Notify::dispatch($order, $message)->onQueue('notify');
-        } catch(Throwable $e) {
-            throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage() , ResponseCode::EXCEPTION);
+        } catch (Throwable $e) {
+            throw new WithdrawException($e->getFile(). $e->getLine() .$e->getMessage(), ResponseCode::EXCEPTION);
         }
     }
 
-    public function callback(Request $request , AbstractWithdrawGateway $gateway): CallbackResult {
+    public function callback(Request $request, AbstractWithdrawGateway $gateway): CallbackResult
+    {
         return $gateway->callback($request);
     }
 
-    public function resetOrderStatus(Request $request) {
-
+    public function resetOrderStatus(Request $request)
+    {
         $post = $request->post();
 
         $order = WithdrawOrder::where('order_id', $post['order_id'])->first();
@@ -65,8 +67,8 @@ class PaymentService implements PaymentInterface
         }
     }
 
-    public function setCallbackDbResult(CallbackResult $res) {
-
+    public function setCallbackDbResult(CallbackResult $res)
+    {
         $orderId = $res->getOrder()->order_id;
 
         if (empty($orderId)) {
@@ -83,19 +85,21 @@ class PaymentService implements PaymentInterface
         );
 
         $this->callbackNotifyToQueue($res->getOrder(), $res->getNotifyMessage());
-
     }
 
-    private function dispatchOrderQueue(Request $request, WithdrawOrder $order)  {
+    private function dispatchOrderQueue(Request $request, WithdrawOrder $order)
+    {
         Order::dispatch($request->post(), $order)->onQueue('withdrawOrder');
     }
 
-    private function checkInputData(Request $request)  {
+    private function checkInputData(Request $request)
+    {
         $this->validatePost($request->post());
         $this->defaultOrderParams($request->post());
     }
 
-    private function validatePost($post) {
+    private function validatePost($post)
+    {
         $validator = Validator::make($post, [
             'type' => 'required',
             'order_id'     => 'required',
@@ -107,7 +111,8 @@ class PaymentService implements PaymentInterface
         }
     }
 
-    private function defaultOrderParams($data) {
+    private function defaultOrderParams($data)
+    {
         $defaultArrays = $this->getNeedDefaultValueParams();
         foreach ($defaultArrays as $key) {
             if (!isset($data[$key])) {
@@ -122,7 +127,8 @@ class PaymentService implements PaymentInterface
      *
      * @return void
      */
-    private function getNeedDefaultValueParams() {
+    private function getNeedDefaultValueParams()
+    {
         return  [
             'amount',
             'bank_card_option',
@@ -149,21 +155,17 @@ class PaymentService implements PaymentInterface
         ];
     }
 
-    private function setOrderToDb(Request $request) {
-
+    private function setOrderToDb(Request $request)
+    {
         $settings = $this->settingRepository->filterCombinePk($request->user()->id, $request->pk)->first();
         $this->settings = collect($settings);
 
         if (! $this->settings->has('id')) {
-            throw new WithdrawException('setting not found, pk' . $request->pk . ' user:'. $request->user()->id , ResponseCode::RESOURCE_NOT_FOUND);
+            throw new WithdrawException('setting not found, pk' . $request->pk . ' user:'. $request->user()->id, ResponseCode::RESOURCE_NOT_FOUND);
         }
 
         $order = $this->withdrawRepository->create($request, $settings);
 
         return $order;
     }
-
-
-
-
 }

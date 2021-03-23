@@ -22,6 +22,7 @@ use App\Lib\Log\LogLine;
 use App\Constants\Payments\Type;
 use App\Jobs\Payment\Withdraw\CryptoCurrencySearch;
 use Throwable;
+
 class Order implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,11 +43,12 @@ class Order implements ShouldQueue
         $this->order = $order;
 
         if (empty($order)) {
-            throw new WithdrawException('order not set' , ResponseCode::EXCEPTION);
+            throw new WithdrawException('order not set', ResponseCode::EXCEPTION);
         }
     }
 
-    public function getInputOrder() {
+    public function getInputOrder()
+    {
         return $this->order;
     }
 
@@ -62,7 +64,7 @@ class Order implements ShouldQueue
             $res = $paymentGateway->send();
 
             if (!isset($res['code'])) {
-                throw new WithdrawException('res code not set' , ResponseCode::EXCEPTION);
+                throw new WithdrawException('res code not set', ResponseCode::EXCEPTION);
             }
             WithdrawOrder::where('order_id', $this->post['order_id'])
             ->update(['status' => $res['code']]);
@@ -77,9 +79,7 @@ class Order implements ShouldQueue
                 CryptoCurrencySearch::dispatch($order, $paymentGateway)->onQueue('cryptocurrency');
                 Log::channel('withdraw')->info(new LogLine('數字貨幣訂單 search queue sended: ' . $this->post['order_id']));
             }
-
         } catch (Throwable $e) {
-
             Log::channel('withdraw')->info(new LogLine($e));
             if (in_array($e->getCode(), [Status::ORDER_ERROR, Status::ORDER_FAILED, Status::ORDER_SUCCESS])) {
                 WithdrawOrder::where('order_id', $this->post['order_id'])
@@ -95,5 +95,4 @@ class Order implements ShouldQueue
                 ->update(['status' => Status::ORDER_ERROR]);
         }
     }
-
 }
